@@ -75,16 +75,14 @@ test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
   # Build Z indicator matrix (n x p)
   Z_mat <- z_indicator_matrix(z, z_levels)
 
-  # ===========================================================================
   # Paper's formulation (Equation 3, p. 2042):
   #   E(X_i | Z = z_j) = gamma_i + alpha_i * beta_j
   #   Identification: alpha_1 = 1 (scale), beta_1 = 0 (reference level)
   #   Moment conditions: d * p
   #   Free parameters: d + (d-1) + (p-1) = 2d + p - 2
   #   df = d*p - (2d + p - 2) = (d-1)(p-2)
-  # ===========================================================================
 
-  # --- Initialization from cell means ---
+  # Initialization from cell means
   # Cell means: mean(X_i | Z = z_j)
   cell_means <- matrix(0, d, p)
   for (j in seq_len(p)) {
@@ -119,7 +117,7 @@ test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
   # Length: d + (d-1) + (p-1) = 2d + p - 2
   theta_init <- c(gamma_init, alpha_init[-1], beta_init[-1])
 
-  # --- GMM moment matrix builder ---
+  # GMM moment matrix builder
   # Returns n x (d*p) matrix of per-observation moment contributions
   build_gmm <- function(theta_val) {
     gam <- theta_val[1:d]
@@ -147,7 +145,7 @@ test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
     g
   }
 
-  # --- Two-step efficient GMM ---
+  # Two-step efficient GMM
 
   # Step 1: weight matrix from initial estimates (fixed during optimization)
   g0 <- build_gmm(theta_init)

@@ -106,7 +106,7 @@ test_t0 <- function(X, z, na.rm = TRUE, verbose = FALSE) {
     }
     g <- colMeans(u)
 
-    # --- Variance adjustment for estimated reliabilities (paper p. 2041) ---
+    # Variance adjustment for estimated reliabilities (paper p. 2041)
     # Sigma = Var(U_k - (dU/dlambda)(dV/dlambda)^{-1} V_k)
     #
     # The intermediate matrices (dudlambda, dvdlambda, V_k) each carry a
