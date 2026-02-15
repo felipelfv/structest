@@ -79,7 +79,7 @@ test_t0(X_bad, z)
 
 ### T1 test (reliability-independent)
 
-The T1 test avoids estimating reliabilities by centering the indicators (subtracting the row mean), which eliminates the latent factor. Under the structural interpretation, the centered conditional expectations have a rank-1 structure that can be tested. This test requires at least 3 indicators and at least 3 levels of *Z*.
+The T1 test avoids estimating reliabilities entirely by parameterising the conditional expectations as E(X_i | Z = z_j) = gamma_i + alpha_i * beta_j, with alpha_1 = 1 and beta_1 = 0 for identification (Equation 3 in the paper). Under the structural model, the matrix of mean differences Delta_ij = E(X_i | Z = z_j) - E(X_i | Z = z_1) has rank <= 1. The T1 test checks this rank constraint using a two-step efficient GMM procedure. This test requires at least 3 indicators and at least 3 levels of *Z*.
 
 Under the null, the test statistic follows a chi-squared distribution with (d - 1)(p - 2) degrees of freedom.
 
@@ -137,7 +137,7 @@ Parameterises E(X_i | Z = z) = gamma_i + (lambda_i / lambda_1) * beta_z and test
 
 ### T1 test
 
-Centers each observation by its row mean to eliminate the latent factor, then tests whether the centered conditional expectations have the rank-1 structure E(X^c_i | Z = z) = alpha_i * beta_z implied by the structural model. Uses a two-step efficient GMM procedure.
+Parameterises E(X_i | Z = z_j) = gamma_i + alpha_i * beta_j with alpha_1 = 1 (identification) and beta_1 = 0 (reference level). Tests whether the mean-difference matrix Delta_ij = E(X_i | Z = z_j) - E(X_i | Z = z_1) has rank <= 1, which is the testable implication of the structural model (Equation 3 in the paper). Uses a two-step efficient GMM procedure.
 
 - Degrees of freedom: (d - 1)(p - 2)
 - Requires: d >= 3 indicators, p >= 3 Z-levels
