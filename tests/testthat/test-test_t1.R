@@ -53,6 +53,7 @@ test_that("test_t1 returns correct components", {
   expect_true("parameter" %in% names(result))
   expect_true("p.value" %in% names(result))
   expect_true("estimates" %in% names(result))
+  expect_true("gamma" %in% names(result$estimates))
   expect_true("alpha" %in% names(result$estimates))
   expect_true("beta" %in% names(result$estimates))
   expect_equal(result$d, 3)

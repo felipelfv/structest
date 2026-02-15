@@ -2,25 +2,28 @@
 #'
 #' Tests whether the structural interpretation of a univariate latent factor
 #' model can be rejected, without requiring estimation of reliability
-#' coefficients. Uses centered indicators and a two-step efficient GMM procedure.
+#' coefficients. Uses a two-step efficient GMM procedure.
 #'
 #' @param X numeric matrix (n x d) of indicator variables, d >= 3.
 #' @param z numeric vector of length n encoding the auxiliary variable.
 #'   Must have at least 3 distinct levels.
 #' @param na.rm logical; if \code{TRUE}, rows with any \code{NA} are removed.
-#' @param max_iter integer; maximum iterations for the alternating LS procedure.
-#' @param tol numeric; convergence tolerance for the alternating LS procedure.
+#' @param max_iter integer; maximum iterations for \code{nlm}.
+#' @param tol numeric; convergence tolerance for the alternating LS initializer.
 #' @param verbose logical; if \code{TRUE}, print progress information.
 #'
 #' @return An object of class \code{c("structest_t1", "structest", "htest")}
 #'   containing:
 #' \describe{
-#'   \item{statistic}{the T1 test statistic.}
+#'   \item{statistic}{the T1 test statistic (J-statistic from two-step
+#'     efficient GMM).}
 #'   \item{parameter}{degrees of freedom, \eqn{(d-1)(p-2)}.}
 #'   \item{p.value}{p-value from chi-squared distribution.}
 #'   \item{method}{description of the test.}
 #'   \item{data.name}{name of the data objects.}
-#'   \item{estimates}{list with \code{alpha} and \code{beta}.}
+#'   \item{estimates}{list with \code{gamma} (intercepts), \code{alpha}
+#'     (loading ratios, \eqn{\alpha_1 = 1}), and \code{beta} (Z effects,
+#'     \eqn{\beta_1 = 0}).}
 #'   \item{n_obs}{number of observations used.}
 #'   \item{d}{number of indicators.}
 #'   \item{p}{number of Z-levels.}
@@ -29,19 +32,30 @@
 #' }
 #'
 #' @details
-#' The indicators are centered by their row mean:
-#' \eqn{X^c_{ik} = X_{ik} - \bar{X}_{i\cdot}}, which eliminates the latent
-#' factor \eqn{Y}. Under the structural interpretation,
-#' \eqn{E[X^c_i | Z = z_j] = \alpha_i \beta_j} where \eqn{\alpha_i} and
-#' \eqn{\beta_j} are identifiable nuisance parameters. The test has
-#' \eqn{(d-1)(p-2)} degrees of freedom. The full model (Equation 3 in the
-#' paper) has \eqn{d \times p} moment conditions and \eqn{2d + p - 2} free
-#' parameters (\eqn{d} intercepts, \eqn{d} alphas, \eqn{p-1} betas, minus 1
-#' for the alpha-beta scale indeterminacy), giving
-#' \eqn{dp - (2d+p-2) = (d-1)(p-2)} degrees of freedom.
+#' Under the structural model \eqn{X_i = \mu_i + \lambda_i \eta + \varepsilon_i},
+#' the conditional expectations satisfy
+#' \deqn{E(X_i \mid Z = z_j) = \gamma_i + \alpha_i \beta_j}
+#' where \eqn{\gamma_i} are intercepts absorbing the reference-level means,
+#' \eqn{\alpha_i} capture the loading ratios (with \eqn{\alpha_1 = 1} for
+#' identification), and \eqn{\beta_j} capture the Z-level effects (with
+#' \eqn{\beta_1 = 0} for the reference level).
 #'
-#' The procedure uses a two-step efficient GMM: first with a fixed weight
-#' matrix from initial estimates, then with the efficient weight matrix.
+#' This gives \eqn{d \times p} moment conditions:
+#' \deqn{E[I(Z = z_j)(X_i - \gamma_i - \alpha_i \beta_j)] = 0}
+#' with \eqn{2d + p - 2} free parameters (\eqn{d} intercepts, \eqn{d - 1}
+#' alphas, \eqn{p - 1} betas), yielding
+#' \eqn{dp - (2d + p - 2) = (d-1)(p-2)} degrees of freedom.
+#'
+#' The test checks whether the mean-difference matrix
+#' \eqn{\Delta_{ij} = E(X_i \mid Z = z_j) - E(X_i \mid Z = z_1)} has rank
+#' \eqn{\le 1}, which is the testable implication of the structural model
+#' (Theorem 2 in the paper).
+#'
+#' The procedure uses a two-step efficient GMM: the first step uses a fixed
+#' weight matrix from initial estimates, and the second step uses the efficient
+#' weight matrix evaluated at the first-step estimates (held fixed during
+#' optimization). The J-statistic from the second step is asymptotically
+#' \eqn{\chi^2_{(d-1)(p-2)}} under the null.
 #'
 #' @references
 #' VanderWeele, T. J. and Vansteelandt, S. (2022). A statistical test to
@@ -58,160 +72,135 @@ test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
   X <- inp$X; z <- inp$z; n <- inp$n; d <- inp$d; p <- inp$p
   z_levels <- inp$z_levels
 
-  # Step 1: Center indicators by row mean
-  row_means <- rowMeans(X)
-  Xc <- X - row_means  # n x d, centered
-
-  # Build Z indicator matrix
+  # Build Z indicator matrix (n x p)
   Z_mat <- z_indicator_matrix(z, z_levels)
 
-  # Step 2: Initial estimates via alternating LS (Appendix of paper)
-  alpha <- numeric(d)
-  beta <- numeric(p)
+  # ===========================================================================
+  # Paper's formulation (Equation 3, p. 2042):
+  #   E(X_i | Z = z_j) = gamma_i + alpha_i * beta_j
+  #   Identification: alpha_1 = 1 (scale), beta_1 = 0 (reference level)
+  #   Moment conditions: d * p
+  #   Free parameters: d + (d-1) + (p-1) = 2d + p - 2
+  #   df = d*p - (2d + p - 2) = (d-1)(p-2)
+  # ===========================================================================
 
-  # Initialize alpha from the first Z-level
-  for (i in seq_len(d)) {
-    alpha[i] <- mean(Xc[z == z_levels[1], i], na.rm = TRUE)
-  }
-
-  # Alternating LS iterations
-  # Model: E[Xc_i | z == z_j] = alpha_i * beta_j
-  xalpha <- Xc  # will hold Xc * alpha (broadcasted)
-  valpha <- Xc  # will hold alpha values (broadcasted)
-
-  # Compute alpha-weighted quantities
-  for (i in seq_len(d)) {
-    xalpha[, i] <- Xc[, i] * alpha[i]
-    valpha[, i] <- alpha[i]
-  }
-
-  su <- 10
-  iter <- 0L
-
-  repeat {
-    iter <- iter + 1L
-
-    # Update beta: for each Z-level j,
-    # beta_j = sum_k sum_i Xc_ik * alpha_i * I(z_k == z_j) /
-    #          sum_k sum_i alpha_i^2 * I(z_k == z_j)
-    for (j in seq_len(p)) {
-      mask <- z == z_levels[j]
-      num <- sum(xalpha[mask, ], na.rm = TRUE)
-      den <- sum(valpha[mask, ]^2, na.rm = TRUE)
-      beta[j] <- num / den
-    }
-
-    # Compute beta-weighted quantities
-    xbeta <- Xc
-    vbeta <- Xc
-    for (j in seq_len(p)) {
-      mask <- z == z_levels[j]
-      for (i in seq_len(d)) {
-        xbeta[mask, i] <- Xc[mask, i] * beta[j]
-        vbeta[mask, i] <- beta[j]
-      }
-    }
-
-    # Update alpha: for each indicator i,
-    # alpha_i = sum_k Xc_ik * beta(z_k) / sum_k beta(z_k)^2
+  # --- Initialization from cell means ---
+  # Cell means: mean(X_i | Z = z_j)
+  cell_means <- matrix(0, d, p)
+  for (j in seq_len(p)) {
+    mask <- z == z_levels[j]
     for (i in seq_len(d)) {
-      num <- sum(xbeta[, i], na.rm = TRUE)
-      den <- sum(vbeta[, i]^2, na.rm = TRUE)
-      alpha[i] <- num / den
-      xalpha[, i] <- Xc[, i] * alpha[i]
-      valpha[, i] <- alpha[i]
+      cell_means[i, j] <- mean(X[mask, i])
     }
-
-    # Check convergence using estimating equations
-    u_check <- numeric(d + p)
-    for (i in seq_len(d)) {
-      u_check[i] <- sum(xbeta[, i] - valpha[, i] * vbeta[, i]^2, na.rm = TRUE)
-    }
-    for (j in seq_len(p)) {
-      mask <- z == z_levels[j]
-      u_check[d + j] <- sum(xalpha[mask, ] - valpha[mask, ]^2 * vbeta[mask, ],
-                            na.rm = TRUE)
-    }
-
-    su_new <- sum(u_check^2)
-    if (verbose) message("Iteration ", iter, ": criterion = ", su_new)
-    if (abs(su_new - su) < tol || iter >= max_iter) break
-    su <- su_new
   }
 
-  # Save initial theta
-  theta <- c(alpha, beta)
+  # gamma_i = E(X_i | Z = z_1), the reference-level mean
+  gamma_init <- cell_means[, 1]
 
-  # Build GMM moment matrix for given theta.
-  # Moment conditions: E[I(z==z_j)*(Xc_i - alpha_i*beta_j)] = 0
-  # for i=2,...,d (indicator 1 dropped) and j=1,...,p, giving (d-1)*p conditions.
-  # df = (d-1)(p-2) as per Eq. 3 in the paper.
+  # Mean differences: D[i,j] = E(X_i|Z=z_j) - gamma_i = alpha_i * beta_j
+  D <- cell_means - gamma_init  # d x p, first column is 0
 
-  build_gmm_matrix <- function(theta_val, Xc_mat, z_vec, z_lvls, d_val, p_val, n_val) {
-    alpha_val <- theta_val[seq_len(d_val)]
-    beta_val <- theta_val[(d_val + 1):(d_val + p_val)]
+  # beta_j = D[1, j] since alpha_1 = 1
+  beta_init <- D[1, ]  # length p, beta_init[1] = 0
+
+  # alpha_i from LS fit of D[i, -1] on beta[-1], for i >= 2
+  alpha_init <- numeric(d)
+  alpha_init[1] <- 1
+  beta_sq_sum <- sum(beta_init[-1]^2)
+  if (beta_sq_sum > 1e-10) {
+    for (i in 2:d) {
+      alpha_init[i] <- sum(D[i, -1] * beta_init[-1]) / beta_sq_sum
+    }
+  } else {
+    alpha_init[2:d] <- 1  # fallback if beta is near zero
+  }
+
+  # Parameter vector theta = (gamma_1,...,gamma_d, alpha_2,...,alpha_d, beta_2,...,beta_p)
+  # Length: d + (d-1) + (p-1) = 2d + p - 2
+  theta_init <- c(gamma_init, alpha_init[-1], beta_init[-1])
+
+  # --- GMM moment matrix builder ---
+  # Returns n x (d*p) matrix of per-observation moment contributions
+  build_gmm <- function(theta_val) {
+    gam <- theta_val[1:d]
+    alp <- c(1, theta_val[(d + 1):(2 * d - 1)])       # alpha_1 = 1 fixed
+    bet <- c(0, theta_val[(2 * d):(2 * d + p - 2)])    # beta_1 = 0 fixed
 
     # Map each observation to its beta value
-    beta_k <- numeric(n_val)
-    for (j in seq_len(p_val)) {
-      beta_k[z_vec == z_lvls[j]] <- beta_val[j]
+    beta_k <- numeric(n)
+    for (j in seq_len(p)) {
+      beta_k[z == z_levels[j]] <- bet[j]
     }
 
-    resid <- Xc_mat - outer(beta_k, alpha_val)  # n x d
+    # Residual matrix: X[k,i] - gamma_i - alpha_i * beta(z_k)
+    resid <- X - matrix(gam, n, d, byrow = TRUE) - outer(beta_k, alp)
 
-    # Drop first indicator
-    resid <- resid[, -1, drop = FALSE]  # n x (d-1)
-
-    # Moment conditions: for each z-level j, multiply residuals by I(z==z_j)
-    Z_ind <- z_indicator_matrix(z_vec, z_lvls)
-    g <- matrix(0, nrow = n_val, ncol = (d_val - 1L) * p_val)
+    # Moment conditions: g[k, col] = I(z_k == z_j) * resid[k, i]
+    g <- matrix(0, nrow = n, ncol = d * p)
     col <- 0L
-    for (j in seq_len(p_val)) {
-      for (i in seq_len(d_val - 1L)) {
+    for (j in seq_len(p)) {
+      for (i in seq_len(d)) {
         col <- col + 1L
-        g[, col] <- Z_ind[, j] * resid[, i]
+        g[, col] <- Z_mat[, j] * resid[, i]
       }
     }
     g
   }
 
-  # Step 3: First-step GMM with fixed weight matrix
-  g_init <- build_gmm_matrix(theta, Xc, z, z_levels, d, p, n)
-  W <- solve(var(g_init, na.rm = TRUE))
+  # --- Two-step efficient GMM ---
+
+  # Step 1: weight matrix from initial estimates (fixed during optimization)
+  g0 <- build_gmm(theta_init)
+  Omega0 <- var(g0)
+  W1 <- tryCatch(solve(Omega0), error = function(e) {
+    solve(Omega0 + 1e-6 * diag(ncol(Omega0)))
+  })
 
   q_step1 <- function(theta_val) {
-    g <- build_gmm_matrix(theta_val, Xc, z, z_levels, d, p, n)
-    gm <- colMeans(g, na.rm = TRUE)
-    n * drop(t(gm) %*% W %*% gm)
+    g <- build_gmm(theta_val)
+    gm <- colMeans(g)
+    n * drop(crossprod(gm, W1 %*% gm))
   }
 
-  res1 <- nlm(q_step1, p = theta)
-  theta <- res1$estimate
-
-  # Step 4: Second-step efficient GMM with updated weight matrix
-  q_efficient <- function(theta_val) {
-    g <- build_gmm_matrix(theta_val, Xc, z, z_levels, d, p, n)
-    gm <- colMeans(g, na.rm = TRUE)
-    W_eff <- solve(var(g, na.rm = TRUE))
-    n * drop(t(gm) %*% W_eff %*% gm)
-  }
-
-  res <- nlm(q_efficient, p = theta)
+  res1 <- nlm(q_step1, p = theta_init, iterlim = max_iter)
+  theta1 <- res1$estimate
 
   if (verbose) {
-    message("T1 optimization converged with code: ", res$code)
-    message("Minimum: ", res$minimum)
+    message("Step 1 converged with code: ", res1$code,
+            ", J = ", format(res1$minimum, digits = 4))
   }
 
-  # Degrees of freedom: (d-1)(p-2), as per the paper (p. 2042).
-  # The full model has d*p moment conditions and 2d+p-2 free parameters,
-  # giving df = d*p - (2d+p-2) = (d-1)(p-2).
+  # Step 2: efficient weight matrix from step-1 residuals (FIXED)
+  g1 <- build_gmm(theta1)
+  Omega1 <- var(g1)
+  W2 <- tryCatch(solve(Omega1), error = function(e) {
+    solve(Omega1 + 1e-6 * diag(ncol(Omega1)))
+  })
+
+  q_step2 <- function(theta_val) {
+    g <- build_gmm(theta_val)
+    gm <- colMeans(g)
+    n * drop(crossprod(gm, W2 %*% gm))
+  }
+
+  res <- nlm(q_step2, p = theta1, iterlim = max_iter)
+
+  if (verbose) {
+    message("Step 2 converged with code: ", res$code,
+            ", J = ", format(res$minimum, digits = 4))
+  }
+
+  # Degrees of freedom: (d-1)(p-2)
   df <- (d - 1L) * (p - 2L)
 
   # Extract estimates
-  alpha_hat <- res$estimate[seq_len(d)]
-  beta_hat <- res$estimate[(d + 1):(d + p)]
-  names(alpha_hat) <- if (!is.null(colnames(inp$X))) colnames(inp$X) else paste0("X", seq_len(d))
+  theta_hat <- res$estimate
+  gamma_hat <- theta_hat[1:d]
+  alpha_hat <- c(1, theta_hat[(d + 1):(2 * d - 1)])
+  beta_hat <- c(0, theta_hat[(2 * d):(2 * d + p - 2)])
+
+  names(gamma_hat) <- if (!is.null(colnames(inp$X))) colnames(inp$X) else paste0("X", seq_len(d))
+  names(alpha_hat) <- names(gamma_hat)
   names(beta_hat) <- paste0("z=", z_levels)
 
   result <- list(
@@ -220,7 +209,7 @@ test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
     p.value = 1 - pchisq(res$minimum, df = df),
     method = "T1: Reliability-independent test of structural interpretation (VanderWeele & Vansteelandt, 2022)",
     data.name = dname,
-    estimates = list(alpha = alpha_hat, beta = beta_hat),
+    estimates = list(gamma = gamma_hat, alpha = alpha_hat, beta = beta_hat),
     n_obs = n,
     d = d,
     p = p,
