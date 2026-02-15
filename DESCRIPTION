@@ -1,0 +1,22 @@
+Package: structest
+Title: Testing the Structural Interpretation of a Univariate Latent Factor Model
+Version: 0.1.0
+Authors@R: c(
+    person("Felipe", "Fontana Vieira", role = c("aut", "cre"),
+           email = "felipelfv98@gmail.com"),
+    person("Tyler", "VanderWeele", role = "aut"),
+    person("Stijn", "Vansteelandt", role = "aut"))
+Description: Implements two statistical tests from VanderWeele and Vansteelandt
+    (2022, JRSS-B) to reject the structural interpretation of a univariate
+    latent factor model. The T0 test (Section 3.2) depends on reliability
+    estimates and requires d >= 3 indicators and p >= 2 Z-levels. The T1 test
+    (Section 3.3) is reliability-independent and requires d >= 2 indicators
+    and p >= 3 Z-levels.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Depends: R (>= 3.5.0)
+Imports: stats, utils
+Suggests: testthat (>= 3.0.0)
+Config/testthat/edition: 3
