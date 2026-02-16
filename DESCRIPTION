@@ -18,4 +18,5 @@ Depends: R (>= 3.5.0)
 Imports: stats, utils
 Suggests: testthat (>= 3.0.0), knitr, rmarkdown
 VignetteBuilder: knitr
+URL: https://felipelfv.github.io/structest/
 Config/testthat/edition: 3
