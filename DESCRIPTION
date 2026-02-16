@@ -1,11 +1,9 @@
 Package: structest
 Title: Testing the Structural Interpretation of a Univariate Latent Factor Model
 Version: 0.1.0
-Authors@R: c(
+Authors@R:
     person("Felipe", "Fontana Vieira", role = c("aut", "cre"),
-           email = "felipelfv98@gmail.com"),
-    person("Tyler", "VanderWeele", role = "aut"),
-    person("Stijn", "Vansteelandt", role = "aut"))
+           email = "felipelfv98@gmail.com")
 Description: Implements two statistical tests from VanderWeele and Vansteelandt
     (2022, JRSS-B) to reject the structural interpretation of a univariate
     latent factor model. The T0 test (Section 3.2) depends on reliability
