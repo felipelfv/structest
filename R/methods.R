@@ -42,7 +42,7 @@ summary.structest <- function(object, digits = max(3L, getOption("digits") - 3L)
     print(round(object$estimates$gamma, digits))
   }
   if (!is.null(object$estimates$alpha)) {
-    cat("  alpha (centered loadings):\n")
+    cat("  alpha:\n")
     print(round(object$estimates$alpha, digits))
   }
   if (!is.null(object$estimates$beta)) {

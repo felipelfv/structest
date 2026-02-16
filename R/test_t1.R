@@ -20,9 +20,9 @@
 #'   \item{p.value}{p-value from chi-squared distribution.}
 #'   \item{method}{description of the test.}
 #'   \item{data.name}{name of the data objects.}
-#'   \item{estimates}{list with \code{gamma} (intercepts), \code{alpha}
-#'     (loading ratios, \eqn{\alpha_1 = 1}), and \code{beta} (Z effects,
-#'     \eqn{\beta_1 = 0}).}
+#'   \item{estimates}{list with \code{gamma} (\eqn{\gamma_i}), \code{alpha}
+#'     (\eqn{\alpha_i}, with \eqn{\alpha_1 = 1}), and \code{beta}
+#'     (\eqn{\beta_j}, with \eqn{\beta_1 = 0}).}
 #'   \item{n_obs}{number of observations used.}
 #'   \item{d}{number of indicators.}
 #'   \item{p}{number of Z-levels.}
@@ -35,8 +35,8 @@
 #' the conditional expectations satisfy
 #' \deqn{E(X_i \mid Z = z_j) = \gamma_i + \alpha_i \beta_j}
 #' where \eqn{\gamma_i} are intercepts absorbing the reference-level means,
-#' \eqn{\alpha_i} capture the loading ratios (with \eqn{\alpha_1 = 1} for
-#' identification), and \eqn{\beta_j} capture the Z-level effects (with
+#' \eqn{\alpha_i} are parameters (with \eqn{\alpha_1 = 1} for
+#' identification), and \eqn{\beta_j} are parameters (with
 #' \eqn{\beta_1 = 0} for the reference level).
 #'
 #' This gives \eqn{d \times p} moment conditions:
@@ -186,7 +186,7 @@ test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
   }
 
   # Final test statistic: weight matrix recomputed at each theta
-  q_cue <- function(theta_val) {
+  q_final <- function(theta_val) {
     g <- build_gmm(theta_val)
     gm <- colMeans(g)
     Sigma <- var(g)
@@ -196,7 +196,7 @@ test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
     n * drop(crossprod(gm, Sigma_inv %*% gm))
   }
 
-  res <- nlm(q_cue, p = res2$estimate, iterlim = max_iter)
+  res <- nlm(q_final, p = res2$estimate, iterlim = max_iter)
 
   if (verbose) {
     message("Final step converged with code: ", res$code,
