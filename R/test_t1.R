@@ -4,7 +4,7 @@
 #' model can be rejected, without requiring estimation of reliability
 #' coefficients. Uses a two-step efficient GMM procedure.
 #'
-#' @param X numeric matrix (n x d) of indicator variables, d >= 3.
+#' @param X numeric matrix (n x d) of indicator variables, d >= 2.
 #' @param z numeric vector of length n encoding the auxiliary variable.
 #'   Must have at least 3 distinct levels.
 #' @param na.rm logical; if \code{TRUE}, rows with any \code{NA} are removed.
@@ -68,7 +68,7 @@ test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
   dname <- paste(deparse(substitute(X)), "and", deparse(substitute(z)))
 
   # Validate inputs
-  inp <- validate_inputs(X, z, na.rm = na.rm, min_d = 3L, min_p = 3L)
+  inp <- validate_inputs(X, z, na.rm = na.rm, min_d = 2L, min_p = 3L)
   X <- inp$X; z <- inp$z; n <- inp$n; d <- inp$d; p <- inp$p
   z_levels <- inp$z_levels
 

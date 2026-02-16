@@ -20,10 +20,10 @@ test_that("test_t0 requires p >= 2", {
   expect_error(test_t0(X, z), "at least 2 distinct Z-levels")
 })
 
-test_that("test_t1 requires d >= 3", {
-  X <- matrix(rnorm(20), ncol = 2)
+test_that("test_t1 requires d >= 2", {
+  X <- matrix(rnorm(10), ncol = 1)
   z <- rep(0:2, length.out = 10)
-  expect_error(test_t1(X, z), "at least 3 indicators")
+  expect_error(test_t1(X, z), "at least 2 indicators")
 })
 
 test_that("test_t1 requires p >= 3", {

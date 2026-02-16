@@ -61,17 +61,29 @@ test_that("test_t1 returns correct components", {
   expect_equal(result$parameter, c(df = 2))  # (3-1)*(3-2)=2
 })
 
-test_that("test_t1 requires d >= 3", {
+test_that("test_t1 works with d = 2 indicators (paper Section 3.3)", {
   set.seed(444)
-  n <- 1000
+  n <- 3000
   z <- sample(0:2, n, replace = TRUE)
-  Y <- 1 + 0.5 * z + rnorm(n)
+  Y <- 1 + 0.5 * (z == 1) + 1.0 * (z == 2) + rnorm(n)
   X <- cbind(
     1.0 * Y + rnorm(n, sd = 0.3),
     0.7 * Y + rnorm(n, sd = 0.3)
   )
 
-  expect_error(test_t1(X, z), "at least 3")
+  result <- test_t1(X, z)
+  expect_equal(result$d, 2)
+  expect_equal(result$parameter, c(df = 1))  # (2-1)*(3-2)=1
+  expect_gt(result$p.value, 0.01)  # structural model holds
+})
+
+test_that("test_t1 requires d >= 2", {
+  set.seed(445)
+  n <- 500
+  z <- sample(0:2, n, replace = TRUE)
+  X <- matrix(rnorm(n), ncol = 1)
+
+  expect_error(test_t1(X, z), "at least 2")
 })
 
 test_that("test_t1 df is correct for d=5, p=3", {

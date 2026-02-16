@@ -48,6 +48,18 @@ estimate_reliability <- function(X, na.rm = TRUE) {
     A[k] <- cov(X[, pairs[k, 1]], X[, pairs[k, 2]])
   }
 
+  # Check for negative pairwise covariances (paper p. 2040)
+  if (any(A <= 0)) {
+    neg_pairs <- which(A <= 0)
+    pair_labels <- paste0("(X", pairs[neg_pairs, 1], ", X", pairs[neg_pairs, 2], ")")
+    warning(
+      "Non-positive pairwise covariance(s) detected for pairs: ",
+      paste(pair_labels, collapse = ", "), ". ",
+      "Reliability estimation assumes all pairwise covariances are positive.",
+      call. = FALSE
+    )
+  }
+
   # Design matrix for quasi-Poisson GLM
   B <- build_design_matrix(d)
   colnames(B) <- paste0("B", seq_len(d))
