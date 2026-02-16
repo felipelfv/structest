@@ -228,7 +228,7 @@ print(result_t1_bad)
 #>   T1: Reliability-independent test of structural interpretation (VanderWeele & Vansteelandt, 2022) 
 #> 
 #> data:   X_bad and z 
-#> statistic = 1491, df = 6, p-value = < 2.2e-16
+#> statistic = 1400, df = 6, p-value = < 2.2e-16
 #> n = 5000, d = 4 indicators, p = 4 Z-levels
 ```
 
@@ -241,25 +241,25 @@ summary(result_t1_bad)
 #> 
 #> data:   X_bad and z 
 #> 
-#> Test statistic:  1491 
+#> Test statistic:  1400 
 #> Degrees of freedom:  6 
 #> P-value:  < 2.2e-16 
 #> 
 #> Sample size:  5000 
 #> Indicators (d):  4 
 #> Z-levels (p):  4 
-#> Convergence code:  1 
+#> Convergence code:  2 
 #> 
 #> Parameter estimates:
 #>   gamma (intercepts):
 #>     X1     X2     X3     X4 
-#> 2.1817 3.2577 1.2516 2.2824 
+#> 2.0872 3.0878 1.0656 2.1163 
 #>   alpha (centered loadings):
 #>      X1      X2      X3      X4 
-#>  1.0000 10.0336 -3.0064  0.1120 
+#>  1.0000  7.7155 -1.5389  0.6065 
 #>   beta (Z effects):
 #>     z=0     z=1     z=2     z=3 
-#>  0.0000  0.1703 -0.0274  0.2636
+#>  0.0000  0.2378 -0.0676  0.3796
 ```
 
 ## Estimating Reliabilities
