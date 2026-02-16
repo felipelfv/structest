@@ -24,7 +24,7 @@ via quasi-Poisson GLM (Section 3.1).}
 \references{
 VanderWeele, T. J. and Vansteelandt, S. (2022). A statistical test to
 reject the structural interpretation of a latent factor model.
-\emph{Journal of the Royal Statistical Society Series B}, 84, 1063--1089.
+\emph{Journal of the Royal Statistical Society Series B}, 84, 2032--2054.
 }
 \author{
 \strong{Maintainer}: Felipe Fontana Vieira \email{felipelfv98@gmail.com}

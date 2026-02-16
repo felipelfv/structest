@@ -60,7 +60,7 @@
 #' @references
 #' VanderWeele, T. J. and Vansteelandt, S. (2022). A statistical test to
 #' reject the structural interpretation of a latent factor model.
-#' \emph{Journal of the Royal Statistical Society Series B}, 84, 1063--1089.
+#' \emph{Journal of the Royal Statistical Society Series B}, 84, 2032--2054.
 #'
 #' @export
 test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
