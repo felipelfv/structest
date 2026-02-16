@@ -2,7 +2,7 @@
 #'
 #' Tests whether the structural interpretation of a univariate latent factor
 #' model can be rejected, without requiring estimation of reliability
-#' coefficients. Uses a two-step efficient GMM procedure.
+#' coefficients.
 #'
 #' @param X numeric matrix (n x d) of indicator variables, d >= 2.
 #' @param z numeric vector of length n encoding the auxiliary variable.
@@ -15,8 +15,7 @@
 #' @return An object of class \code{c("structest_t1", "structest", "htest")}
 #'   containing:
 #' \describe{
-#'   \item{statistic}{the T1 test statistic (J-statistic from two-step
-#'     efficient GMM).}
+#'   \item{statistic}{the T1 test statistic.}
 #'   \item{parameter}{degrees of freedom, \eqn{(d-1)(p-2)}.}
 #'   \item{p.value}{p-value from chi-squared distribution.}
 #'   \item{method}{description of the test.}
@@ -51,11 +50,10 @@
 #' \eqn{\le 1}, which is the testable implication of the structural model
 #' (Theorem 2 in the paper).
 #'
-#' The procedure uses a two-step efficient GMM: the first step uses a fixed
-#' weight matrix from initial estimates, and the second step uses the efficient
-#' weight matrix evaluated at the first-step estimates (held fixed during
-#' optimization). The J-statistic from the second step is asymptotically
-#' \eqn{\chi^2_{(d-1)(p-2)}} under the null.
+#' The procedure first uses two-step GMM to obtain stable initial estimates,
+#' then minimizes the GMM criterion with the weight matrix recomputed at each
+#' parameter value, matching the authors' reference implementation. The test
+#' statistic is asymptotically \eqn{\chi^2_{(d-1)(p-2)}} under the null.
 #'
 #' @references
 #' VanderWeele, T. J. and Vansteelandt, S. (2022). A statistical test to
@@ -145,8 +143,7 @@ test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
     g
   }
 
-  # Two-step efficient GMM
-
+  # Two-step GMM for initial estimates
   # Step 1: weight matrix from initial estimates (fixed during optimization)
   g0 <- build_gmm(theta_init)
   Omega0 <- var(g0)
@@ -181,10 +178,28 @@ test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
     n * drop(crossprod(gm, W2 %*% gm))
   }
 
-  res <- nlm(q_step2, p = theta1, iterlim = max_iter)
+  res2 <- nlm(q_step2, p = theta1, iterlim = max_iter)
 
   if (verbose) {
-    message("Step 2 converged with code: ", res$code,
+    message("Step 2 converged with code: ", res2$code,
+            ", J = ", format(res2$minimum, digits = 4))
+  }
+
+  # Final test statistic: weight matrix recomputed at each theta
+  q_cue <- function(theta_val) {
+    g <- build_gmm(theta_val)
+    gm <- colMeans(g)
+    Sigma <- var(g)
+    Sigma_inv <- tryCatch(solve(Sigma), error = function(e) {
+      solve(Sigma + 1e-6 * diag(ncol(Sigma)))
+    })
+    n * drop(crossprod(gm, Sigma_inv %*% gm))
+  }
+
+  res <- nlm(q_cue, p = res2$estimate, iterlim = max_iter)
+
+  if (verbose) {
+    message("Final step converged with code: ", res$code,
             ", J = ", format(res$minimum, digits = 4))
   }
 
