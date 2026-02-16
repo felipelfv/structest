@@ -1,7 +1,9 @@
 # structest <img src="man/figures/logo.png" align="right" height="139" />
 
 [![R-CMD-CHECK](https://github.com/felipelfv/structest/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/felipelfv/structest/actions/workflows/R-CMD-check.yaml)
-[![Tests](https://github.com/felipelfv/structest/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/felipelfv/structest/actions/workflows/test-coverage.yaml)
+[![test-coverage](https://github.com/felipelfv/structest/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/felipelfv/structest/actions/workflows/test-coverage.yaml)
+[![codecov](https://codecov.io/gh/felipelfv/structest/branch/main/graph/badge.svg)](https://codecov.io/gh/felipelfv/structest)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 
 R package implementing the statistical tests from:
 

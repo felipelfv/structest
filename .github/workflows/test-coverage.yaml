@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
 
-name: Tests
+name: test-coverage
 
 jobs:
   test-coverage:
@@ -22,10 +22,26 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::testthat
+          extra-packages: any::covr
           needs: coverage
 
-      - name: Run tests
+      - name: Test coverage
         run: |
-          testthat::test_local(reporter = testthat::CheckReporter)
+          covr::codecov(
+            quiet = FALSE,
+            clean = FALSE,
+            install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
+          )
         shell: Rscript {0}
+
+      - name: Show testthat output
+        if: always()
+        run: |
+          find '${{ runner.temp }}/package' -name 'testthat.Rout*' -exec cat '{}' \; || true
+        shell: bash
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
