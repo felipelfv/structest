@@ -33,7 +33,7 @@ test_that("test_t1 requires p >= 3", {
 })
 
 test_that("NA handling works", {
-  set.seed(42)
+  set.seed(12345)
   n <- 100
   z <- rep(0:1, length.out = n)
   Y <- 1 + 0.5 * z + rnorm(n)
@@ -51,7 +51,7 @@ test_that("NA handling works", {
 })
 
 test_that("factor z is accepted", {
-  set.seed(42)
+  set.seed(12345)
   n <- 500
   z_fac <- factor(rep(c("A", "B"), length.out = n))
   z_num <- as.integer(z_fac) - 1L

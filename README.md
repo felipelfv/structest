@@ -46,7 +46,7 @@ Under the null hypothesis that the structural model holds, the test statistic fo
 ```r
 library(structest)
 
-set.seed(42)
+set.seed(12345)
 n <- 5000
 d <- 5
 
@@ -65,7 +65,7 @@ test_t0(X, z)
 
 ```r
 # Now simulate data where Z affects indicators differently (violating the structural model)
-set.seed(42)
+set.seed(12345)
 Y <- rnorm(n)
 X_bad <- cbind(
   2 + 1.0 * Y + 0.5 * z + rnorm(n, sd = 0.3),
@@ -86,7 +86,7 @@ The T1 test avoids estimating reliabilities entirely by parameterising the condi
 Under the null, the test statistic follows a chi-squared distribution with (d - 1)(p - 2) degrees of freedom.
 
 ```r
-set.seed(42)
+set.seed(12345)
 n <- 5000
 d <- 5
 
@@ -153,7 +153,7 @@ Parameterises E(X_i | Z = z_j) = gamma_i + alpha_i * beta_j with alpha_1 = 1 (id
 | **Minimum Z-levels** | 2 | 3 |
 | **Degrees of freedom** | (d-1)(p-1) | (d-1)(p-2) |
 
-The T1 test is generally preferred because it does not depend on the distributional assumptions needed to estimate reliabilities (e.g. independent, homoscedastic errors). However, when only 2 levels of *Z* are available, only the T0 test can be used.
+The T1 test is generally preferred because it does not depend on the error-structure assumptions needed to estimate reliabilities (e.g. independent, homoscedastic errors). However, when only 2 levels of *Z* are available, only the T0 test can be used.
 
 ## Reference
 

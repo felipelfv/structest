@@ -86,7 +86,7 @@ which are obtained from pairwise covariances via a quasi-Poisson GLM.
 ### Example: data consistent with the structural model
 
 ```{r t0-h0}
-set.seed(42)
+set.seed(12345)
 n <- 5000
 d <- 5
 
@@ -113,7 +113,7 @@ Now consider data where $Z$ affects each indicator disproportionately, which
 violates the structural interpretation:
 
 ```{r t0-h1}
-set.seed(42)
+set.seed(12345)
 eta <- rnorm(n)
 X_bad <- cbind(
   2 + 1.0 * eta + 0.5 * z + rnorm(n, sd = 0.3),
@@ -160,13 +160,13 @@ moment conditions, $2d + p - 2$ free parameters, and $(d-1)(p-2)$ degrees of
 freedom.
 
 **When to use:** $d \geq 3$ indicators and $p \geq 3$ levels of $Z$.
-Preferred over $T_0$ because it does not rely on distributional assumptions
+Preferred over $T_0$ because it does not rely on error-structure assumptions
 needed for reliability estimation.
 
 ### Example: data consistent with the structural model
 
 ```{r t1-h0}
-set.seed(42)
+set.seed(12345)
 n <- 5000
 d <- 4
 
@@ -190,7 +190,7 @@ structural model.
 ### Example: data violating the structural model
 
 ```{r t1-h1}
-set.seed(42)
+set.seed(12345)
 eta <- rnorm(n)
 X_bad <- cbind(
   2 + 1.0 * eta + 0.5 * (z == 1) + 0.3 * (z == 2) + 0.4 * (z == 3)
@@ -225,7 +225,7 @@ log-reliabilities. The function fits this as a quasi-Poisson GLM with log
 link.
 
 ```{r reliability}
-set.seed(42)
+set.seed(12345)
 n <- 5000
 d <- 5
 eta <- rnorm(n)
@@ -260,7 +260,7 @@ if you need the reliability estimates for other purposes.
 **Guidance:**
 
 - **$T_1$ is generally preferred** because it does not depend on the
-  distributional assumptions needed to estimate reliabilities (e.g.,
+  error-structure assumptions needed to estimate reliabilities (e.g.,
   independent, homoscedastic errors).
 - **$T_0$ is necessary** when only 2 levels of $Z$ are available, since
   $T_1$ requires $p \geq 3$.
