@@ -254,7 +254,7 @@ summary(result_t1_bad)
 #>   gamma (intercepts):
 #>     X1     X2     X3     X4 
 #> 2.0872 3.0878 1.0656 2.1163 
-#>   alpha (centered loadings):
+#>   alpha:
 #>      X1      X2      X3      X4 
 #>  1.0000  7.7155 -1.5389  0.6065 
 #>   beta (Z effects):
