@@ -85,16 +85,17 @@ estimate_reliability <- function(X, na.rm = TRUE) {
     U_pairs[, k] <- Xc[, i] * Xc[, j] - lambda[i] * lambda[j]
   }
 
-  # Per-indicator score: V_k[, i] = -sum_{j != i} lambda_j * U_{ij}
+  # Per-subject estimating function contributions for reliability (paper p. 2041):
+  # V_{ik} = sum_{j != i} lambda_j * {(X_i - Xbar_i)(X_j - Xbar_j) - lambda_i lambda_j}
   V_k <- matrix(0, nrow = n, ncol = d)
   for (i in seq_len(d)) {
     for (k in seq_len(n_pairs)) {
       i1 <- pairs[k, 1]
       i2 <- pairs[k, 2]
       if (i1 == i) {
-        V_k[, i] <- V_k[, i] - lambda[i2] * U_pairs[, k]
+        V_k[, i] <- V_k[, i] + lambda[i2] * U_pairs[, k]
       } else if (i2 == i) {
-        V_k[, i] <- V_k[, i] - lambda[i1] * U_pairs[, k]
+        V_k[, i] <- V_k[, i] + lambda[i1] * U_pairs[, k]
       }
     }
   }
