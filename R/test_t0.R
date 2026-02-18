@@ -106,14 +106,21 @@ test_t0 <- function(X, z, na.rm = TRUE, verbose = FALSE) {
     }
     g <- colMeans(u)
 
-    # Variance adjustment for estimated reliabilities (paper p. 2041)
-    # Sigma = Var(U_k - (dU/dlambda)(dV/dlambda)^{-1} V_k)
+    # Variance adjustment for estimated reliabilities (paper p. 2041):
+    # Sigma = Var(U*_k) where U*_k = U_k - E[dU/dlambda] (E[dV/dlambda])^{-1} V_k
     #
-    # The intermediate matrices (dudlambda, dvdlambda, V_k) each carry a
-    # sign flip relative to the paper's notation, so their product equals
-    # the NEGATIVE of the paper's adjustment term. Hence: u + t(...).
+    # All matrices below use the paper's sign conventions directly:
+    #   dudlambda = E[dU/dlambda]           (d*p) x d
+    #   dvdlambda = E[dV/dlambda]           d x d
+    #   V_k       = paper's V_k             n x d
 
-    # dudtheta_pred = -diag(p_z)  [d*p x d*p diagonal]
+    # E[dU_{(i,j)}/dlambda_s]:
+    #   U_{(i,j),k} = I(z_k=z_j)(X_ik - gamma_i - ratio_i * beta_j)
+    #   dU/dlambda_s = -I(z_k=z_j) * d(ratio_i * beta_j)/dlambda_s
+    #   E[dU/dlambda_s] = -p_z[j] * d(ratio_i * beta_j)/dlambda_s
+    # Only nonzero for i > 1 AND j > 1:
+    #   d(lambda_i/lambda_1 * beta_j)/dlambda_1 = -ratio_i * beta_j / lambda_1
+    #   d(lambda_i/lambda_1 * beta_j)/dlambda_i = beta_j / lambda_1
     diag_pz <- numeric(d * p)
     col <- 0L
     for (i in seq_len(d)) {
@@ -123,33 +130,37 @@ test_t0 <- function(X, z, na.rm = TRUE, verbose = FALSE) {
       }
     }
 
-    # dthetadlambda: negated derivative of predicted values w.r.t. lambda
-    dthetadlambda <- matrix(0, nrow = d * p, ncol = d)
+    dpred_dlambda <- matrix(0, nrow = d * p, ncol = d)
     col <- 0L
     for (i in seq_len(d)) {
       for (j in seq_len(p)) {
         col <- col + 1L
         if (i > 1 && j > 1) {
-          dthetadlambda[col, 1] <- ratio[i] * beta[j] / lambda[1]
-          dthetadlambda[col, i] <- -beta[j] / lambda[1]
+          dpred_dlambda[col, 1] <- -ratio[i] * beta[j] / lambda[1]
+          dpred_dlambda[col, i] <- beta[j] / lambda[1]
         }
       }
     }
 
-    dudlambda <- -diag(diag_pz) %*% dthetadlambda  # (d*p) x d
+    dudlambda <- -diag(diag_pz) %*% dpred_dlambda  # E[dU/dlambda], (d*p) x d
+
+    # E[dV/dlambda] where V_{ik} = sum_{j!=i} lambda_j [(X_i-Xbar)(X_j-Xbar) - lambda_i lambda_j]
+    #   dV_i/dlambda_i = sum_{j!=i} lambda_j * (-lambda_j) = -sum_{j!=i} lambda_j^2
+    #   dV_i/dlambda_m = (X_i-Xbar)(X_m-Xbar) - 2*lambda_i*lambda_m  (m != i)
+    #   E[dV_i/dlambda_m] = mean_obs[...] = mean(u_im) - lambda_i*lambda_m
     dvdlambda <- matrix(0, nrow = d, ncol = d)
     for (i in seq_len(d)) {
-      dvdlambda[i, i] <- sum(lambda[-i]^2)
+      dvdlambda[i, i] <- -sum(lambda[-i]^2)
       for (k in seq_len(d)) {
         if (k != i) {
           pair_idx <- which((pairs[, 1] == min(i, k)) & (pairs[, 2] == max(i, k)))
-          dvdlambda[i, k] <- -(mean_U_pairs[pair_idx] - lambda[i] * lambda[k])
+          dvdlambda[i, k] <- mean_U_pairs[pair_idx] - lambda[i] * lambda[k]
         }
       }
     }
 
-    # Adjusted moment conditions (paper p. 2041)
-    uadjust <- u + t(dudlambda %*% solve(dvdlambda) %*% t(V_k))
+    # Adjusted moment conditions: U*_k = U_k - E[dU/dlambda] (E[dV/dlambda])^{-1} V_k
+    uadjust <- u - t(dudlambda %*% solve(dvdlambda) %*% t(V_k))
 
     # GMM criterion with adjusted variance
     Sigma <- var(uadjust)
