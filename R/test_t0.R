@@ -162,8 +162,8 @@ test_t0 <- function(X, z, na.rm = TRUE, verbose = FALSE) {
     # Adjusted moment conditions: U*_k = U_k - E[dU/dlambda] (E[dV/dlambda])^{-1} V_k
     uadjust <- u - t(dudlambda %*% solve(dvdlambda) %*% t(V_k))
 
-    # GMM criterion with adjusted variance
-    Sigma <- var(uadjust)
+    # GMM criterion with adjusted variance (1/N normalization, matching paper)
+    Sigma <- var(uadjust) * ((n - 1) / n)
     n * drop(t(g) %*% solve(Sigma) %*% g)
   }
 
