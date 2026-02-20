@@ -146,7 +146,7 @@ test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
   # Two-step GMM for initial estimates
   # Step 1: weight matrix from initial estimates (fixed during optimization)
   g0 <- build_gmm(theta_init)
-  Omega0 <- var(g0)
+  Omega0 <- var(g0) * ((n - 1) / n)
   W1 <- tryCatch(solve(Omega0), error = function(e) {
     solve(Omega0 + 1e-6 * diag(ncol(Omega0)))
   })
@@ -167,7 +167,7 @@ test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
 
   # Step 2: efficient weight matrix from step-1 residuals (FIXED)
   g1 <- build_gmm(theta1)
-  Omega1 <- var(g1)
+  Omega1 <- var(g1) * ((n - 1) / n)
   W2 <- tryCatch(solve(Omega1), error = function(e) {
     solve(Omega1 + 1e-6 * diag(ncol(Omega1)))
   })
@@ -189,7 +189,7 @@ test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
   q_final <- function(theta_val) {
     g <- build_gmm(theta_val)
     gm <- colMeans(g)
-    Sigma <- var(g)
+    Sigma <- var(g) * ((n - 1) / n)
     Sigma_inv <- tryCatch(solve(Sigma), error = function(e) {
       solve(Sigma + 1e-6 * diag(ncol(Sigma)))
     })
