@@ -68,7 +68,7 @@ pairwise_indices <- function(d) {
 }
 
 
-#' Build the design matrix B for the quasi-Poisson GLM (loading estimation)
+#' Build the design matrix B for the quasi-Poisson GLM (reliability estimation)
 #'
 #' For d indicators, there are choose(d,2) pairwise covariances.
 #' B is choose(d,2) x d, where B[k, i] = 1 if indicator i is in pair k.

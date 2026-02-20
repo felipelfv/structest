@@ -1,18 +1,18 @@
-#' Estimate Factor Loadings (Section 3.1)
+#' Estimate Reliability Coefficients (Section 3.1)
 #'
-#' Estimates the factor loadings \eqn{\lambda_i} for each indicator in a
-#' univariate latent factor model, using pairwise covariances and a
-#' quasi-Poisson GLM with log link.
+#' Estimates the reliability coefficients (loadings) \eqn{\lambda_i} for each
+#' indicator in a univariate latent factor model, using pairwise covariances
+#' and a quasi-Poisson GLM with log link.
 #'
 #' @param X numeric matrix (n x d) of indicator variables, d >= 3.
 #' @param na.rm logical; if \code{TRUE}, rows with any \code{NA} are removed.
 #'
 #' @return A list with components:
 #' \describe{
-#'   \item{lambda}{numeric vector of length d with estimated factor loadings.}
+#'   \item{lambda}{numeric vector of length d with estimated reliabilities.}
 #'   \item{glm_fit}{the fitted \code{glm} object.}
 #'   \item{V_k}{matrix (n x d) of per-subject estimating function contributions
-#'     for the loading parameters (used internally by \code{test_t0}).}
+#'     for the reliability parameters (used internally by \code{test_t0}).}
 #' }
 #'
 #' @details
@@ -37,7 +37,7 @@ estimate_reliability <- function(X, na.rm = TRUE) {
   n <- nrow(X)
   d <- ncol(X)
   if (d < 3L) {
-    stop("Need at least 3 indicators for loading estimation.", call. = FALSE)
+    stop("Need at least 3 indicators for reliability estimation.", call. = FALSE)
   }
 
   # Compute pairwise sample covariances
@@ -55,7 +55,7 @@ estimate_reliability <- function(X, na.rm = TRUE) {
     warning(
       "Non-positive pairwise covariance(s) detected for pairs: ",
       paste(pair_labels, collapse = ", "), ". ",
-      "Loading estimation assumes all pairwise covariances are positive.",
+      "Reliability estimation assumes all pairwise covariances are positive.",
       call. = FALSE
     )
   }
@@ -85,7 +85,7 @@ estimate_reliability <- function(X, na.rm = TRUE) {
     U_pairs[, k] <- Xc[, i] * Xc[, j] - lambda[i] * lambda[j]
   }
 
-  # Per-subject estimating function contributions for factor loadings (paper p. 2041):
+  # Per-subject estimating function contributions for reliability (paper p. 2041):
   # V_{ik} = sum_{j != i} lambda_j * {(X_i - Xbar_i)(X_j - Xbar_j) - lambda_i lambda_j}
   V_k <- matrix(0, nrow = n, ncol = d)
   for (i in seq_len(d)) {

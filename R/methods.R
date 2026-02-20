@@ -50,7 +50,7 @@ summary.structest <- function(object, digits = max(3L, getOption("digits") - 3L)
     print(round(object$estimates$beta, digits))
   }
   if (!is.null(object$estimates$lambda)) {
-    cat("  lambda (factor loadings):\n")
+    cat("  lambda (reliabilities):\n")
     print(round(object$estimates$lambda, digits))
   }
   cat("\n")
