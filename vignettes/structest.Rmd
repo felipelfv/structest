@@ -49,11 +49,9 @@ $$
 X_i = \mu_i + \lambda_i\,\eta + \varepsilon_i, \qquad i = 1, \ldots, d
 $$
 
-where $\eta$ is the latent variable, $\lambda_i$ are factor loadings,
-$\mu_i$ are intercepts, and the $\varepsilon_i$ are independent error terms.
-(Note: the paper refers to $\lambda_i$ as "reliabilities", but strictly
-speaking the reliability of indicator $i$ is
-$\lambda_i^2 / \text{Var}(X_i)$; $\lambda_i$ is the factor loading.)
+where $\eta$ is the latent variable, $\lambda_i$ are factor loadings
+(reliabilities), $\mu_i$ are intercepts, and the $\varepsilon_i$ are
+independent error terms.
 
 Under the **structural** interpretation, the latent variable $\eta$ is the
 causally relevant quantity. If we have an external variable $Z$ that affects
@@ -80,7 +78,7 @@ $$
 
 with $\beta_1 = 0$ (reference level). This gives $d \times p$ moment
 conditions with $d + p - 1$ free parameters, yielding $(d-1)(p-1)$ degrees of
-freedom. The test requires estimated factor loadings $\lambda_i$,
+freedom. The test requires estimated reliability coefficients $\lambda_i$,
 which are obtained from pairwise covariances via a quasi-Poisson GLM.
 
 **When to use:** $d \geq 3$ indicators and $p \geq 2$ levels of $Z$.
@@ -141,7 +139,7 @@ summary(result_t0_bad)
 
 ## The $T_1$ Test (Reliability-Independent)
 
-The $T_1$ test (Section 3.3 of the paper) avoids estimating factor loadings
+The $T_1$ test (Section 3.3 of the paper) avoids estimating reliabilities
 entirely. Under the structural model, the conditional expectations satisfy
 (Equation 3 in the paper):
 
@@ -163,7 +161,7 @@ freedom.
 
 **When to use:** $d \geq 3$ indicators and $p \geq 3$ levels of $Z$.
 Preferred over $T_0$ because it does not rely on error-structure assumptions
-needed for loading estimation.
+needed for reliability estimation.
 
 ### Example: data consistent with the structural model
 
@@ -216,14 +214,14 @@ The structural interpretation is rejected, as expected.
 summary(result_t1_bad)
 ```
 
-## Estimating Factor Loadings
+## Estimating Reliabilities
 
 The `estimate_reliability()` function estimates the factor loadings
 $\lambda_i$ from pairwise covariances. Under the model $X_i = \mu_i +
 \lambda_i\,\eta + \varepsilon_i$, we have $\text{Cov}(X_i, X_j) =
 \lambda_i\,\lambda_j$. Taking logs gives $\log \text{Cov}(X_i, X_j) =
 \log\lambda_i + \log\lambda_j$, which is a linear model in the
-log-loadings. The function fits this as a quasi-Poisson GLM with log
+log-reliabilities. The function fits this as a quasi-Poisson GLM with log
 link.
 
 ```{r reliability}
@@ -247,13 +245,13 @@ data.frame(
 ```
 
 This function is called internally by `test_t0()`, but you can use it directly
-if you need the loading estimates for other purposes.
+if you need the reliability estimates for other purposes.
 
 ## Choosing Between $T_0$ and $T_1$
 
 | | $T_0$ | $T_1$ |
 |---|---|---|
-| **Relies on loading estimates** | Yes | No |
+| **Relies on reliability estimates** | Yes | No |
 | **Sensitive to error distribution misspecification** | Yes | No |
 | **Minimum indicators ($d$)** | 3 | 3 |
 | **Minimum $Z$-levels ($p$)** | 2 | 3 |
@@ -262,7 +260,7 @@ if you need the loading estimates for other purposes.
 **Guidance:**
 
 - **$T_1$ is generally preferred** because it does not depend on the
-  error-structure assumptions needed to estimate factor loadings (e.g.,
+  error-structure assumptions needed to estimate reliabilities (e.g.,
   independent, homoscedastic errors).
 - **$T_0$ is necessary** when only 2 levels of $Z$ are available, since
   $T_1$ requires $p \geq 3$.

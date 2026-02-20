@@ -70,7 +70,7 @@ test_that("summary.structest produces expected output", {
   expect_match(combined, "gamma \\(intercepts\\)")
   expect_match(combined, "alpha")
   expect_match(combined, "beta \\(Z effects\\)")
-  expect_match(combined, "lambda \\(factor loadings\\)")
+  expect_match(combined, "lambda \\(reliabilities\\)")
 })
 
 test_that("summary.structest returns object invisibly", {

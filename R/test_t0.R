@@ -2,7 +2,7 @@
 #'
 #' Tests whether the structural interpretation of a univariate latent factor
 #' model can be rejected, using a GMM test that accounts for uncertainty in
-#' the estimated factor loadings.
+#' the estimated reliability coefficients.
 #'
 #' @param X numeric matrix (n x d) of indicator variables, d >= 3.
 #' @param z numeric vector of length n encoding the auxiliary variable.
@@ -19,7 +19,7 @@
 #'   \item{method}{description of the test.}
 #'   \item{data.name}{name of the data objects.}
 #'   \item{estimates}{list with \code{gamma} (intercepts), \code{beta} (Z effects),
-#'     and \code{lambda} (factor loadings).}
+#'     and \code{lambda} (reliabilities).}
 #'   \item{n_obs}{number of observations used.}
 #'   \item{d}{number of indicators.}
 #'   \item{p}{number of Z-levels.}
@@ -34,7 +34,7 @@
 #' yielding \eqn{(d-1)(p-1)} degrees of freedom.
 #'
 #' The variance of the GMM estimating equations is adjusted for the
-#' uncertainty in the estimated factor loadings \eqn{\lambda_i}.
+#' uncertainty in the reliability estimates \eqn{\lambda_i}.
 #'
 #' @references
 #' VanderWeele, T. J. and Vansteelandt, S. (2022). A statistical test to
@@ -50,10 +50,10 @@ test_t0 <- function(X, z, na.rm = TRUE, verbose = FALSE) {
   X <- inp$X; z <- inp$z; n <- inp$n; d <- inp$d; p <- inp$p
   z_levels <- inp$z_levels
 
-  # Step 1: Estimate factor loadings (Section 3.1)
+  # Step 1: Estimate reliabilities (Section 3.1)
   rel <- estimate_reliability(X, na.rm = FALSE)
   lambda <- rel$lambda
-  V_k <- rel$V_k         # n x d: per-subject loading scores
+  V_k <- rel$V_k         # n x d: per-subject reliability scores
   U_pairs <- rel$U_pairs  # n x choose(d,2): pairwise estimating functions
   pairs <- rel$pairs
   mean_U_pairs <- colMeans(U_pairs)
@@ -86,7 +86,7 @@ test_t0 <- function(X, z, na.rm = TRUE, verbose = FALSE) {
   Z_mat <- z_indicator_matrix(z, z_levels)
   p_z <- colMeans(Z_mat)  # proportion in each z-level
 
-  # Step 3: GMM with variance adjustment for loading uncertainty
+  # Step 3: GMM with variance adjustment for reliability uncertainty
   # u_{ij} = I(z==z_j) * (X_i - gamma_i - (lambda_i/lambda_1)*beta_j), beta_1 = 0
 
   q_t0 <- function(theta) {
@@ -106,7 +106,7 @@ test_t0 <- function(X, z, na.rm = TRUE, verbose = FALSE) {
     }
     g <- colMeans(u)
 
-    # Variance adjustment for estimated factor loadings (paper p. 2041):
+    # Variance adjustment for estimated reliabilities (paper p. 2041):
     # Sigma = Var(U*_k) where U*_k = U_k - E[dU/dlambda] (E[dV/dlambda])^{-1} V_k
     #
     # All matrices below use the paper's sign conventions directly:

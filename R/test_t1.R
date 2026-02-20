@@ -1,8 +1,8 @@
 #' T1 Test: Reliability-Independent Test of Structural Interpretation (Section 3.3)
 #'
 #' Tests whether the structural interpretation of a univariate latent factor
-#' model can be rejected, without requiring estimation of factor
-#' loadings.
+#' model can be rejected, without requiring estimation of reliability
+#' coefficients.
 #'
 #' @param X numeric matrix (n x d) of indicator variables, d >= 2.
 #' @param z numeric vector of length n encoding the auxiliary variable.
