@@ -1,0 +1,715 @@
+---
+title: "Mathematical Framework: Testing the Structural Interpretation of a Latent Factor Model"
+subtitle: "A step-by-step derivation connecting VanderWeele & Vansteelandt (2022) to the structest package"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    theme: cosmo
+    html-math-method: mathjax
+---
+
+## The Basic Latent Factor Model
+
+### The Model
+
+We observe $d$ indicators $X_1, \dots, X_d$ on each of $N$ subjects. The classical univariate latent factor model assumes these indicators are driven by a single unobserved latent variable $\eta$:
+
+$$
+X_i = \lambda_i \eta + \varepsilon_i, \qquad i = 1, \dots, d \tag{1}
+$$
+
+with the following assumptions:
+
+- $\eta$ has mean zero and unit variance: $E[\eta] = 0$, $\text{Var}(\eta) = 1$
+- $\varepsilon_i$ has mean zero: $E[\varepsilon_i] = 0$
+- $\varepsilon_i$ is independent of $\eta$: $\varepsilon_i \perp \!\!\! \perp \eta$
+- The errors are mutually independent: $\varepsilon_i \perp \!\!\! \perp \varepsilon_j$ for $i \neq j$
+- Each $\lambda_i \neq 0$
+
+The coefficient $\lambda_i$ is called the *factor loading* of indicator $i$. It governs how strongly the latent factor $\eta$ influences the observed indicator $X_i$. (Note: the paper refers to $\lambda_i$ as the "reliability," but in standard psychometrics the reliability of indicator $i$ is $\lambda_i^2 / \text{Var}(X_i)$ --- the proportion of variance attributable to the latent factor. What the paper calls "reliability" is, strictly speaking, the factor loading.)
+
+### Deriving the Covariance Structure
+
+We now derive the covariance between any two indicators $X_i$ and $X_j$ (with $i \neq j$) from first principles.
+
+**Step 1.** Write out the covariance using Equation (1):
+
+$$
+\text{Cov}(X_i, X_j) = \text{Cov}(\lambda_i \eta + \varepsilon_i, \; \lambda_j \eta + \varepsilon_j)
+$$
+
+**Step 2.** Expand by bilinearity of covariance:
+
+$$
+= \lambda_i \lambda_j \, \text{Cov}(\eta, \eta) + \lambda_i \, \text{Cov}(\eta, \varepsilon_j) + \lambda_j \, \text{Cov}(\varepsilon_i, \eta) + \text{Cov}(\varepsilon_i, \varepsilon_j)
+$$
+
+**Step 3.** Apply the independence assumptions. Since $\varepsilon_j \perp \!\!\! \perp \eta$, we have $\text{Cov}(\eta, \varepsilon_j) = 0$. Since $\varepsilon_i \perp \!\!\! \perp \eta$, we have $\text{Cov}(\varepsilon_i, \eta) = 0$. Since $\varepsilon_i \perp \!\!\! \perp \varepsilon_j$ for $i \neq j$, we have $\text{Cov}(\varepsilon_i, \varepsilon_j) = 0$. This leaves:
+
+$$
+= \lambda_i \lambda_j \, \text{Var}(\eta) = \lambda_i \lambda_j \cdot 1
+$$
+
+**Result:**
+
+$$
+\text{Cov}(X_i, X_j) = \lambda_i \lambda_j \qquad \text{for } i \neq j \tag{1a}
+$$
+
+This is the fundamental identity. It says the covariance between any two indicators is completely determined by their loadings. Note that we also get $\text{Var}(X_i) = \lambda_i^2 + \text{Var}(\varepsilon_i)$, but we will not use this.
+
+### Why the Measurement Model Cannot Distinguish Causal Structures
+
+Consider an external outcome $Y$. Two causal structures are both fully consistent with Equation (1):
+
+**Structure A (Structural):** $\eta$ causes each $X_i$ (through $\lambda_i$), and $\eta$ causes $Y$. The indicators $X_i$ are causally inert --- they are mere reflections of $\eta$.
+
+**Structure B (Non-structural):** Each $X_i$ has its own direct causal effect on $Y$. There is no single entity $\eta$ doing causal work --- it is a mathematical convenience.
+
+To see why both are consistent with Equation (1), observe that the model only specifies the joint distribution of $(X_1, \dots, X_d)$ through $\eta$ and $\varepsilon_i$. It says nothing about $Y$. The covariance structure $\text{Cov}(X_i, X_j) = \lambda_i \lambda_j$ holds in both cases because it depends only on the relationship between $X_i$ and $\eta$, not on any downstream variable.
+
+Formally: let $\Sigma_X$ denote the covariance matrix of $(X_1, \dots, X_d)$. Under both Structure A and Structure B, $\Sigma_X$ has the same factor structure with off-diagonal entries $\lambda_i \lambda_j$. No amount of analysis of $\Sigma_X$ alone can distinguish the two.
+
+This is the paper's key point: **a well-fitting measurement model does not imply a structural interpretation**.
+
+## Theorem 1: The Testable Implication
+
+### Statement
+
+Now introduce an external variable $Z$ (a treatment, outcome, or any other variable). $Z$ need not be related to $\eta$ in any particular way. Theorem 1 states:
+
+> **Theorem 1.** Suppose that $Z$ is independent of $(X_1, \dots, X_d)$ conditional on $\eta$ and that the basic latent factor model in Equation (1) holds. Then for any $i$ and $j$, and any values $z$ and $z^*$:
+>
+> $$\lambda_i \left\{E(X_j \mid Z = z) - E(X_j \mid Z = z^*)\right\} = \lambda_j \left\{E(X_i \mid Z = z) - E(X_i \mid Z = z^*)\right\} \tag{T1}$$
+
+The condition "$Z$ independent of $(X_1, \dots, X_d)$ conditional on $\eta$" is precisely what makes the model *structural*: $Z$ can only reach the indicators through $\eta$.
+
+### Proof
+
+We derive the identity step by step.
+
+**Step 1.** Compute $E(X_i \mid Z = z)$ using the law of iterated expectations. Since $Z$ is independent of $(X_1, \dots, X_d)$ conditional on $\eta$, we can write:
+
+$$
+E(X_i \mid Z = z) = E_\eta\!\left\{E(X_i \mid \eta, Z = z) \mid Z = z\right\}
+$$
+
+By the conditional independence assumption, $X_i \mid (\eta, Z) \overset{d}{=} X_i \mid \eta$, so:
+
+$$
+= E_\eta\!\left\{E(X_i \mid \eta) \mid Z = z\right\}
+$$
+
+**Step 2.** From Equation (1), $E(X_i \mid \eta) = \lambda_i \eta + E(\varepsilon_i) = \lambda_i \eta$ (since $\varepsilon_i$ has mean zero and is independent of $\eta$). Substituting:
+
+$$
+E(X_i \mid Z = z) = E_\eta\!\left\{\lambda_i \eta \mid Z = z\right\} = \lambda_i \, E(\eta \mid Z = z)
+$$
+
+**Step 3.** Similarly, for any other value $z^*$:
+
+$$
+E(X_i \mid Z = z^*) = \lambda_i \, E(\eta \mid Z = z^*)
+$$
+
+**Step 4.** Take the difference:
+
+$$
+E(X_i \mid Z = z) - E(X_i \mid Z = z^*) = \lambda_i \left\{E(\eta \mid Z = z) - E(\eta \mid Z = z^*)\right\}
+$$
+
+**Step 5.** Write the same identity for indicator $j$:
+
+$$
+E(X_j \mid Z = z) - E(X_j \mid Z = z^*) = \lambda_j \left\{E(\eta \mid Z = z) - E(\eta \mid Z = z^*)\right\}
+$$
+
+**Step 6.** Multiply the first by $\lambda_j$ and the second by $\lambda_i$:
+
+$$
+\lambda_j \left\{E(X_i \mid Z = z) - E(X_i \mid Z = z^*)\right\} = \lambda_i \lambda_j \left\{E(\eta \mid Z = z) - E(\eta \mid Z = z^*)\right\}
+$$
+
+$$
+\lambda_i \left\{E(X_j \mid Z = z) - E(X_j \mid Z = z^*)\right\} = \lambda_i \lambda_j \left\{E(\eta \mid Z = z) - E(\eta \mid Z = z^*)\right\}
+$$
+
+The right-hand sides are identical. Therefore:
+
+$$
+\lambda_i \left\{E(X_j \mid Z = z) - E(X_j \mid Z = z^*)\right\} = \lambda_j \left\{E(X_i \mid Z = z) - E(X_i \mid Z = z^*)\right\} \qquad \blacksquare
+$$
+
+### Interpretation
+
+The identity says that the "effect" of $Z$ on each indicator, when scaled by the loading, must be the same. This is because under the structural model, $Z$ can only reach $X_i$ through $\eta$, and the $\lambda_i$ governs how much of $\eta$'s variation is transmitted to $X_i$.
+
+If $Z$ had a direct effect on $X_2$ that bypasses $\eta$ (violating the structural assumption), the effect on $X_2$ would not be proportional to $\lambda_2$ relative to the other indicators. The identity would fail, and the test would reject.
+
+## Estimating Reliability (Section 3.1)
+
+### From the Covariance Identity to Estimating Equations
+
+From Equation (1a), we have $d$ unknown loadings $\lambda_1, \dots, \lambda_d$ and $\binom{d}{2}$ observed pairwise covariances. We need to estimate $\lambda$ from data.
+
+Let $X_{ik}$ denote the value of indicator $i$ for subject $k = 1, \dots, N$. The sample mean of indicator $i$ is $\bar{X}_i = \frac{1}{N} \sum_{k=1}^{N} X_{ik}$. The sample covariance between indicators $i$ and $j$ is:
+
+$$
+C_{ij} = \frac{1}{N-1}\sum_{k=1}^{N}(X_{ik} - \bar{X}_i)(X_{jk} - \bar{X}_j)
+$$
+
+Under the model, $E[C_{ij}] = \lambda_i \lambda_j$. A natural estimating equation for each indicator $i$ would set the observed covariances equal to their expected values. However, there are $\binom{d}{2}$ covariances and only $d$ unknowns, so we need to combine the equations.
+
+The paper uses the following $d$ estimating equations (one per indicator):
+
+$$
+\sum_{\substack{j=1 \\ j \neq i}}^{d} \lambda_j \left(C_{ij} - \lambda_i \lambda_j\right) = 0 \qquad i = 1, \dots, d \tag{1b}
+$$
+
+**Where these come from:** Each equation sums over all pairs involving indicator $i$. The term $C_{ij} - \lambda_i \lambda_j$ is the residual for pair $(i,j)$: how far the observed covariance is from its expected value. The weight $\lambda_j$ comes from the derivative of $\lambda_i \lambda_j$ with respect to $\lambda_i$:
+
+$$
+\frac{\partial}{\partial \lambda_i}(\lambda_i \lambda_j) = \lambda_j
+$$
+
+So Equation (1b) is a weighted least-squares score equation. It has the form $\sum_j \frac{\partial f}{\partial \lambda_i} (C_{ij} - f_{ij}) = 0$ where $f_{ij} = \lambda_i \lambda_j$.
+
+### Per-Subject Form
+
+Equation (1b) uses summary statistics $C_{ij}$. For the variance adjustment in T0, we need the *per-subject* contributions. Writing $C_{ij} = \frac{1}{N-1}\sum_k (X_{ik} - \bar{X}_i)(X_{jk} - \bar{X}_j)$, we define the subject-level residual for pair $(i,j)$:
+
+$$
+u_{ij,k} = (X_{ik} - \bar{X}_i)(X_{jk} - \bar{X}_j) - \lambda_i \lambda_j
+$$
+
+This is subject $k$'s contribution to the covariance of pair $(i,j)$, minus the expected value under the model. Its sample mean is approximately $C_{ij} - \lambda_i \lambda_j$.
+
+The per-subject loading score for indicator $i$ is then:
+
+$$
+V_{ik} = \sum_{\substack{j=1 \\ j \neq i}}^{d} \lambda_j \, u_{ij,k} = \sum_{\substack{j=1 \\ j \neq i}}^{d} \lambda_j \left\{(X_{ik} - \bar{X}_i)(X_{jk} - \bar{X}_j) - \lambda_i \lambda_j\right\} \tag{1c}
+$$
+
+This is the per-subject version of Equation (1b). Its sample mean is zero at the solution. The $N \times d$ matrix $V_k$ (with rows indexed by subjects and columns by indicators) will be used in the T0 variance adjustment.
+
+### The Quasi-Poisson GLM (Computational Device)
+
+Solving Equation (1b) directly is nonlinear. The paper observes that when all $\lambda_i > 0$ (which implies all $C_{ij} > 0$), we can take logarithms:
+
+$$
+\log E[C_{ij}] = \log(\lambda_i \lambda_j) = \log \lambda_i + \log \lambda_j
+$$
+
+Define $\Lambda_s = \log \lambda_s$. For each pair $(i,j)$, we have:
+
+$$
+\log E[C_{ij}] = \sum_{s=1}^{d} \Lambda_s \, I(s \in \{i,j\}) \tag{1d}
+$$
+
+where $I(s \in \{i,j\})$ is 1 if indicator $s$ is either $i$ or $j$, and 0 otherwise.
+
+This is a generalised linear model with:
+
+- **Response:** $C_{ij}$ (the $\binom{d}{2}$ sample covariances)
+- **Link function:** $\log$ (so $\mu = \exp(B\Lambda)$)
+- **Linear predictor:** $\Lambda_i + \Lambda_j$ (no intercept)
+- **Design matrix** $B$: a $\binom{d}{2} \times d$ matrix where row $k$ (corresponding to pair $(i,j)$) has $B_{k,i} = 1$, $B_{k,j} = 1$, and all other entries 0
+- **Family:** quasi-Poisson (we only use the mean-variance relationship $\text{Var} \propto \mu$, not the Poisson distribution)
+
+The estimated loadings are $\hat{\lambda}_s = \exp(\hat{\Lambda}_s)$.
+
+### Connection to `estimate_reliability()`
+
+```{r}
+#| eval: false
+# Response: pairwise sample covariances
+A[k] <- cov(X[, pairs[k, 1]], X[, pairs[k, 2]])
+
+# Design matrix B: binom(d,2) x d
+# B[k, s] = 1 if indicator s is in pair k
+B <- build_design_matrix(d)
+
+# Fit the GLM from Equation (1d)
+fit <- glm(A ~ -1 + B, family = quasi(link = "log"))
+lambda <- exp(coef(fit))
+```
+
+For $V_k$ (Equation 1c):
+
+```{r}
+#| eval: false
+# Subject-level pair residuals: u_{ij,k}
+U_pairs[, k] <- Xc[, i] * Xc[, j] - lambda[i] * lambda[j]
+
+# Per-subject loading scores: V_{ik} = Σ_{j≠i} λ_j × u_{ij,k}
+# For each pair (i1, i2) containing indicator i, add λ_{other} × u_{pair,k}
+if (i1 == i) V_k[, i] <- V_k[, i] + lambda[i2] * U_pairs[, k]
+if (i2 == i) V_k[, i] <- V_k[, i] + lambda[i1] * U_pairs[, k]
+```
+
+
+## The T0 Test: Reliability-Dependent (Section 3.2)
+
+### From Theorem 1 to the Constrained Model
+
+Consider a discrete variable $Z$ with levels $\{z_1, \dots, z_p\}$. Fix $z_1$ as the reference level and set $z^* = z_1$ in Theorem 1. For any indicator $i$ and level $z_j$:
+
+$$
+E(X_i \mid Z = z_j) - E(X_i \mid Z = z_1) = \lambda_i \left\{E(\eta \mid Z = z_j) - E(\eta \mid Z = z_1)\right\}
+$$
+
+(This follows from Step 4 of the Theorem 1 proof.)
+
+Now define:
+
+$$
+\gamma_i \equiv E(X_i \mid Z = z_1) \qquad \beta_j \equiv E(X_1 \mid Z = z_j) - E(X_1 \mid Z = z_1) \tag{2a}
+$$
+
+Since $E(X_1 \mid Z = z_j) - E(X_1 \mid Z = z_1) = \lambda_1\{E(\eta \mid Z = z_j) - E(\eta \mid Z = z_1)\}$, we have:
+
+$$
+E(\eta \mid Z = z_j) - E(\eta \mid Z = z_1) = \frac{\beta_j}{\lambda_1}
+$$
+
+Substituting back:
+
+$$
+E(X_i \mid Z = z_j) = \gamma_i + \lambda_i \cdot \frac{\beta_j}{\lambda_1} = \gamma_i + \frac{\lambda_i}{\lambda_1}\,\beta_j \tag{2}
+$$
+
+Note that $\beta_1 = E(X_1 \mid Z = z_1) - E(X_1 \mid Z = z_1) = 0$ by construction.
+
+The free parameters are $\gamma_1, \dots, \gamma_d$ ($d$ parameters) and $\beta_2, \dots, \beta_p$ ($p - 1$ parameters), totalling $d + p - 1$. The loadings $\lambda_i$ are treated as known (estimated separately).
+
+### The Moment Conditions
+
+Under the null hypothesis (Equation 2 holds), the residual for subject $k$, indicator $i$, and $Z$-level $j$ is:
+
+$$
+X_{ik} - \gamma_i - \frac{\lambda_i}{\lambda_1}\,\beta_j
+$$
+
+This residual should have mean zero among subjects with $Z_k = z_j$. We express this as a moment condition by multiplying by the indicator $I(Z_k = z_j)$:
+
+$$
+E\left[I(Z_k = z_j)\left(X_{ik} - \gamma_i - \frac{\lambda_i}{\lambda_1}\,\beta_j\right)\right] = 0
+$$
+
+**Why:** $E[I(Z_k = z_j) \cdot f(X_k)] = P(Z = z_j) \cdot E[f(X_k) \mid Z = z_j]$. So this moment condition is equivalent to $P(Z = z_j) \cdot \{E(X_i \mid Z = z_j) - \gamma_i - (\lambda_i/\lambda_1)\beta_j\} = 0$. Since $P(Z = z_j) > 0$, this holds if and only if the model is correct.
+
+We have $d \times p$ such conditions (one for each indicator--level pair). Define the subject-level moment vector $U_k$ as a $(d \times p)$-dimensional column vector with elements:
+
+$$
+U_{(i,j),k} = I(Z_k = z_j)\left(X_{ik} - \gamma_i - \frac{\lambda_i}{\lambda_1}\,\beta_j\right), \quad i = 1,\dots,d, \;\; j = 1,\dots,p \tag{2b}
+$$
+
+### Counting Degrees of Freedom
+
+We have $d \times p$ moment conditions and $d + p - 1$ free parameters. The number of overidentifying restrictions (degrees of freedom) is:
+
+$$
+dp - (d + p - 1) = dp - d - p + 1 = d(p-1) - (p-1) = (d-1)(p-1)
+$$
+
+For this to be positive (so the test has power), we need $d \geq 2$ and $p \geq 2$. But recall that estimating $\lambda$ requires $d \geq 3$, so T0 requires $d \geq 3$ and $p \geq 2$.
+
+### The GMM Test Statistic
+
+Define:
+
+$$
+\bar{g} = \frac{1}{N}\sum_{k=1}^{N} U_k
+$$
+
+This is the sample mean of the moment conditions --- a $(d \times p)$-dimensional vector. Under the null with correctly specified parameters, $\bar{g} \approx 0$.
+
+Define:
+
+$$
+\Sigma = \frac{1}{N}\sum_{k=1}^{N}(U_k - \bar{U})(U_k - \bar{U})^\top
+$$
+
+the empirical covariance matrix of the $U_k$.
+
+The GMM test statistic is:
+
+$$
+T_0 = N \, \bar{g}^\top \, \Sigma^{-1} \, \bar{g} \tag{2c}
+$$
+
+This is minimised over the free parameters $(\gamma, \beta)$ using numerical optimisation (`nlm`). By Theorem 9.2 of Newey & McFadden (1994), the minimised value converges to a $\chi^2_{(d-1)(p-1)}$ distribution under the null.
+
+### Connection to `test_t0()` --- Moment Conditions
+
+```{r}
+#| eval: false
+ratio <- lambda / lambda[1]   # λ_i / λ_1, fixed
+
+q_t0 <- function(theta) {
+  gamma <- theta[1:d]
+  beta  <- c(0, theta[(d+1):(d+p-1)])   # β_1 = 0
+
+  # Build U_k from Equation (2b)
+  u <- matrix(0, nrow = n, ncol = d * p)
+  col <- 0L
+  for (i in 1:d) {
+    for (j in 1:p) {
+      col <- col + 1L
+      pred <- gamma[i] + ratio[i] * beta[j]
+      u[, col] <- Z_mat[, j] * (X[, i] - pred)
+    }
+  }
+  g <- colMeans(u)   # ḡ from Equation (2c)
+  # ... (variance adjustment follows)
+}
+```
+
+### The Variance Adjustment
+
+#### The Problem
+
+In Equation (2), the ratios $\lambda_i / \lambda_1$ are treated as known constants. In practice, they are replaced by $\hat{\lambda}_i / \hat{\lambda}_1$ estimated from Section 3.1. This introduces additional sampling variability into $U_k$ that is not captured by $\text{Var}(U_k)$ alone.
+
+If we ignore this, $\Sigma$ underestimates the true variability of $\bar{g}$, inflating $T_0$ and leading to too many false rejections.
+
+#### The General Principle
+
+We have two sets of estimating equations evaluated on the same data:
+
+- $V_k(\lambda)$: the loading equations (Equation 1c), which determine $\hat{\lambda}$
+- $U_k(\gamma, \beta; \lambda)$: the structural test equations (Equation 2b), which depend on $\lambda$
+
+The combined system is "stacked": we solve $V_k = 0$ for $\lambda$, plug $\hat{\lambda}$ into $U_k$, and solve $U_k = 0$ for $(\gamma, \beta)$.
+
+From the theory of stacked estimating equations (see the Appendix of the paper, or Newey & McFadden, 1994), the adjusted influence function that accounts for the plug-in is:
+
+$$
+U^*_k = U_k - E\!\left[\frac{\partial U_k}{\partial \lambda}\right] \left(E\!\left[\frac{\partial V_k}{\partial \lambda}\right]\right)^{-1} V_k \tag{2d}
+$$
+
+**Intuition:** $V_k$ is the "noise" from estimating $\lambda$. The matrix $E[\partial U / \partial \lambda] \cdot (E[\partial V / \partial \lambda])^{-1}$ is the *sensitivity* of $U$ to perturbations in $\lambda$, normalised by how quickly $V$ responds to those same perturbations. The product tells us how much of $V_k$'s noise propagates into $U_k$. Subtracting it removes this propagated component.
+
+The corrected covariance matrix is then $\Sigma^* = \frac{1}{N}\sum_k (U^*_k - \bar{U}^*)(U^*_k - \bar{U}^*)^\top$, and the test statistic uses $\Sigma^*$ instead of $\Sigma$. Crucially, the moment means $\bar{g}$ are still computed from the *original* $U_k$, not the adjusted $U^*_k$.
+
+#### Deriving $E[\partial U / \partial \lambda]$
+
+From Equation (2b), the moment condition for $(i,j)$ is:
+
+$$
+U_{(i,j),k} = I(Z_k = z_j)\!\left(X_{ik} - \gamma_i - \frac{\lambda_i}{\lambda_1}\beta_j\right)
+$$
+
+Only the term $\frac{\lambda_i}{\lambda_1}\beta_j$ depends on $\lambda$. Define $r_i = \lambda_i / \lambda_1$. The derivative of the prediction with respect to $\lambda_s$ is:
+
+**Case $s = 1$ (denominator), $i > 1$, $j > 1$:**
+
+$$
+\frac{\partial}{\partial \lambda_1}\!\left(\frac{\lambda_i}{\lambda_1}\beta_j\right) = -\frac{\lambda_i}{\lambda_1^2}\,\beta_j = -\frac{r_i \, \beta_j}{\lambda_1}
+$$
+
+**Case $s = i$ (numerator), $i > 1$, $j > 1$:**
+
+$$
+\frac{\partial}{\partial \lambda_i}\!\left(\frac{\lambda_i}{\lambda_1}\beta_j\right) = \frac{\beta_j}{\lambda_1}
+$$
+
+**All other cases:** The derivative is zero. When $i = 1$, the ratio is $\lambda_1/\lambda_1 = 1$ (constant). When $j = 1$, $\beta_1 = 0$.
+
+Since $\frac{\partial U_{(i,j),k}}{\partial \lambda_s} = -I(Z_k = z_j) \cdot \frac{\partial(\text{pred})}{\partial \lambda_s}$, taking expectations:
+
+$$
+E\!\left[\frac{\partial U_{(i,j)}}{\partial \lambda_s}\right] = -P(Z = z_j) \cdot \frac{\partial(\text{pred})}{\partial \lambda_s} \tag{2e}
+$$
+
+#### Deriving $E[\partial V / \partial \lambda]$
+
+From Equation (1c):
+
+$$
+V_{ik} = \sum_{\substack{j=1 \\ j \neq i}}^{d} \lambda_j \left\{(X_{ik} - \bar{X}_i)(X_{jk} - \bar{X}_j) - \lambda_i \lambda_j\right\}
+$$
+
+**Diagonal ($\partial V_i / \partial \lambda_i$):** Each term in the sum contributes $\lambda_j \cdot (-\lambda_j) = -\lambda_j^2$:
+
+$$
+\frac{\partial V_i}{\partial \lambda_i} = -\sum_{\substack{j=1 \\ j \neq i}}^{d} \lambda_j^2 \tag{2f}
+$$
+
+**Off-diagonal ($\partial V_i / \partial \lambda_m$, $m \neq i$):** The $j = m$ term in the sum gives:
+
+$$
+\frac{\partial}{\partial \lambda_m}\!\left[\lambda_m\!\left\{(X_{ik} - \bar{X}_i)(X_{mk} - \bar{X}_m) - \lambda_i \lambda_m\right\}\right] = (X_{ik} - \bar{X}_i)(X_{mk} - \bar{X}_m) - 2\lambda_i\lambda_m
+$$
+
+Taking the sample average over $k$:
+
+$$
+\frac{1}{N}\sum_{k=1}^{N}\frac{\partial V_{ik}}{\partial \lambda_m} = C_{im} - 2\lambda_i\lambda_m = \underbrace{(C_{im} - \lambda_i\lambda_m)}_{\text{mean}(u_{im,k})} - \lambda_i\lambda_m \tag{2g}
+$$
+
+#### Connection to `test_t0()` --- Variance Adjustment
+
+```{r}
+#| eval: false
+# Equation (2e): dpred/dλ, then dudlambda = -P(Z=z_j) × dpred/dλ
+dpred_dlambda[col, 1] <- -ratio[i] * beta[j] / lambda[1]
+dpred_dlambda[col, i] <- beta[j] / lambda[1]
+dudlambda <- -diag(diag_pz) %*% dpred_dlambda
+
+# Equations (2f) and (2g)
+dvdlambda[i, i] <- -sum(lambda[-i]^2)
+dvdlambda[i, k] <- mean_U_pairs[pair_idx] - lambda[i] * lambda[k]
+
+# Equation (2d): the adjustment
+uadjust <- u - t(dudlambda %*% solve(dvdlambda) %*% t(V_k))
+
+# Equation (2c) with adjusted variance
+Sigma <- var(uadjust) * ((n - 1) / n)   # 1/N normalisation
+T0 <- n * drop(t(g) %*% solve(Sigma) %*% g)
+```
+
+Note that `g = colMeans(u)` uses the **original** (unadjusted) moments. Only the **variance** $\Sigma$ is computed from the adjusted $U^*_k$. The paper says to "re-define $\Sigma$ in the expression for $T_0$".
+
+## Theorem 2 and the T1 Test: Reliability-Independent (Section 3.3)
+
+### Motivation
+
+T0 depends on $\hat{\lambda}$, which requires the full distributional assumptions of Equation (1): independent errors, unit variance for $\eta$, etc. If the covariance structure of the $\varepsilon_i$ is misspecified, $\hat{\lambda}$ may be biased, and T0 may falsely reject the structural interpretation even when it holds. T1 avoids loading estimation entirely.
+
+### Theorem 2: Equivalent Reformulation
+
+**Theorem 2.** Under the basic latent factor model in Equation (1), for any discrete $Z$, the following two conditions are equivalent:
+
+1. For any $i$, $j$, and values $z$, $z^*$: $\;\lambda_i\{E(X_j \mid Z = z) - E(X_j \mid Z = z^*)\} = \lambda_j\{E(X_i \mid Z = z) - E(X_i \mid Z = z^*)\}$
+
+2. For any $i$ and values $z$, and for an arbitrary fixed reference value $z^*$:
+$$E(X_i \mid Z = z) - E(X_i \mid Z = z^*) = \alpha_i \, \beta_z \quad \text{for some parameters } \alpha_i, \beta_z$$
+
+#### Proof that (1) implies (2)
+
+**Step 1.** Let $\gamma_i = E(X_i \mid Z = z_1)$ where $z_1$ is the reference level. From Theorem 1 (Step 4 of the proof), we know:
+
+$$
+E(X_i \mid Z = z) - \gamma_i = \lambda_i\{E(\eta \mid Z = z) - E(\eta \mid Z = z_1)\}
+$$
+
+**Step 2.** Define:
+
+$$
+\alpha_i \equiv \frac{E(X_i \mid Z = z^*) - \gamma_i}{E(X_1 \mid Z = z^*) - \gamma_1} = \frac{\lambda_i\{E(\eta \mid Z = z^*) - E(\eta \mid Z = z_1)\}}{\lambda_1\{E(\eta \mid Z = z^*) - E(\eta \mid Z = z_1)\}} = \frac{\lambda_i}{\lambda_1}
+$$
+
+(provided $E(X_1 \mid Z = z^*) \neq \gamma_1$, i.e., $Z$ has some effect).
+
+**Step 3.** Define $\beta_z \equiv E(X_1 \mid Z = z) - \gamma_1$. Then from Step 1:
+
+$$
+E(X_i \mid Z = z) - \gamma_i = \frac{\lambda_i}{\lambda_1} \cdot \lambda_1\{E(\eta \mid Z = z) - E(\eta \mid Z = z_1)\} = \alpha_i \, \beta_z
+$$
+
+So $E(X_i \mid Z = z) = \gamma_i + \alpha_i \, \beta_z$.  $\blacksquare$
+
+#### What This Means
+
+The matrix of mean differences:
+
+$$
+\Delta_{ij} = E(X_i \mid Z = z_j) - E(X_i \mid Z = z_1)
+$$
+
+is a $d \times p$ matrix (indicators $\times$ Z-levels). Under the structural model, it factors as:
+
+$$
+\Delta = \alpha \, \beta^\top
+$$
+
+where $\alpha = (\alpha_1, \dots, \alpha_d)^\top$ and $\beta = (\beta_1, \dots, \beta_p)^\top$. This is a **rank-1 matrix**. The T1 test checks whether $\Delta$ has rank $\leq 1$.
+
+The key advantage: $\alpha_i$ and $\beta_j$ are free parameters estimated from data. We do not need to know $\lambda_i$.
+
+### The Model Under the Null (Equation 3)
+
+$$
+E(X_i \mid Z = z_j) = \gamma_i + \alpha_i \, \beta_j \tag{3}
+$$
+
+with identification constraints $\alpha_1 = 1$ and $\beta_1 = 0$.
+
+**Why $\alpha_1 = 1$:** The product $\alpha_i \beta_j$ is invariant to rescaling: $(\alpha_i / \tau)(\beta_j \tau) = \alpha_i \beta_j$ for any $\tau \neq 0$. Fixing $\alpha_1 = 1$ pins down the scale.
+
+**Why $\beta_1 = 0$:** This sets $z_1$ as the reference level, so $E(X_i \mid Z = z_1) = \gamma_i$.
+
+**Parameter count:**
+
+- $\gamma_1, \dots, \gamma_d$: $d$ parameters
+- $\alpha_2, \dots, \alpha_d$: $d - 1$ parameters (since $\alpha_1 = 1$)
+- $\beta_2, \dots, \beta_p$: $p - 1$ parameters (since $\beta_1 = 0$)
+- **Total:** $2d + p - 2$
+
+### Counting Degrees of Freedom
+
+Moment conditions: $d \times p$. Free parameters: $2d + p - 2$. Degrees of freedom:
+
+$$
+dp - (2d + p - 2) = dp - 2d - p + 2 = d(p - 2) - (p - 2) = (d-1)(p-2)
+$$
+
+For this to be positive, we need $d \geq 2$ and $p \geq 3$.
+
+### The Moment Conditions
+
+For each $(i, j)$:
+
+$$
+E\left[I(Z_k = z_j)\left(X_{ik} - \gamma_i - \alpha_i\,\beta_j\right)\right] = 0 \tag{3a}
+$$
+
+Define the subject-level moment vector $U_k$ with elements:
+
+$$
+U_{(i,j),k} = I(Z_k = z_j)\left(X_{ik} - \gamma_i - \alpha_i\,\beta_j\right)
+$$
+
+### Connection to `test_t1()`
+
+```{r}
+#| eval: false
+build_gmm <- function(theta_val) {
+  gam <- theta_val[1:d]
+  alp <- c(1, theta_val[(d+1):(2*d-1)])     # α_1 = 1 fixed
+  bet <- c(0, theta_val[(2*d):(2*d+p-2)])   # β_1 = 0 fixed
+
+  # For each subject k, beta_k = β_{z_k}
+  beta_k <- numeric(n)
+  for (j in 1:p) beta_k[z == z_levels[j]] <- bet[j]
+
+  # Residual matrix: X_{ik} - γ_i - α_i × β_{z_k}
+  resid <- X - matrix(gam, n, d, byrow = TRUE) - outer(beta_k, alp)
+
+  # Moment conditions from Equation (3a)
+  g <- matrix(0, nrow = n, ncol = d * p)
+  col <- 0L
+  for (j in 1:p) {
+    for (i in 1:d) {
+      col <- col + 1L
+      g[, col] <- Z_mat[, j] * resid[, i]
+    }
+  }
+  g
+}
+```
+
+### The Test Statistic and GMM Procedure
+
+The T1 statistic has the same form as T0:
+
+$$
+T_1 = N \, \bar{g}^\top \, \Sigma^{-1} \, \bar{g} \tag{3b}
+$$
+
+minimised over $(\gamma, \alpha, \beta)$, converging to $\chi^2_{(d-1)(p-2)}$ under the null.
+
+Unlike T0, there is no plug-in nuisance parameter, so **no variance adjustment is needed**.
+
+However, Equation (3) is nonlinear in the parameters (the product $\alpha_i \beta_j$), so the optimisation requires care. The implementation uses a three-step procedure:
+
+**Step 1 (Consistent estimates):** Use initial values from cell means. Form the weight matrix $W_1 = \Sigma_0^{-1}$ from initial residuals. Minimise $T_1$ with $W_1$ **fixed**. This gives consistent (but inefficient) estimates.
+
+**Step 2 (Efficient estimates):** Recompute $W_2 = \Sigma_1^{-1}$ from step-1 residuals. Minimise $T_1$ with $W_2$ **fixed**. This is the standard two-step efficient GMM.
+
+**Step 3 (Test statistic):** Minimise $T_1$ with $\Sigma$ **recomputed at each parameter value** (continuously-updating GMM). The minimised value is the test statistic.
+
+```{r}
+#| eval: false
+# Step 1
+Omega0 <- var(build_gmm(theta_init)) * ((n-1)/n)
+W1 <- solve(Omega0)
+res1 <- nlm(function(th) { gm <- colMeans(build_gmm(th)); n * crossprod(gm, W1 %*% gm) },
+            p = theta_init)
+
+# Step 2
+Omega1 <- var(build_gmm(res1$estimate)) * ((n-1)/n)
+W2 <- solve(Omega1)
+res2 <- nlm(function(th) { gm <- colMeans(build_gmm(th)); n * crossprod(gm, W2 %*% gm) },
+            p = res1$estimate)
+
+# Step 3 (final, CU-GMM)
+res <- nlm(function(th) {
+  g <- build_gmm(th); gm <- colMeans(g)
+  Sigma <- var(g) * ((n-1)/n)
+  n * crossprod(gm, solve(Sigma) %*% gm)
+}, p = res2$estimate)
+```
+
+### Initialisation from Cell Means
+
+The initial parameter values come directly from the data:
+
+**Step 1.** Compute cell means: $\hat{\mu}_{ij} = \frac{1}{n_j}\sum_{k: Z_k = z_j} X_{ik}$
+
+**Step 2.** Set $\hat{\gamma}_i = \hat{\mu}_{i1}$ (reference-level means).
+
+**Step 3.** Form the difference matrix $D_{ij} = \hat{\mu}_{ij} - \hat{\gamma}_i \approx \alpha_i \beta_j$.
+
+**Step 4.** Since $\alpha_1 = 1$: $\beta_j \approx D_{1j}$.
+
+**Step 5.** For $i \geq 2$, estimate $\alpha_i$ by least-squares regression of $D_{i,-1}$ on $\beta_{-1}$:
+
+$$
+\hat{\alpha}_i = \frac{\sum_{j=2}^{p} D_{ij} \, \hat{\beta}_j}{\sum_{j=2}^{p} \hat{\beta}_j^2}
+$$
+
+```{r}
+#| eval: false
+gamma_init <- cell_means[, 1]
+D <- cell_means - gamma_init
+beta_init <- D[1, ]
+for (i in 2:d) {
+  alpha_init[i] <- sum(D[i, -1] * beta_init[-1]) / sum(beta_init[-1]^2)
+}
+```
+
+## Summary
+
+$$
+\boxed{X_i = \lambda_i \eta + \varepsilon_i} \quad \text{(Equation 1)}
+$$
+
+$$
+\Downarrow \quad \text{Cov}(X_i, X_j) = \lambda_i\lambda_j
+$$
+
+$$
+\texttt{estimate\_reliability()} \longrightarrow \hat{\lambda}
+$$
+
+$$
+\Downarrow
+$$
+
+$$
+\text{Theorem 1: } \lambda_i\{E(X_j|Z\!=\!z) - E(X_j|Z\!=\!z^*)\} = \lambda_j\{E(X_i|Z\!=\!z) - E(X_i|Z\!=\!z^*)\}
+$$
+
+$$
+\swarrow \qquad\qquad\qquad\qquad \searrow
+$$
+
+| | **T0** (plug in $\hat{\lambda}$) | **T1** (reparameterise as rank-1) |
+|---|---|---|
+| **Equation** | $E(X_i \mid Z\!=\!z_j) = \gamma_i + \frac{\lambda_i}{\lambda_1}\beta_j$ | $E(X_i \mid Z\!=\!z_j) = \gamma_i + \alpha_i \beta_j$ |
+| **Function** | `test_t0()` | `test_t1()` |
+| **Statistic** | $T_0 \sim \chi^2_{(d-1)(p-1)}$ | $T_1 \sim \chi^2_{(d-1)(p-2)}$ |
+| **Requires** | $d \geq 3$, $p \geq 2$ | $d \geq 2$, $p \geq 3$ |
+| **Depends on Eq. (1)** | Yes (through $\hat{\lambda}$) | No |
+| **Variance adjustment** | Yes (for uncertainty in $\hat{\lambda}$) | Not needed |
+
+## References
+
+VanderWeele, T. J. and Vansteelandt, S. (2022). A statistical test to reject the structural interpretation of a latent factor model. *Journal of the Royal Statistical Society: Series B (Statistical Methodology)*, **84**, 2032--2054. [doi:10.1111/rssb.12555](https://doi.org/10.1111/rssb.12555)
+
+Newey, W. K. and McFadden, D. (1994). Large sample estimation and hypothesis testing. *Handbook of Econometrics*, **4**, 2111--2245.
