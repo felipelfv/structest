@@ -86,7 +86,7 @@ print(result_t0)
 #>   T0: Reliability-dependent test of structural interpretation (VanderWeele & Vansteelandt, 2022) 
 #> 
 #> data:   X and z 
-#> statistic = 6.074, df = 4, p-value = 0.1937
+#> statistic = 6.075, df = 4, p-value = 0.1936
 #> n = 5000, d = 5 indicators, p = 2 Z-levels
 ```
 
@@ -198,7 +198,7 @@ print(result_t1)
 #>   T1: Reliability-independent test of structural interpretation (VanderWeele & Vansteelandt, 2022) 
 #> 
 #> data:   X and z 
-#> statistic = 3.016, df = 6, p-value = 0.8068
+#> statistic = 3.017, df = 6, p-value = 0.8068
 #> n = 5000, d = 4 indicators, p = 4 Z-levels
 ```
 
