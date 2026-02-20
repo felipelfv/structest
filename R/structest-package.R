@@ -9,7 +9,7 @@
 #'     Requires d >= 3 indicators and p >= 2 Z-levels.}
 #'   \item{\code{\link{test_t1}}}{Reliability-independent test (Section 3.3).
 #'     Requires d >= 2 indicators and p >= 3 Z-levels.}
-#'   \item{\code{\link{estimate_reliability}}}{Estimate reliability coefficients
+#'   \item{\code{\link{estimate_reliability}}}{Estimate factor loadings
 #'     via quasi-Poisson GLM (Section 3.1).}
 #' }
 #'
