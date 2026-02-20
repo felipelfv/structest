@@ -33,12 +33,9 @@ Consider a reflective latent factor model with $d$ indicators:
 
 $$X_{i} = \mu_{i} + \lambda_{i}\,\eta + \varepsilon_{i},\qquad i = 1,\ldots,d$$
 
-where $\eta$ is the latent variable, $\lambda_{i}$ are factor loadings,
-$\mu_{i}$ are intercepts, and the $\varepsilon_{i}$ are independent
-error terms. (Note: the paper refers to $\lambda_{i}$ as
-“reliabilities”, but strictly speaking the reliability of indicator $i$
-is $\lambda_{i}^{2}/\text{Var}\left( X_{i} \right)$; $\lambda_{i}$ is
-the factor loading.)
+where $\eta$ is the latent variable, $\lambda_{i}$ are factor loadings
+(reliabilities), $\mu_{i}$ are intercepts, and the $\varepsilon_{i}$ are
+independent error terms.
 
 Under the **structural** interpretation, the latent variable $\eta$ is
 the causally relevant quantity. If we have an external variable $Z$ that
@@ -60,7 +57,7 @@ $$E\left( X_{i} \mid Z = z_{j} \right) = \gamma_{i} + \frac{\lambda_{i}}{\lambda
 
 with $\beta_{1} = 0$ (reference level). This gives $d \times p$ moment
 conditions with $d + p - 1$ free parameters, yielding $(d - 1)(p - 1)$
-degrees of freedom. The test requires estimated factor loadings
+degrees of freedom. The test requires estimated reliability coefficients
 $\lambda_{i}$, which are obtained from pairwise covariances via a
 quasi-Poisson GLM.
 
@@ -152,14 +149,14 @@ summary(result_t0_bad)
 #>   beta (Z effects):
 #>   z=0   z=1 
 #> 0.000 1.728 
-#>   lambda (factor loadings):
+#>   lambda (reliabilities):
 #> [1] 1.0099 1.0213 0.4555 0.9002 0.8222
 ```
 
 ## The $T_{1}$ Test (Reliability-Independent)
 
-The $T_{1}$ test (Section 3.3 of the paper) avoids estimating factor
-loadings entirely. Under the structural model, the conditional
+The $T_{1}$ test (Section 3.3 of the paper) avoids estimating
+reliabilities entirely. Under the structural model, the conditional
 expectations satisfy (Equation 3 in the paper):
 
 $$E\left( X_{i} \mid Z = z_{j} \right) = \gamma_{i} + \alpha_{i}\,\beta_{j}$$
@@ -176,7 +173,7 @@ $(d - 1)(p - 2)$ degrees of freedom.
 
 **When to use:** $d \geq 3$ indicators and $p \geq 3$ levels of $Z$.
 Preferred over $T_{0}$ because it does not rely on error-structure
-assumptions needed for loading estimation.
+assumptions needed for reliability estimation.
 
 ### Example: data consistent with the structural model
 
@@ -265,7 +262,7 @@ summary(result_t1_bad)
 #>  0.0000  0.2378 -0.0676  0.3796
 ```
 
-## Estimating Factor Loadings
+## Estimating Reliabilities
 
 The
 [`estimate_reliability()`](https://felipelfv.github.io/structest/reference/estimate_reliability.md)
@@ -275,8 +272,8 @@ $X_{i} = \mu_{i} + \lambda_{i}\,\eta + \varepsilon_{i}$, we have
 $\text{Cov}\left( X_{i},X_{j} \right) = \lambda_{i}\,\lambda_{j}$.
 Taking logs gives
 $\log\text{Cov}\left( X_{i},X_{j} \right) = \log\lambda_{i} + \log\lambda_{j}$,
-which is a linear model in the log-loadings. The function fits this as a
-quasi-Poisson GLM with log link.
+which is a linear model in the log-reliabilities. The function fits this
+as a quasi-Poisson GLM with log link.
 
 ``` r
 set.seed(12345)
@@ -306,14 +303,14 @@ data.frame(
 
 This function is called internally by
 [`test_t0()`](https://felipelfv.github.io/structest/reference/test_t0.md),
-but you can use it directly if you need the loading estimates for other
-purposes.
+but you can use it directly if you need the reliability estimates for
+other purposes.
 
 ## Choosing Between $T_{0}$ and $T_{1}$
 
 |                                                      | $T_{0}$          | $T_{1}$          |
 |------------------------------------------------------|------------------|------------------|
-| **Relies on loading estimates**                      | Yes              | No               |
+| **Relies on reliability estimates**                  | Yes              | No               |
 | **Sensitive to error distribution misspecification** | Yes              | No               |
 | **Minimum indicators ($d$)**                         | 3                | 3                |
 | **Minimum $Z$-levels ($p$)**                         | 2                | 3                |
@@ -322,7 +319,7 @@ purposes.
 **Guidance:**
 
 - **$T_{1}$ is generally preferred** because it does not depend on the
-  error-structure assumptions needed to estimate factor loadings (e.g.,
+  error-structure assumptions needed to estimate reliabilities (e.g.,
   independent, homoscedastic errors).
 - **$T_{0}$ is necessary** when only 2 levels of $Z$ are available,
   since $T_{1}$ requires $p \geq 3$.

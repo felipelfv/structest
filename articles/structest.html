@@ -97,18 +97,11 @@ X_i = \mu_i + \lambda_i\,\eta + \varepsilon_i, \qquad i = 1, \ldots, d
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>η</mi><annotation encoding="application/x-tex">\eta</annotation></semantics></math>
 is the latent variable,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>λ</mi><mi>i</mi></msub><annotation encoding="application/x-tex">\lambda_i</annotation></semantics></math>
-are factor loadings,
+are factor loadings (reliabilities),
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>μ</mi><mi>i</mi></msub><annotation encoding="application/x-tex">\mu_i</annotation></semantics></math>
 are intercepts, and the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ε</mi><mi>i</mi></msub><annotation encoding="application/x-tex">\varepsilon_i</annotation></semantics></math>
-are independent error terms. (Note: the paper refers to
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>λ</mi><mi>i</mi></msub><annotation encoding="application/x-tex">\lambda_i</annotation></semantics></math>
-as “reliabilities”, but strictly speaking the reliability of indicator
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
-is
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>λ</mi><mi>i</mi><mn>2</mn></msubsup><mi>/</mi><mtext mathvariant="normal">Var</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\lambda_i^2 / \text{Var}(X_i)</annotation></semantics></math>;
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>λ</mi><mi>i</mi></msub><annotation encoding="application/x-tex">\lambda_i</annotation></semantics></math>
-is the factor loading.)</p>
+are independent error terms.</p>
 <p>Under the <strong>structural</strong> interpretation, the latent
 variable
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>η</mi><annotation encoding="application/x-tex">\eta</annotation></semantics></math>
@@ -156,7 +149,7 @@ moment conditions with
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo>+</mo><mi>p</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">d + p - 1</annotation></semantics></math>
 free parameters, yielding
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>d</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>p</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">(d-1)(p-1)</annotation></semantics></math>
-degrees of freedom. The test requires estimated factor loadings
+degrees of freedom. The test requires estimated reliability coefficients
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>λ</mi><mi>i</mi></msub><annotation encoding="application/x-tex">\lambda_i</annotation></semantics></math>,
 which are obtained from pairwise covariances via a quasi-Poisson
 GLM.</p>
@@ -252,7 +245,7 @@ is very small, correctly rejecting the structural interpretation.</p>
 <span><span class="co">#&gt;   beta (Z effects):</span></span>
 <span><span class="co">#&gt;   z=0   z=1 </span></span>
 <span><span class="co">#&gt; 0.000 1.728 </span></span>
-<span><span class="co">#&gt;   lambda (factor loadings):</span></span>
+<span><span class="co">#&gt;   lambda (reliabilities):</span></span>
 <span><span class="co">#&gt; [1] 1.0099 1.0213 0.4555 0.9002 0.8222</span></span></code></pre></div>
 </div>
 </div>
@@ -263,7 +256,7 @@ Test (Reliability-Independent)<a class="anchor" aria-label="anchor" href="#the-t
 </h2>
 <p>The
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mn>1</mn></msub><annotation encoding="application/x-tex">T_1</annotation></semantics></math>
-test (Section 3.3 of the paper) avoids estimating factor loadings
+test (Section 3.3 of the paper) avoids estimating reliabilities
 entirely. Under the structural model, the conditional expectations
 satisfy (Equation 3 in the paper):</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo>∣</mo><mi>Z</mi><mo>=</mo><msub><mi>z</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>γ</mi><mi>i</mi></msub><mo>+</mo><msub><mi>α</mi><mi>i</mi></msub><mspace width="0.167em"></mspace><msub><mi>β</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">
@@ -298,7 +291,7 @@ levels of
 Preferred over
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mn>0</mn></msub><annotation encoding="application/x-tex">T_0</annotation></semantics></math>
 because it does not rely on error-structure assumptions needed for
-loading estimation.</p>
+reliability estimation.</p>
 <div class="section level3">
 <h3 id="example-data-consistent-with-the-structural-model-1">Example: data consistent with the structural model<a class="anchor" aria-label="anchor" href="#example-data-consistent-with-the-structural-model-1"></a>
 </h3>
@@ -384,7 +377,7 @@ the structural model.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="estimating-factor-loadings">Estimating Factor Loadings<a class="anchor" aria-label="anchor" href="#estimating-factor-loadings"></a>
+<h2 id="estimating-reliabilities">Estimating Reliabilities<a class="anchor" aria-label="anchor" href="#estimating-reliabilities"></a>
 </h2>
 <p>The <code><a href="../reference/estimate_reliability.html">estimate_reliability()</a></code> function estimates the factor
 loadings
@@ -395,8 +388,8 @@ we have
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Cov</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo>,</mo><msub><mi>X</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>λ</mi><mi>i</mi></msub><mspace width="0.167em"></mspace><msub><mi>λ</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">\text{Cov}(X_i, X_j) = \lambda_i\,\lambda_j</annotation></semantics></math>.
 Taking logs gives
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mtext mathvariant="normal">Cov</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo>,</mo><msub><mi>X</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>log</mo><msub><mi>λ</mi><mi>i</mi></msub><mo>+</mo><mo>log</mo><msub><mi>λ</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">\log \text{Cov}(X_i, X_j) = \log\lambda_i + \log\lambda_j</annotation></semantics></math>,
-which is a linear model in the log-loadings. The function fits this as a
-quasi-Poisson GLM with log link.</p>
+which is a linear model in the log-reliabilities. The function fits this
+as a quasi-Poisson GLM with log link.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">12345</span><span class="op">)</span></span>
 <span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">5000</span></span>
@@ -422,7 +415,7 @@ quasi-Poisson GLM with log link.</p>
 <span><span class="co">#&gt; 4  0.9     0.898</span></span>
 <span><span class="co">#&gt; 5  0.7     0.695</span></span></code></pre></div>
 <p>This function is called internally by <code><a href="../reference/test_t0.html">test_t0()</a></code>, but you
-can use it directly if you need the loading estimates for other
+can use it directly if you need the reliability estimates for other
 purposes.</p>
 </div>
 <div class="section level2">
@@ -439,7 +432,7 @@ and
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td><strong>Relies on loading estimates</strong></td>
+<td><strong>Relies on reliability estimates</strong></td>
 <td>Yes</td>
 <td>No</td>
 </tr>
@@ -474,7 +467,7 @@ misspecification</strong></td>
 <li>
 <strong><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mn>1</mn></msub><annotation encoding="application/x-tex">T_1</annotation></semantics></math>
 is generally preferred</strong> because it does not depend on the
-error-structure assumptions needed to estimate factor loadings (e.g.,
+error-structure assumptions needed to estimate reliabilities (e.g.,
 independent, homoscedastic errors).</li>
 <li>
 <strong><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mn>0</mn></msub><annotation encoding="application/x-tex">T_0</annotation></semantics></math>
