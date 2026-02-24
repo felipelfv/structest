@@ -2,3 +2,4 @@ url: https://felipelfv.github.io/structest/
 
 template:
   bootstrap: 5
+  math-rendering: mathjax
