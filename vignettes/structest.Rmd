@@ -18,18 +18,18 @@ knitr::opts_chunk$set(
 
 Factor analysis is one of the most widely used methods in the social and
 behavioural sciences. When a single latent factor fits the covariance among a
-set of observed indicators, researchers routinely form a composite score and
-use it in subsequent causal analyses. This practice implicitly assumes a
-**structural** interpretation of the latent factor model: that the latent
-variable itself, rather than the individual indicators, is what is causally
-efficacious.
+set of observed indicators, researchers often treat the latent variable as the
+causally relevant quantity in subsequent analyses. This practice implicitly
+assumes a **structural** interpretation of the latent factor model: that the
+latent variable itself, rather than the individual indicators, is what is
+causally efficacious.
 
 But a measurement model that fits well does *not* guarantee that this
 structural interpretation is correct. The indicators could each have their own
 direct causal effects on an outcome, even though their covariance structure is
 perfectly consistent with a single latent factor. If the structural
-interpretation is wrong, causal conclusions drawn from composite scores may be
-misleading.
+interpretation is wrong, causal conclusions treating the latent variable as the
+cause may be misleading.
 
 VanderWeele and Vansteelandt (2022) showed that the structural interpretation
 imposes testable empirical constraints. The **structest** package implements
