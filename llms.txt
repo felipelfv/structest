@@ -31,16 +31,15 @@ covariance structure is consistent with a single latent factor (see
 Figures 2 and 3 in the paper).
 
 VanderWeele and Vansteelandt (2022) show that the structural
-interpretation has empirically testable implications. Specifically,
-under a structural latent factor model, the association between any
-external variable *Z* and indicator *X_i*, scaled by the factor loading
-of *X_i*, must be the same across all indicators (Theorem 1). This
-package implements the two statistical tests proposed in the paper:
+interpretation imposes testable overidentifying restrictions.
+Specifically, under a structural latent factor model, the association
+between any external variable *Z* and indicator *X_i*, scaled by the
+factor loading of *X_i*, must be the same across all indicators (Theorem
+1). This package implements two GMM-based tests of these overidentifying
+restrictions:
 
-- **T0**: a statistical test dependent on reliability estimates (Section
-  3.2)
-- **T1**: a statistical test independent of reliability estimates
-  (Section 3.3)
+- **T0**: depends on estimated factor loadings (Section 3.2)
+- **T1**: independent of factor loading estimates (Section 3.3)
 
 ## Installation
 

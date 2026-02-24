@@ -19,7 +19,7 @@ treating the latent variable as the cause may be misleading.
 
 VanderWeele and Vansteelandt (2022) showed that the structural
 interpretation imposes testable empirical constraints. The **structest**
-package implements two statistical tests—\\T_0\\ and \\T_1\\—that can
+package implements two GMM-based tests—\\T_0\\ and \\T_1\\—that can
 reject these constraints, providing researchers with a principled way to
 evaluate whether the structural interpretation is tenable.
 
@@ -48,8 +48,7 @@ by Theorem 1 of VanderWeele and Vansteelandt (2022), for any indicators
 \lambda_j \bigl\\E(X_i \mid Z=z) - E(X_i \mid Z=z^\*)\bigr\\ \\
 
 This identity is testable with observed data. The \\T_0\\ and \\T_1\\
-tests formalise it using generalised methods of moments estimators
-(Newey & McFadden, 1994).
+tests formalise it as overidentifying restrictions in a GMM framework.
 
 ## The \\T_0\\ Test (Reliability-Dependent)
 
@@ -173,7 +172,7 @@ reference level. This means the matrix of mean differences
 \\ \Delta\_{ij} = E(X_i \mid Z = z_j) - E(X_i \mid Z = z_1) \\
 
 has rank \\\leq 1\\ under the structural model. The \\T_1\\ test checks
-this rank constraint using generalised methods of moments, with \\d
+this rank constraint using a two-step efficient GMM procedure, with \\d
 \times p\\ moment conditions, \\2d + p - 2\\ free parameters, and
 \\(d-1)(p-2)\\ degrees of freedom.
 

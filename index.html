@@ -67,12 +67,12 @@
 </h2>
 <p>Factor analysis is routinely used to assess whether a single univariate latent variable explains the covariance among a set of observed indicators. When a one-factor model fits adequately, researchers often treat the latent variable as the causally relevant quantity in subsequent analyses. This practice implicitly assumes a <strong>structural</strong> interpretation of the latent factor model: that it is the latent variable, rather than the individual indicators, that is causally efficacious.</p>
 <p>However, a measurement model fitting well does <strong>not</strong> imply the structural interpretation is correct. The individual indicators could each have separate causal effects on outcomes, even though their covariance structure is consistent with a single latent factor (see Figures 2 and 3 in the paper).</p>
-<p>VanderWeele and Vansteelandt (2022) show that the structural interpretation has empirically testable implications. Specifically, under a structural latent factor model, the association between any external variable <em>Z</em> and indicator <em>X_i</em>, scaled by the factor loading of <em>X_i</em>, must be the same across all indicators (Theorem 1). This package implements the two statistical tests proposed in the paper:</p>
+<p>VanderWeele and Vansteelandt (2022) show that the structural interpretation imposes testable overidentifying restrictions. Specifically, under a structural latent factor model, the association between any external variable <em>Z</em> and indicator <em>X_i</em>, scaled by the factor loading of <em>X_i</em>, must be the same across all indicators (Theorem 1). This package implements two GMM-based tests of these overidentifying restrictions:</p>
 <ul>
 <li>
-<strong>T0</strong>: a statistical test dependent on reliability estimates (Section 3.2)</li>
+<strong>T0</strong>: depends on estimated factor loadings (Section 3.2)</li>
 <li>
-<strong>T1</strong>: a statistical test independent of reliability estimates (Section 3.3)</li>
+<strong>T1</strong>: independent of factor loading estimates (Section 3.3)</li>
 </ul>
 </div>
 <div class="section level2">
