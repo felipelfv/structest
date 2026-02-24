@@ -14,10 +14,10 @@ Factor analysis is routinely used to assess whether a single univariate latent v
 
 However, a measurement model fitting well does **not** imply the structural interpretation is correct. The individual indicators could each have separate causal effects on outcomes, even though their covariance structure is consistent with a single latent factor (see Figures 2 and 3 in the paper).
 
-VanderWeele and Vansteelandt (2022) show that the structural interpretation imposes testable overidentifying restrictions. Specifically, under a structural latent factor model, the association between any external variable *Z* and indicator *X_i*, scaled by the factor loading of *X_i*, must be the same across all indicators (Theorem 1). This package implements two GMM-based tests of these overidentifying restrictions:
+VanderWeele and Vansteelandt (2022) show that the structural interpretation has empirically testable implications. Specifically, under a structural latent factor model, the association between any external variable *Z* and indicator *X_i*, scaled by the factor loading of *X_i*, must be the same across all indicators (Theorem 1). This package implements the two statistical tests proposed in the paper:
 
-- **T0**: depends on estimated factor loadings (Section 3.2)
-- **T1**: independent of factor loading estimates (Section 3.3)
+- **T0**: a statistical test dependent on reliability estimates (Section 3.2)
+- **T1**: a statistical test independent of reliability estimates (Section 3.3)
 
 ## Installation
 

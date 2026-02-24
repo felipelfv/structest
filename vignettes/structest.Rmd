@@ -33,7 +33,7 @@ cause may be misleading.
 
 VanderWeele and Vansteelandt (2022) showed that the structural interpretation
 imposes testable empirical constraints. The **structest** package implements
-two GMM-based tests---$T_0$ and $T_1$---that can reject these constraints,
+two statistical tests---$T_0$ and $T_1$---that can reject these constraints,
 providing researchers with a principled way to evaluate whether the structural
 interpretation is tenable.
 
@@ -65,7 +65,8 @@ $$
 $$
 
 This identity is testable with observed data. The $T_0$ and $T_1$ tests
-formalise it as overidentifying restrictions in a GMM framework.
+formalise it using generalised methods of moments estimators
+(Newey & McFadden, 1994).
 
 ## The $T_0$ Test (Reliability-Dependent)
 
@@ -155,7 +156,7 @@ $$
 $$
 
 has rank $\leq 1$ under the structural model. The $T_1$ test checks this
-rank constraint using a two-step efficient GMM procedure, with $d \times p$
+rank constraint using generalised methods of moments, with $d \times p$
 moment conditions, $2d + p - 2$ free parameters, and $(d-1)(p-2)$ degrees of
 freedom.
 
