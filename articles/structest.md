@@ -4,22 +4,22 @@
 
 Factor analysis is one of the most widely used methods in the social and
 behavioural sciences. When a single latent factor fits the covariance
-among a set of observed indicators, researchers routinely form a
-composite score and use it in subsequent causal analyses. This practice
-implicitly assumes a **structural** interpretation of the latent factor
-model: that the latent variable itself, rather than the individual
-indicators, is what is causally efficacious.
+among a set of observed indicators, researchers often treat the latent
+variable as the causally relevant quantity in subsequent analyses. This
+practice implicitly assumes a **structural** interpretation of the
+latent factor model: that the latent variable itself, rather than the
+individual indicators, is what is causally efficacious.
 
 But a measurement model that fits well does *not* guarantee that this
 structural interpretation is correct. The indicators could each have
 their own direct causal effects on an outcome, even though their
 covariance structure is perfectly consistent with a single latent
 factor. If the structural interpretation is wrong, causal conclusions
-drawn from composite scores may be misleading.
+treating the latent variable as the cause may be misleading.
 
 VanderWeele and Vansteelandt (2022) showed that the structural
 interpretation imposes testable empirical constraints. The **structest**
-package implements two GMM-based tests—\\T_0\\ and \\T_1\\—that can
+package implements two statistical tests—\\T_0\\ and \\T_1\\—that can
 reject these constraints, providing researchers with a principled way to
 evaluate whether the structural interpretation is tenable.
 
@@ -48,7 +48,8 @@ by Theorem 1 of VanderWeele and Vansteelandt (2022), for any indicators
 \lambda_j \bigl\\E(X_i \mid Z=z) - E(X_i \mid Z=z^\*)\bigr\\ \\
 
 This identity is testable with observed data. The \\T_0\\ and \\T_1\\
-tests formalise it as overidentifying restrictions in a GMM framework.
+tests formalise it using generalised methods of moments estimators
+(Newey & McFadden, 1994).
 
 ## The \\T_0\\ Test (Reliability-Dependent)
 
@@ -172,7 +173,7 @@ reference level. This means the matrix of mean differences
 \\ \Delta\_{ij} = E(X_i \mid Z = z_j) - E(X_i \mid Z = z_1) \\
 
 has rank \\\leq 1\\ under the structural model. The \\T_1\\ test checks
-this rank constraint using a two-step efficient GMM procedure, with \\d
+this rank constraint using generalised methods of moments, with \\d
 \times p\\ moment conditions, \\2d + p - 2\\ free parameters, and
 \\(d-1)(p-2)\\ degrees of freedom.
 

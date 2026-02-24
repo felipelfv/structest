@@ -68,20 +68,22 @@
 </h2>
 <p>Factor analysis is one of the most widely used methods in the social
 and behavioural sciences. When a single latent factor fits the
-covariance among a set of observed indicators, researchers routinely
-form a composite score and use it in subsequent causal analyses. This
-practice implicitly assumes a <strong>structural</strong> interpretation
-of the latent factor model: that the latent variable itself, rather than
-the individual indicators, is what is causally efficacious.</p>
+covariance among a set of observed indicators, researchers often treat
+the latent variable as the causally relevant quantity in subsequent
+analyses. This practice implicitly assumes a <strong>structural</strong>
+interpretation of the latent factor model: that the latent variable
+itself, rather than the individual indicators, is what is causally
+efficacious.</p>
 <p>But a measurement model that fits well does <em>not</em> guarantee
 that this structural interpretation is correct. The indicators could
 each have their own direct causal effects on an outcome, even though
 their covariance structure is perfectly consistent with a single latent
 factor. If the structural interpretation is wrong, causal conclusions
-drawn from composite scores may be misleading.</p>
+treating the latent variable as the cause may be misleading.</p>
 <p>VanderWeele and Vansteelandt (2022) showed that the structural
 interpretation imposes testable empirical constraints. The
-<strong>structest</strong> package implements two GMM-based tests—<span class="math inline">\(T_0\)</span> and <span class="math inline">\(T_1\)</span>—that can reject these constraints,
+<strong>structest</strong> package implements two statistical
+tests—<span class="math inline">\(T_0\)</span> and <span class="math inline">\(T_1\)</span>—that can reject these constraints,
 providing researchers with a principled way to evaluate whether the
 structural interpretation is tenable.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -109,8 +111,8 @@ Theorem 1 of VanderWeele and Vansteelandt (2022), for any indicators
 \lambda_i \bigl\{E(X_j \mid Z=z) - E(X_j \mid Z=z^*)\bigr\}
 = \lambda_j \bigl\{E(X_i \mid Z=z) - E(X_i \mid Z=z^*)\bigr\}
 \]</span></p>
-<p>This identity is testable with observed data. The <span class="math inline">\(T_0\)</span> and <span class="math inline">\(T_1\)</span> tests formalise it as overidentifying
-restrictions in a GMM framework.</p>
+<p>This identity is testable with observed data. The <span class="math inline">\(T_0\)</span> and <span class="math inline">\(T_1\)</span> tests formalise it using generalised
+methods of moments estimators (Newey &amp; McFadden, 1994).</p>
 </div>
 <div class="section level2">
 <h2 id="the-t_0-test-reliability-dependent">The <span class="math inline">\(T_0\)</span> Test
@@ -235,10 +237,8 @@ the reference level. This means the matrix of mean differences</p>
 \]</span></p>
 <p>has rank <span class="math inline">\(\leq 1\)</span> under the
 structural model. The <span class="math inline">\(T_1\)</span> test
-checks this rank constraint using a two-step efficient GMM procedure,
-with <span class="math inline">\(d \times p\)</span> moment conditions,
-<span class="math inline">\(2d + p - 2\)</span> free parameters, and
-<span class="math inline">\((d-1)(p-2)\)</span> degrees of freedom.</p>
+checks this rank constraint using generalised methods of moments, with
+<span class="math inline">\(d \times p\)</span> moment conditions, <span class="math inline">\(2d + p - 2\)</span> free parameters, and <span class="math inline">\((d-1)(p-2)\)</span> degrees of freedom.</p>
 <p><strong>When to use:</strong> <span class="math inline">\(d \geq
 3\)</span> indicators and <span class="math inline">\(p \geq 3\)</span>
 levels of <span class="math inline">\(Z\)</span>. Preferred over <span class="math inline">\(T_0\)</span> because it does not rely on

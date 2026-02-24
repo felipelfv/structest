@@ -65,14 +65,14 @@
 <div class="section level2">
 <h2 id="background">Background<a class="anchor" aria-label="anchor" href="#background"></a>
 </h2>
-<p>Factor analysis is routinely used to assess whether a single univariate latent variable explains the covariance among a set of observed indicators. When a one-factor model fits adequately, researchers typically form a composite score (e.g. the mean of the items) and treat it as a measure of the underlying construct in subsequent causal analyses. This practice implicitly assumes a <strong>structural</strong> interpretation of the latent factor model: that it is the latent variable, rather than the individual indicators, that is causally efficacious.</p>
-<p>However, a basic measurement model fitting well does <strong>not</strong> imply the structural interpretation is correct. The individual indicators could each have separate causal effects on outcomes, even though their covariance structure is consistent with a single latent factor (see Figures 2 and 3 in the paper).</p>
-<p>VanderWeele and Vansteelandt (2022) show that the structural interpretation imposes testable empirical constraints. Specifically, under a structural latent factor model, the association between any external variable <em>Z</em> and indicator <em>X_i</em>, scaled by the reliability of <em>X_i</em>, must be the same across all indicators (Theorem 1). This package implements two GMM-based tests that exploit these constraints:</p>
+<p>Factor analysis is routinely used to assess whether a single univariate latent variable explains the covariance among a set of observed indicators. When a one-factor model fits adequately, researchers often treat the latent variable as the causally relevant quantity in subsequent analyses. This practice implicitly assumes a <strong>structural</strong> interpretation of the latent factor model: that it is the latent variable, rather than the individual indicators, that is causally efficacious.</p>
+<p>However, a measurement model fitting well does <strong>not</strong> imply the structural interpretation is correct. The individual indicators could each have separate causal effects on outcomes, even though their covariance structure is consistent with a single latent factor (see Figures 2 and 3 in the paper).</p>
+<p>VanderWeele and Vansteelandt (2022) show that the structural interpretation has empirically testable implications. Specifically, under a structural latent factor model, the association between any external variable <em>Z</em> and indicator <em>X_i</em>, scaled by the factor loading of <em>X_i</em>, must be the same across all indicators (Theorem 1). This package implements the two statistical tests proposed in the paper:</p>
 <ul>
 <li>
-<strong>T0</strong>: a test that depends on estimated reliability coefficients (Section 3.2)</li>
+<strong>T0</strong>: a statistical test dependent on reliability estimates (Section 3.2)</li>
 <li>
-<strong>T1</strong>: a test that is independent of reliability estimates (Section 3.3)</li>
+<strong>T1</strong>: a statistical test independent of reliability estimates (Section 3.3)</li>
 </ul>
 </div>
 <div class="section level2">
@@ -97,160 +97,18 @@
 <tbody>
 <tr class="odd">
 <td><code>test_t0(X, z)</code></td>
-<td>Reliability-dependent test (Section 3.2). Requires d &gt;= 3 indicators and p &gt;= 2 Z-levels.</td>
+<td>Factor-loading-dependent test (Section 3.2). Requires d &gt;= 3 indicators and p &gt;= 2 Z-levels.</td>
 </tr>
 <tr class="even">
 <td><code>test_t1(X, z)</code></td>
-<td>Reliability-independent test (Section 3.3). Requires d &gt;= 3 indicators and p &gt;= 3 Z-levels.</td>
+<td>Factor-loading-independent test (Section 3.3). Requires d &gt;= 3 indicators and p &gt;= 3 Z-levels.</td>
 </tr>
 <tr class="odd">
 <td><code>estimate_reliability(X)</code></td>
-<td>Estimate reliability coefficients via quasi-Poisson GLM (Section 3.1).</td>
+<td>Estimate factor loadings via quasi-Poisson GLM on pairwise covariances (Section 3.1).</td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section level2">
-<h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
-</h2>
-<div class="section level3">
-<h3 id="t0-test-reliability-dependent">T0 test (reliability-dependent)<a class="anchor" aria-label="anchor" href="#t0-test-reliability-dependent"></a>
-</h3>
-<p>The T0 test uses estimated reliabilities to construct moment conditions that should hold under the structural interpretation. It requires at least 3 indicators and a discrete auxiliary variable <em>Z</em> with at least 2 levels.</p>
-<p>Under the null hypothesis that the structural model holds, the test statistic follows a chi-squared distribution with (d - 1)(p - 1) degrees of freedom.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://felipelfv.github.io/structest/">structest</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">12345</span><span class="op">)</span></span>
-<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">5000</span></span>
-<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fl">5</span></span>
-<span></span>
-<span><span class="co"># Simulate data under the structural model</span></span>
-<span><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="va">n</span>, <span class="fl">1</span>, <span class="fl">0.5</span><span class="op">)</span>                         <span class="co"># binary auxiliary variable</span></span>
-<span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">+</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="va">z</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>                    <span class="co"># latent factor affected by Z</span></span>
-<span><span class="va">lambda</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.0</span>, <span class="fl">0.8</span>, <span class="fl">0.6</span>, <span class="fl">0.9</span>, <span class="fl">0.7</span><span class="op">)</span>          <span class="co"># reliabilities</span></span>
-<span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="va">n</span>, <span class="va">d</span><span class="op">)</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">d</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">X</span><span class="op">[</span>, <span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">2</span> <span class="op">+</span> <span class="va">lambda</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">*</span> <span class="va">Y</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, sd <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># Run T0 test (should NOT reject)</span></span>
-<span><span class="fu"><a href="reference/test_t0.html">test_t0</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">z</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Now simulate data where Z affects indicators differently (violating the structural model)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">12345</span><span class="op">)</span></span>
-<span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
-<span><span class="va">X_bad</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span></span>
-<span>  <span class="fl">2</span> <span class="op">+</span> <span class="fl">1.0</span> <span class="op">*</span> <span class="va">Y</span> <span class="op">+</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="va">z</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, sd <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span>,</span>
-<span>  <span class="fl">3</span> <span class="op">+</span> <span class="fl">0.8</span> <span class="op">*</span> <span class="va">Y</span> <span class="op">+</span> <span class="fl">2.0</span> <span class="op">*</span> <span class="va">z</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, sd <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span>,   <span class="co"># disproportionate Z effect</span></span>
-<span>  <span class="fl">1</span> <span class="op">+</span> <span class="fl">0.6</span> <span class="op">*</span> <span class="va">Y</span> <span class="op">-</span> <span class="fl">0.3</span> <span class="op">*</span> <span class="va">z</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, sd <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span>,</span>
-<span>  <span class="fl">2</span> <span class="op">+</span> <span class="fl">0.9</span> <span class="op">*</span> <span class="va">Y</span> <span class="op">+</span> <span class="fl">0.4</span> <span class="op">*</span> <span class="va">z</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, sd <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span>,</span>
-<span>  <span class="fl">1</span> <span class="op">+</span> <span class="fl">0.7</span> <span class="op">*</span> <span class="va">Y</span> <span class="op">+</span> <span class="fl">0.8</span> <span class="op">*</span> <span class="va">z</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, sd <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Run T0 test (should reject)</span></span>
-<span><span class="fu"><a href="reference/test_t0.html">test_t0</a></span><span class="op">(</span><span class="va">X_bad</span>, <span class="va">z</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="t1-test-reliability-independent">T1 test (reliability-independent)<a class="anchor" aria-label="anchor" href="#t1-test-reliability-independent"></a>
-</h3>
-<p>The T1 test avoids estimating reliabilities entirely by parameterising the conditional expectations as E(X_i | Z = z_j) = gamma_i + alpha_i * beta_j, with alpha_1 = 1 and beta_1 = 0 for identification (Equation 3 in the paper). Under the structural model, the matrix of mean differences Delta_ij = E(X_i | Z = z_j) - E(X_i | Z = z_1) has rank &lt;= 1. The T1 test checks this rank constraint using a two-step efficient GMM procedure. This test requires at least 3 indicators and at least 3 levels of <em>Z</em>.</p>
-<p>Under the null, the test statistic follows a chi-squared distribution with (d - 1)(p - 2) degrees of freedom.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">12345</span><span class="op">)</span></span>
-<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">5000</span></span>
-<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fl">5</span></span>
-<span></span>
-<span><span class="co"># Simulate data under the structural model (Z with 4 levels)</span></span>
-<span><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">3</span>, <span class="va">n</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">+</span> <span class="fl">0.3</span> <span class="op">*</span> <span class="op">(</span><span class="va">z</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0.7</span> <span class="op">*</span> <span class="op">(</span><span class="va">z</span> <span class="op">==</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1.2</span> <span class="op">*</span> <span class="op">(</span><span class="va">z</span> <span class="op">==</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
-<span><span class="va">lambda</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.0</span>, <span class="fl">0.8</span>, <span class="fl">0.6</span>, <span class="fl">0.9</span>, <span class="fl">0.7</span><span class="op">)</span></span>
-<span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="va">n</span>, <span class="va">d</span><span class="op">)</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">d</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">X</span><span class="op">[</span>, <span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">lambda</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">*</span> <span class="va">Y</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, sd <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># Run T1 test (should NOT reject)</span></span>
-<span><span class="fu"><a href="reference/test_t1.html">test_t1</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">z</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="estimating-reliabilities">Estimating reliabilities<a class="anchor" aria-label="anchor" href="#estimating-reliabilities"></a>
-</h3>
-<p>The reliability coefficients can also be estimated directly. Under the model X_i = lambda_i * Y + epsilon_i, we have Cov(X_i, X_j) = lambda_i * lambda_j. The reliabilities are obtained by fitting a quasi-Poisson GLM with log link to the pairwise covariances.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">rel</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/estimate_reliability.html">estimate_reliability</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span></span>
-<span><span class="va">rel</span><span class="op">$</span><span class="va">lambda</span></span></code></pre></div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a>
-</h2>
-<div class="section level3">
-<h3 id="model">Model<a class="anchor" aria-label="anchor" href="#model"></a>
-</h3>
-<p>The basic (reflective) latent factor model assumes:</p>
-<p>X_i = alpha_i + lambda_i * eta + epsilon_i, for i = 1, …, d</p>
-<p>where eta is the latent variable, lambda_i are the factor loadings (reliabilities), and epsilon_i are independent error terms. The <strong>structural</strong> interpretation further assumes that eta, rather than the individual X_i, is causally efficacious.</p>
-</div>
-<div class="section level3">
-<h3 id="theorem-1-vanderweele--vansteelandt-2022">Theorem 1 (VanderWeele &amp; Vansteelandt, 2022)<a class="anchor" aria-label="anchor" href="#theorem-1-vanderweele--vansteelandt-2022"></a>
-</h3>
-<p>If the structural latent factor model holds and <em>Z</em> is independent of (X_1, …, X_d) conditional on eta, then for any <em>i</em>, <em>j</em>, and any values <em>z</em>, <em>z*</em>:</p>
-<p>lambda_i {E(X_j | Z = z) - E(X_j | Z = z<em>)} = lambda_j {E(X_i | Z = z) - E(X_i | Z = z</em>)}</p>
-<p>This identity is testable with observed data. The T0 and T1 tests are GMM-based tests of overidentifying restrictions implied by this identity.</p>
-</div>
-<div class="section level3">
-<h3 id="t0-test">T0 test<a class="anchor" aria-label="anchor" href="#t0-test"></a>
-</h3>
-<p>Parameterises E(X_i | Z = z) = gamma_i + (lambda_i / lambda_1) * beta_z and tests the overidentifying restrictions using a GMM criterion. The variance of the estimating equations is adjusted for uncertainty in the estimated reliabilities (see paper, p. 2041).</p>
-<ul>
-<li>Degrees of freedom: (d - 1)(p - 1)</li>
-<li>Requires: d &gt;= 3 indicators, p &gt;= 2 Z-levels</li>
-</ul>
-</div>
-<div class="section level3">
-<h3 id="t1-test">T1 test<a class="anchor" aria-label="anchor" href="#t1-test"></a>
-</h3>
-<p>Parameterises E(X_i | Z = z_j) = gamma_i + alpha_i * beta_j with alpha_1 = 1 (identification) and beta_1 = 0 (reference level). Tests whether the mean-difference matrix Delta_ij = E(X_i | Z = z_j) - E(X_i | Z = z_1) has rank &lt;= 1, which is the testable implication of the structural model (Equation 3 in the paper). Uses a two-step efficient GMM procedure.</p>
-<ul>
-<li>Degrees of freedom: (d - 1)(p - 2)</li>
-<li>Requires: d &gt;= 3 indicators, p &gt;= 3 Z-levels</li>
-</ul>
-</div>
-<div class="section level3">
-<h3 id="choosing-between-t0-and-t1">Choosing between T0 and T1<a class="anchor" aria-label="anchor" href="#choosing-between-t0-and-t1"></a>
-</h3>
-<table class="table">
-<thead><tr class="header">
-<th></th>
-<th>T0</th>
-<th>T1</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td><strong>Relies on reliability estimates</strong></td>
-<td>Yes</td>
-<td>No</td>
-</tr>
-<tr class="even">
-<td><strong>Sensitive to error distribution misspecification</strong></td>
-<td>Yes</td>
-<td>No</td>
-</tr>
-<tr class="odd">
-<td><strong>Minimum Z-levels</strong></td>
-<td>2</td>
-<td>3</td>
-</tr>
-<tr class="even">
-<td><strong>Degrees of freedom</strong></td>
-<td>(d-1)(p-1)</td>
-<td>(d-1)(p-2)</td>
-</tr>
-</tbody>
-</table>
-<p>The T1 test is generally preferred because it does not depend on the error-structure assumptions needed to estimate reliabilities (e.g. independent, homoscedastic errors). However, when only 2 levels of <em>Z</em> are available, only the T0 test can be used.</p>
-</div>
 </div>
 <div class="section level2">
 <h2 id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>
