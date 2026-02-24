@@ -1,8 +1,8 @@
 # Estimate Reliability Coefficients (Section 3.1)
 
-Estimates the reliability coefficients (loadings) \\\lambda_i\\ for each
-indicator in a univariate latent factor model, using pairwise
-covariances and a quasi-Poisson GLM with log link.
+Estimates the reliability coefficients \\\lambda_i\\ for each indicator
+in a univariate latent factor model, using pairwise covariances and a
+quasi-Poisson GLM with log link.
 
 ## Usage
 

@@ -19,7 +19,7 @@ treating the latent variable as the cause may be misleading.
 
 VanderWeele and Vansteelandt (2022) showed that the structural
 interpretation imposes testable empirical constraints. The **structest**
-package implements two GMM-based tests—\\T_0\\ and \\T_1\\—that can
+package implements two statistical tests—\\T_0\\ and \\T_1\\—that can
 reject these constraints, providing researchers with a principled way to
 evaluate whether the structural interpretation is tenable.
 
@@ -34,9 +34,11 @@ Consider a reflective latent factor model with \\d\\ indicators:
 \\ X_i = \mu_i + \lambda_i\\\eta + \varepsilon_i, \qquad i = 1, \ldots,
 d \\
 
-where \\\eta\\ is the latent variable, \\\lambda_i\\ are factor loadings
-(reliabilities), \\\mu_i\\ are intercepts, and the \\\varepsilon_i\\ are
-independent error terms.
+where \\\eta\\ is the latent variable, \\\lambda_i\\ are the
+reliabilities, \\\mu_i\\ are intercepts, and the \\\varepsilon_i\\ are
+independent error terms. (Following the paper, we use the term
+“reliabilities” for \\\lambda_i\\; in mainstream psychometrics these are
+more commonly known as factor loadings.)
 
 Under the **structural** interpretation, the latent variable \\\eta\\ is
 the causally relevant quantity. If we have an external variable \\Z\\
@@ -48,7 +50,8 @@ by Theorem 1 of VanderWeele and Vansteelandt (2022), for any indicators
 \lambda_j \bigl\\E(X_i \mid Z=z) - E(X_i \mid Z=z^\*)\bigr\\ \\
 
 This identity is testable with observed data. The \\T_0\\ and \\T_1\\
-tests formalise it as overidentifying restrictions in a GMM framework.
+tests formalise it using generalised methods of moments estimators
+(Newey & McFadden, 1994).
 
 ## The \\T_0\\ Test (Reliability-Dependent)
 
@@ -77,7 +80,7 @@ d <- 5
 # Simulate under the structural model
 z <- rbinom(n, 1, 0.5)                        # binary auxiliary variable
 eta <- 1 + 0.5 * z + rnorm(n)                 # latent factor affected by Z
-lambda <- c(1.0, 0.8, 0.6, 0.9, 0.7)         # factor loadings
+lambda <- c(1.0, 0.8, 0.6, 0.9, 0.7)         # reliabilities
 X <- matrix(NA, n, d)
 for (i in 1:d) {
   X[, i] <- 2 + lambda[i] * eta + rnorm(n, sd = 0.5)
@@ -172,7 +175,7 @@ reference level. This means the matrix of mean differences
 \\ \Delta\_{ij} = E(X_i \mid Z = z_j) - E(X_i \mid Z = z_1) \\
 
 has rank \\\leq 1\\ under the structural model. The \\T_1\\ test checks
-this rank constraint using a two-step efficient GMM procedure, with \\d
+this rank constraint using generalised methods of moments, with \\d
 \times p\\ moment conditions, \\2d + p - 2\\ free parameters, and
 \\(d-1)(p-2)\\ degrees of freedom.
 
@@ -271,7 +274,7 @@ summary(result_t1_bad)
 
 The
 [`estimate_reliability()`](https://felipelfv.github.io/structest/reference/estimate_reliability.md)
-function estimates the factor loadings \\\lambda_i\\ from pairwise
+function estimates the reliabilities \\\lambda_i\\ from pairwise
 covariances. Under the model \\X_i = \mu_i + \lambda_i\\\eta +
 \varepsilon_i\\, we have \\\text{Cov}(X_i, X_j) =
 \lambda_i\\\lambda_j\\. Taking logs gives \\\log \text{Cov}(X_i, X_j) =

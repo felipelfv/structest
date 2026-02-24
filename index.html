@@ -67,13 +67,14 @@
 </h2>
 <p>Factor analysis is routinely used to assess whether a single univariate latent variable explains the covariance among a set of observed indicators. When a one-factor model fits adequately, researchers often treat the latent variable as the causally relevant quantity in subsequent analyses. This practice implicitly assumes a <strong>structural</strong> interpretation of the latent factor model: that it is the latent variable, rather than the individual indicators, that is causally efficacious.</p>
 <p>However, a measurement model fitting well does <strong>not</strong> imply the structural interpretation is correct. The individual indicators could each have separate causal effects on outcomes, even though their covariance structure is consistent with a single latent factor (see Figures 2 and 3 in the paper).</p>
-<p>VanderWeele and Vansteelandt (2022) show that the structural interpretation imposes testable overidentifying restrictions. Specifically, under a structural latent factor model, the association between any external variable <em>Z</em> and indicator <em>X_i</em>, scaled by the factor loading of <em>X_i</em>, must be the same across all indicators (Theorem 1). This package implements two GMM-based tests of these overidentifying restrictions:</p>
+<p>VanderWeele and Vansteelandt (2022) show that the structural interpretation has empirically testable implications. Specifically, under a structural latent factor model, the association between any external variable <em>Z</em> and indicator <em>X_i</em>, scaled by the reliability of <em>X_i</em>, must be the same across all indicators (Theorem 1). This package implements the two statistical tests proposed in the paper:</p>
 <ul>
 <li>
-<strong>T0</strong>: depends on estimated factor loadings (Section 3.2)</li>
+<strong>T0</strong>: a statistical test dependent on reliability estimates (Section 3.2)</li>
 <li>
-<strong>T1</strong>: independent of factor loading estimates (Section 3.3)</li>
+<strong>T1</strong>: a statistical test independent of reliability estimates (Section 3.3)</li>
 </ul>
+<p><strong>Note on terminology:</strong> Following the paper, this package refers to the coefficients <em>lambda_i</em> as “reliabilities.” In mainstream psychometrics these are more commonly known as factor loadings.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -97,15 +98,15 @@
 <tbody>
 <tr class="odd">
 <td><code>test_t0(X, z)</code></td>
-<td>Factor-loading-dependent test (Section 3.2). Requires d &gt;= 3 indicators and p &gt;= 2 Z-levels.</td>
+<td>Statistical test dependent on reliability estimates (Section 3.2). Requires d &gt;= 3 indicators and p &gt;= 2 Z-levels.</td>
 </tr>
 <tr class="even">
 <td><code>test_t1(X, z)</code></td>
-<td>Factor-loading-independent test (Section 3.3). Requires d &gt;= 3 indicators and p &gt;= 3 Z-levels.</td>
+<td>Statistical test independent of reliability estimates (Section 3.3). Requires d &gt;= 3 indicators and p &gt;= 3 Z-levels.</td>
 </tr>
 <tr class="odd">
 <td><code>estimate_reliability(X)</code></td>
-<td>Estimate factor loadings via quasi-Poisson GLM on pairwise covariances (Section 3.1).</td>
+<td>Estimation of reliability via quasi-Poisson GLM on pairwise covariances (Section 3.1).</td>
 </tr>
 </tbody>
 </table>

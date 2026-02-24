@@ -2,8 +2,7 @@
 
 Tests whether the structural interpretation of a univariate latent
 factor model can be rejected, without requiring estimation of
-reliability coefficients. Uses centered indicators and a two-step
-efficient GMM procedure.
+reliability coefficients.
 
 ## Usage
 
@@ -15,7 +14,7 @@ test_t1(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25, verbose = FALSE)
 
 - X:
 
-  numeric matrix (n x d) of indicator variables, d \>= 3.
+  numeric matrix (n x d) of indicator variables, d \>= 2.
 
 - z:
 
@@ -28,11 +27,11 @@ test_t1(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25, verbose = FALSE)
 
 - max_iter:
 
-  integer; maximum iterations for the alternating LS procedure.
+  integer; maximum iterations for `nlm`.
 
 - tol:
 
-  numeric; convergence tolerance for the alternating LS procedure.
+  numeric; convergence tolerance for the alternating LS initializer.
 
 - verbose:
 
@@ -64,7 +63,8 @@ An object of class `c("structest_t1", "structest", "htest")` containing:
 
 - estimates:
 
-  list with `alpha` and `beta`.
+  list with `gamma` (\\\gamma_i\\), `alpha` (\\\alpha_i\\, with
+  \\\alpha_1 = 1\\), and `beta` (\\\beta_j\\, with \\\beta_1 = 0\\).
 
 - n_obs:
 
@@ -88,18 +88,29 @@ An object of class `c("structest_t1", "structest", "htest")` containing:
 
 ## Details
 
-The indicators are centered by their row mean: \\X^c\_{ik} = X\_{ik} -
-\bar{X}\_{i\cdot}\\, which eliminates the latent factor \\Y\\. Under the
-structural interpretation, \\E\[X^c_i \| Z = z_j\] = \alpha_i \beta_j\\
-where \\\alpha_i\\ and \\\beta_j\\ are identifiable nuisance parameters.
-The test has \\(d-1)(p-2)\\ degrees of freedom. The full model (Equation
-3 in the paper) has \\d \times p\\ moment conditions and \\2d + p - 2\\
-free parameters (\\d\\ intercepts, \\d\\ alphas, \\p-1\\ betas, minus 1
-for the alpha-beta scale indeterminacy), giving \\dp - (2d+p-2) =
-(d-1)(p-2)\\ degrees of freedom.
+Under the structural model \\X_i = \mu_i + \lambda_i \eta +
+\varepsilon_i\\, the conditional expectations satisfy \$\$E(X_i \mid Z =
+z_j) = \gamma_i + \alpha_i \beta_j\$\$ where \\\gamma_i\\ are intercepts
+absorbing the reference-level means, \\\alpha_i\\ are parameters (with
+\\\alpha_1 = 1\\ for identification), and \\\beta_j\\ are parameters
+(with \\\beta_1 = 0\\ for the reference level).
 
-The procedure uses a two-step efficient GMM: first with a fixed weight
-matrix from initial estimates, then with the efficient weight matrix.
+This gives \\d \times p\\ moment conditions: \$\$E\[I(Z = z_j)(X_i -
+\gamma_i - \alpha_i \beta_j)\] = 0\$\$ with \\2d + p - 2\\ free
+parameters (\\d\\ intercepts, \\d - 1\\ alphas, \\p - 1\\ betas),
+yielding \\dp - (2d + p - 2) = (d-1)(p-2)\\ degrees of freedom.
+
+The test checks whether the mean-difference matrix \\\Delta\_{ij} =
+E(X_i \mid Z = z_j) - E(X_i \mid Z = z_1)\\ has rank \\\le 1\\, which is
+the testable implication of the structural model (Theorem 2 in the
+paper).
+
+Consistent generalised methods of moments estimators (Newey & McFadden,
+1994) are obtained by minimising a distance metric statistic. The
+procedure uses two-step estimation to obtain stable initial estimates,
+then minimises the criterion with the weight matrix recomputed at each
+parameter value. The test statistic is asymptotically
+\\\chi^2\_{(d-1)(p-2)}\\ under the null.
 
 ## References
 

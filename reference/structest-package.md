@@ -26,12 +26,12 @@ VanderWeele, T. J. and Vansteelandt, S. (2022). A statistical test to
 reject the structural interpretation of a latent factor model. *Journal
 of the Royal Statistical Society Series B*, 84, 2032–2054.
 
+## See also
+
+Useful links:
+
+- <https://felipelfv.github.io/structest/>
+
 ## Author
 
 **Maintainer**: Felipe Fontana Vieira <felipelfv98@gmail.com>
-
-Authors:
-
-- Tyler VanderWeele
-
-- Stijn Vansteelandt

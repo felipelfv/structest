@@ -7,9 +7,9 @@
   };
 </script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="T1 Test: Reliability-Independent Test of Structural Interpretation (Section 3.3) — test_t1"><meta name="description" content="Tests whether the structural interpretation of a univariate latent factor
 model can be rejected, without requiring estimation of reliability
-coefficients. Uses centered indicators and a two-step efficient GMM procedure."><meta property="og:description" content="Tests whether the structural interpretation of a univariate latent factor
+coefficients."><meta property="og:description" content="Tests whether the structural interpretation of a univariate latent factor
 model can be rejected, without requiring estimation of reliability
-coefficients. Uses centered indicators and a two-step efficient GMM procedure."><meta property="og:image" content="https://felipelfv.github.io/structest/logo.png"></head><body>
+coefficients."><meta property="og:image" content="https://felipelfv.github.io/structest/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -44,7 +44,7 @@ coefficients. Uses centered indicators and a two-step efficient GMM procedure.">
     <div class="ref-description section level2">
     <p>Tests whether the structural interpretation of a univariate latent factor
 model can be rejected, without requiring estimation of reliability
-coefficients. Uses centered indicators and a two-step efficient GMM procedure.</p>
+coefficients.</p>
     </div>
 
     <div class="section level2">
@@ -57,7 +57,7 @@ coefficients. Uses centered indicators and a two-step efficient GMM procedure.</
 
 
 <dl><dt id="arg-x">X<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>numeric matrix (n x d) of indicator variables, d &gt;= 3.</p></dd>
+<dd><p>numeric matrix (n x d) of indicator variables, d &gt;= 2.</p></dd>
 
 
 <dt id="arg-z">z<a class="anchor" aria-label="anchor" href="#arg-z"></a></dt>
@@ -70,11 +70,11 @@ Must have at least 3 distinct levels.</p></dd>
 
 
 <dt id="arg-max-iter">max_iter<a class="anchor" aria-label="anchor" href="#arg-max-iter"></a></dt>
-<dd><p>integer; maximum iterations for the alternating LS procedure.</p></dd>
+<dd><p>integer; maximum iterations for <code>nlm</code>.</p></dd>
 
 
 <dt id="arg-tol">tol<a class="anchor" aria-label="anchor" href="#arg-tol"></a></dt>
-<dd><p>numeric; convergence tolerance for the alternating LS procedure.</p></dd>
+<dd><p>numeric; convergence tolerance for the alternating LS initializer.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
@@ -100,7 +100,9 @@ containing:</p><dl><dt>statistic</dt>
 <dd><p>name of the data objects.</p></dd>
 
 <dt>estimates</dt>
-<dd><p>list with <code>alpha</code> and <code>beta</code>.</p></dd>
+<dd><p>list with <code>gamma</code> (\(\gamma_i\)), <code>alpha</code>
+(\(\alpha_i\), with \(\alpha_1 = 1\)), and <code>beta</code>
+(\(\beta_j\), with \(\beta_1 = 0\)).</p></dd>
 
 <dt>n_obs</dt>
 <dd><p>number of observations used.</p></dd>
@@ -121,18 +123,28 @@ containing:</p><dl><dt>statistic</dt>
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The indicators are centered by their row mean:
-\(X^c_{ik} = X_{ik} - \bar{X}_{i\cdot}\), which eliminates the latent
-factor \(Y\). Under the structural interpretation,
-\(E[X^c_i | Z = z_j] = \alpha_i \beta_j\) where \(\alpha_i\) and
-\(\beta_j\) are identifiable nuisance parameters. The test has
-\((d-1)(p-2)\) degrees of freedom. The full model (Equation 3 in the
-paper) has \(d \times p\) moment conditions and \(2d + p - 2\) free
-parameters (\(d\) intercepts, \(d\) alphas, \(p-1\) betas, minus 1
-for the alpha-beta scale indeterminacy), giving
-\(dp - (2d+p-2) = (d-1)(p-2)\) degrees of freedom.</p>
-<p>The procedure uses a two-step efficient GMM: first with a fixed weight
-matrix from initial estimates, then with the efficient weight matrix.</p>
+    <p>Under the structural model \(X_i = \mu_i + \lambda_i \eta + \varepsilon_i\),
+the conditional expectations satisfy
+$$E(X_i \mid Z = z_j) = \gamma_i + \alpha_i \beta_j$$
+where \(\gamma_i\) are intercepts absorbing the reference-level means,
+\(\alpha_i\) are parameters (with \(\alpha_1 = 1\) for
+identification), and \(\beta_j\) are parameters (with
+\(\beta_1 = 0\) for the reference level).</p>
+<p>This gives \(d \times p\) moment conditions:
+$$E[I(Z = z_j)(X_i - \gamma_i - \alpha_i \beta_j)] = 0$$
+with \(2d + p - 2\) free parameters (\(d\) intercepts, \(d - 1\)
+alphas, \(p - 1\) betas), yielding
+\(dp - (2d + p - 2) = (d-1)(p-2)\) degrees of freedom.</p>
+<p>The test checks whether the mean-difference matrix
+\(\Delta_{ij} = E(X_i \mid Z = z_j) - E(X_i \mid Z = z_1)\) has rank
+\(\le 1\), which is the testable implication of the structural model
+(Theorem 2 in the paper).</p>
+<p>Consistent generalised methods of moments estimators
+(Newey &amp; McFadden, 1994) are obtained by minimising a distance metric
+statistic. The procedure uses two-step estimation to obtain stable
+initial estimates, then minimises the criterion with the weight matrix
+recomputed at each parameter value. The test statistic is asymptotically
+\(\chi^2_{(d-1)(p-2)}\) under the null.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>

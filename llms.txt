@@ -31,15 +31,20 @@ covariance structure is consistent with a single latent factor (see
 Figures 2 and 3 in the paper).
 
 VanderWeele and Vansteelandt (2022) show that the structural
-interpretation imposes testable overidentifying restrictions.
-Specifically, under a structural latent factor model, the association
-between any external variable *Z* and indicator *X_i*, scaled by the
-factor loading of *X_i*, must be the same across all indicators (Theorem
-1). This package implements two GMM-based tests of these overidentifying
-restrictions:
+interpretation has empirically testable implications. Specifically,
+under a structural latent factor model, the association between any
+external variable *Z* and indicator *X_i*, scaled by the reliability of
+*X_i*, must be the same across all indicators (Theorem 1). This package
+implements the two statistical tests proposed in the paper:
 
-- **T0**: depends on estimated factor loadings (Section 3.2)
-- **T1**: independent of factor loading estimates (Section 3.3)
+- **T0**: a statistical test dependent on reliability estimates (Section
+  3.2)
+- **T1**: a statistical test independent of reliability estimates
+  (Section 3.3)
+
+**Note on terminology:** Following the paper, this package refers to the
+coefficients *lambda_i* as “reliabilities.” In mainstream psychometrics
+these are more commonly known as factor loadings.
 
 ## Installation
 
@@ -50,11 +55,11 @@ devtools::install_github("felipelfv/structest")
 
 ## Functions
 
-| Function                  | Description                                                                                      |
-|---------------------------|--------------------------------------------------------------------------------------------------|
-| `test_t0(X, z)`           | Factor-loading-dependent test (Section 3.2). Requires d \>= 3 indicators and p \>= 2 Z-levels.   |
-| `test_t1(X, z)`           | Factor-loading-independent test (Section 3.3). Requires d \>= 3 indicators and p \>= 3 Z-levels. |
-| `estimate_reliability(X)` | Estimate factor loadings via quasi-Poisson GLM on pairwise covariances (Section 3.1).            |
+| Function                  | Description                                                                                                            |
+|---------------------------|------------------------------------------------------------------------------------------------------------------------|
+| `test_t0(X, z)`           | Statistical test dependent on reliability estimates (Section 3.2). Requires d \>= 3 indicators and p \>= 2 Z-levels.   |
+| `test_t1(X, z)`           | Statistical test independent of reliability estimates (Section 3.3). Requires d \>= 3 indicators and p \>= 3 Z-levels. |
+| `estimate_reliability(X)` | Estimation of reliability via quasi-Poisson GLM on pairwise covariances (Section 3.1).                                 |
 
 ## Reference
 

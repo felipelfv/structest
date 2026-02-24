@@ -1,8 +1,9 @@
 # T0 Test: Reliability-Dependent Test of Structural Interpretation (Section 3.2)
 
 Tests whether the structural interpretation of a univariate latent
-factor model can be rejected, using a GMM test that accounts for
-uncertainty in the estimated reliability coefficients.
+factor model can be rejected, using estimated reliability coefficients.
+The variance of the estimating equations is adjusted for uncertainty in
+the reliability estimates (see paper, p. 2041).
 
 ## Usage
 
@@ -86,8 +87,11 @@ conditions with \\d + p - 1\\ free parameters (\\\gamma_1, \ldots,
 \gamma_d\\ and \\\beta_2, \ldots, \beta_p\\ with \\\beta_1 = 0\\),
 yielding \\(d-1)(p-1)\\ degrees of freedom.
 
-The variance of the GMM estimating equations is adjusted for the
-uncertainty in the reliability estimates \\\lambda_i\\.
+The variance of the estimating equations is adjusted for the uncertainty
+in the reliability estimates \\\lambda_i\\ (see paper, p. 2041).
+Consistent generalised methods of moments estimators (Newey & McFadden,
+1994) are obtained by minimising the resulting distance metric
+statistic.
 
 ## References
 
