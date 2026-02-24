@@ -80,35 +80,59 @@ test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
   #   Free parameters: d + (d-1) + (p-1) = 2d + p - 2
   #   df = d*p - (2d + p - 2) = (d-1)(p-2)
 
-  # Initialization from cell means
-  # Cell means: mean(X_i | Z = z_j)
-  cell_means <- matrix(0, d, p)
-  for (j in seq_len(p)) {
-    mask <- z == z_levels[j]
-    for (i in seq_len(d)) {
-      cell_means[i, j] <- mean(X[mask, i])
-    }
-  }
-
-  # gamma_i = E(X_i | Z = z_1), the reference-level mean
-  gamma_init <- cell_means[, 1]
-
-  # Mean differences: D[i,j] = E(X_i|Z=z_j) - gamma_i = alpha_i * beta_j
-  D <- cell_means - gamma_init  # d x p, first column is 0
-
-  # beta_j = D[1, j] since alpha_1 = 1
-  beta_init <- D[1, ]  # length p, beta_init[1] = 0
-
-  # alpha_i from LS fit of D[i, -1] on beta[-1], for i >= 2
+  # Initialization via Appendix A.3 iterative procedure
+  # Initial values: gamma_i = 0, alpha_i = mean(X_i | Z = z_1)
+  gamma_init <- rep(0, d)
   alpha_init <- numeric(d)
-  alpha_init[1] <- 1
-  beta_sq_sum <- sum(beta_init[-1]^2)
-  if (beta_sq_sum > 1e-10) {
-    for (i in 2:d) {
-      alpha_init[i] <- sum(D[i, -1] * beta_init[-1]) / beta_sq_sum
+  for (i in seq_len(d)) {
+    alpha_init[i] <- mean(X[z == z_levels[1], i])
+  }
+  beta_init <- rep(0, p)
+
+  # Group sizes for each Z level
+  n_z <- tabulate(match(z, z_levels), nbins = p)
+
+  for (iter in seq_len(1000L)) {
+    gamma_old <- gamma_init
+    alpha_old <- alpha_init
+    beta_old  <- beta_init
+
+    # Step 1: estimate beta_z for z = 2, ..., p  (beta_1 = 0 fixed)
+    for (j in 2:p) {
+      mask <- z == z_levels[j]
+      num <- 0
+      den <- 0
+      for (i in seq_len(d)) {
+        num <- num + alpha_init[i] * sum(X[mask, i] - gamma_init[i])
+        den <- den + alpha_init[i]^2 * n_z[j]
+      }
+      beta_init[j] <- num / den
     }
-  } else {
-    alpha_init[2:d] <- 1  # fallback if beta is near zero
+
+    # Step 2: estimate alpha_i  (alpha_1 = 1 fixed)
+    beta_k <- beta_init[match(z, z_levels)]
+    beta_sq_sum <- sum(beta_k^2)
+    if (beta_sq_sum > 1e-10) {
+      for (i in seq_len(d)) {
+        alpha_init[i] <- sum(beta_k * (X[, i] - gamma_init[i])) / beta_sq_sum
+      }
+    }
+    # Rescale so alpha_1 = 1
+    scale <- alpha_init[1]
+    if (abs(scale) > 1e-10) {
+      beta_init <- beta_init * scale
+      alpha_init <- alpha_init / scale
+    }
+
+    # Step 3: estimate gamma_i
+    for (i in seq_len(d)) {
+      gamma_init[i] <- mean(X[, i] - alpha_init[i] * beta_k)
+    }
+
+    # Check convergence
+    delta <- max(abs(gamma_init - gamma_old), abs(alpha_init - alpha_old),
+                 abs(beta_init - beta_old))
+    if (delta < tol) break
   }
 
   # Parameter vector theta = (gamma_1,...,gamma_d, alpha_2,...,alpha_d, beta_2,...,beta_p)
