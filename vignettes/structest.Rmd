@@ -49,9 +49,10 @@ $$
 X_i = \mu_i + \lambda_i\,\eta + \varepsilon_i, \qquad i = 1, \ldots, d
 $$
 
-where $\eta$ is the latent variable, $\lambda_i$ are factor loadings
-(reliabilities), $\mu_i$ are intercepts, and the $\varepsilon_i$ are
-independent error terms.
+where $\eta$ is the latent variable, $\lambda_i$ are the reliabilities,
+$\mu_i$ are intercepts, and the $\varepsilon_i$ are independent error terms.
+(Following the paper, we use the term "reliabilities" for $\lambda_i$;
+in mainstream psychometrics these are more commonly known as factor loadings.)
 
 Under the **structural** interpretation, the latent variable $\eta$ is the
 causally relevant quantity. If we have an external variable $Z$ that affects
@@ -94,7 +95,7 @@ d <- 5
 # Simulate under the structural model
 z <- rbinom(n, 1, 0.5)                        # binary auxiliary variable
 eta <- 1 + 0.5 * z + rnorm(n)                 # latent factor affected by Z
-lambda <- c(1.0, 0.8, 0.6, 0.9, 0.7)         # factor loadings
+lambda <- c(1.0, 0.8, 0.6, 0.9, 0.7)         # reliabilities
 X <- matrix(NA, n, d)
 for (i in 1:d) {
   X[, i] <- 2 + lambda[i] * eta + rnorm(n, sd = 0.5)
@@ -217,7 +218,7 @@ summary(result_t1_bad)
 
 ## Estimating Reliabilities
 
-The `estimate_reliability()` function estimates the factor loadings
+The `estimate_reliability()` function estimates the reliabilities
 $\lambda_i$ from pairwise covariances. Under the model $X_i = \mu_i +
 \lambda_i\,\eta + \varepsilon_i$, we have $\text{Cov}(X_i, X_j) =
 \lambda_i\,\lambda_j$. Taking logs gives $\log \text{Cov}(X_i, X_j) =

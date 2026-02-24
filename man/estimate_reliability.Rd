@@ -21,7 +21,7 @@ for the reliability parameters (used internally by \code{test_t0}).}
 }
 }
 \description{
-Estimates the reliability coefficients (loadings) \eqn{\lambda_i} for each
+Estimates the reliability coefficients \eqn{\lambda_i} for each
 indicator in a univariate latent factor model, using pairwise covariances
 and a quasi-Poisson GLM with log link.
 }

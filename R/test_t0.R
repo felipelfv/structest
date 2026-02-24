@@ -1,8 +1,9 @@
 #' T0 Test: Reliability-Dependent Test of Structural Interpretation (Section 3.2)
 #'
 #' Tests whether the structural interpretation of a univariate latent factor
-#' model can be rejected, using a GMM test that accounts for uncertainty in
-#' the estimated reliability coefficients.
+#' model can be rejected, using estimated reliability coefficients. The
+#' variance of the estimating equations is adjusted for uncertainty in the
+#' reliability estimates (see paper, p. 2041).
 #'
 #' @param X numeric matrix (n x d) of indicator variables, d >= 3.
 #' @param z numeric vector of length n encoding the auxiliary variable.
@@ -33,8 +34,11 @@
 #' (\eqn{\gamma_1, \ldots, \gamma_d} and \eqn{\beta_2, \ldots, \beta_p} with \eqn{\beta_1 = 0}),
 #' yielding \eqn{(d-1)(p-1)} degrees of freedom.
 #'
-#' The variance of the GMM estimating equations is adjusted for the
-#' uncertainty in the reliability estimates \eqn{\lambda_i}.
+#' The variance of the estimating equations is adjusted for the
+#' uncertainty in the reliability estimates \eqn{\lambda_i}
+#' (see paper, p. 2041). Consistent generalised methods of moments
+#' estimators (Newey & McFadden, 1994) are obtained by minimising
+#' the resulting distance metric statistic.
 #'
 #' @references
 #' VanderWeele, T. J. and Vansteelandt, S. (2022). A statistical test to
@@ -86,7 +90,7 @@ test_t0 <- function(X, z, na.rm = TRUE, verbose = FALSE) {
   Z_mat <- z_indicator_matrix(z, z_levels)
   p_z <- colMeans(Z_mat)  # proportion in each z-level
 
-  # Step 3: GMM with variance adjustment for reliability uncertainty
+  # Step 3: Distance metric statistic with variance adjustment for reliability uncertainty
   # u_{ij} = I(z==z_j) * (X_i - gamma_i - (lambda_i/lambda_1)*beta_j), beta_1 = 0
 
   q_t0 <- function(theta) {
@@ -162,7 +166,7 @@ test_t0 <- function(X, z, na.rm = TRUE, verbose = FALSE) {
     # Adjusted moment conditions: U*_k = U_k - E[dU/dlambda] (E[dV/dlambda])^{-1} V_k
     uadjust <- u - t(dudlambda %*% solve(dvdlambda) %*% t(V_k))
 
-    # GMM criterion with adjusted variance (1/N normalization, matching paper)
+    # Distance metric statistic with adjusted variance (1/N normalization, matching paper)
     Sigma <- var(uadjust) * ((n - 1) / n)
     n * drop(t(g) %*% solve(Sigma) %*% g)
   }

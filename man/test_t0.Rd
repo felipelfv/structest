@@ -36,8 +36,9 @@ and \code{lambda} (reliabilities).}
 }
 \description{
 Tests whether the structural interpretation of a univariate latent factor
-model can be rejected, using a GMM test that accounts for uncertainty in
-the estimated reliability coefficients.
+model can be rejected, using estimated reliability coefficients. The
+variance of the estimating equations is adjusted for uncertainty in the
+reliability estimates (see paper, p. 2041).
 }
 \details{
 Under the structural model, \eqn{E[X_i | Z = z_j] = \gamma_i + (\lambda_i / \lambda_1) \beta_j}.
@@ -45,8 +46,11 @@ This gives \eqn{d \times p} moment conditions with \eqn{d + p - 1} free paramete
 (\eqn{\gamma_1, \ldots, \gamma_d} and \eqn{\beta_2, \ldots, \beta_p} with \eqn{\beta_1 = 0}),
 yielding \eqn{(d-1)(p-1)} degrees of freedom.
 
-The variance of the GMM estimating equations is adjusted for the
-uncertainty in the reliability estimates \eqn{\lambda_i}.
+The variance of the estimating equations is adjusted for the
+uncertainty in the reliability estimates \eqn{\lambda_i}
+(see paper, p. 2041). Consistent generalised methods of moments
+estimators (Newey & McFadden, 1994) are obtained by minimising
+the resulting distance metric statistic.
 }
 \references{
 VanderWeele, T. J. and Vansteelandt, S. (2022). A statistical test to

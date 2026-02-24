@@ -50,10 +50,12 @@
 #' \eqn{\le 1}, which is the testable implication of the structural model
 #' (Theorem 2 in the paper).
 #'
-#' The procedure first uses two-step GMM to obtain stable initial estimates,
-#' then minimizes the GMM criterion with the weight matrix recomputed at each
-#' parameter value, matching the authors' reference implementation. The test
-#' statistic is asymptotically \eqn{\chi^2_{(d-1)(p-2)}} under the null.
+#' Consistent generalised methods of moments estimators
+#' (Newey & McFadden, 1994) are obtained by minimising a distance metric
+#' statistic. The procedure uses two-step estimation to obtain stable
+#' initial estimates, then minimises the criterion with the weight matrix
+#' recomputed at each parameter value. The test statistic is asymptotically
+#' \eqn{\chi^2_{(d-1)(p-2)}} under the null.
 #'
 #' @references
 #' VanderWeele, T. J. and Vansteelandt, S. (2022). A statistical test to
@@ -139,7 +141,7 @@ test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
   # Length: d + (d-1) + (p-1) = 2d + p - 2
   theta_init <- c(gamma_init, alpha_init[-1], beta_init[-1])
 
-  # GMM moment matrix builder
+  # Moment condition builder (Equation 3, p. 2042)
   # Returns n x (d*p) matrix of per-observation moment contributions
   build_gmm <- function(theta_val) {
     gam <- theta_val[1:d]
@@ -167,7 +169,7 @@ test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
     g
   }
 
-  # Two-step GMM for initial estimates
+  # Two-step estimation for initial estimates
   # Step 1: weight matrix from initial estimates (fixed during optimization)
   g0 <- build_gmm(theta_init)
   Omega0 <- var(g0) * ((n - 1) / n)

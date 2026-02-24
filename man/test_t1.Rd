@@ -7,16 +7,16 @@
 test_t1(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25, verbose = FALSE)
 }
 \arguments{
-\item{X}{numeric matrix (n x d) of indicator variables, d >= 3.}
+\item{X}{numeric matrix (n x d) of indicator variables, d >= 2.}
 
 \item{z}{numeric vector of length n encoding the auxiliary variable.
 Must have at least 3 distinct levels.}
 
 \item{na.rm}{logical; if \code{TRUE}, rows with any \code{NA} are removed.}
 
-\item{max_iter}{integer; maximum iterations for the alternating LS procedure.}
+\item{max_iter}{integer; maximum iterations for \code{nlm}.}
 
-\item{tol}{numeric; convergence tolerance for the alternating LS procedure.}
+\item{tol}{numeric; convergence tolerance for the alternating LS initializer.}
 
 \item{verbose}{logical; if \code{TRUE}, print progress information.}
 }
@@ -29,7 +29,9 @@ containing:
 \item{p.value}{p-value from chi-squared distribution.}
 \item{method}{description of the test.}
 \item{data.name}{name of the data objects.}
-\item{estimates}{list with \code{alpha} and \code{beta}.}
+\item{estimates}{list with \code{gamma} (\eqn{\gamma_i}), \code{alpha}
+(\eqn{\alpha_i}, with \eqn{\alpha_1 = 1}), and \code{beta}
+(\eqn{\beta_j}, with \eqn{\beta_1 = 0}).}
 \item{n_obs}{number of observations used.}
 \item{d}{number of indicators.}
 \item{p}{number of Z-levels.}
@@ -40,22 +42,34 @@ containing:
 \description{
 Tests whether the structural interpretation of a univariate latent factor
 model can be rejected, without requiring estimation of reliability
-coefficients. Uses centered indicators and a two-step efficient GMM procedure.
+coefficients.
 }
 \details{
-The indicators are centered by their row mean:
-\eqn{X^c_{ik} = X_{ik} - \bar{X}_{i\cdot}}, which eliminates the latent
-factor \eqn{Y}. Under the structural interpretation,
-\eqn{E[X^c_i | Z = z_j] = \alpha_i \beta_j} where \eqn{\alpha_i} and
-\eqn{\beta_j} are identifiable nuisance parameters. The test has
-\eqn{(d-1)(p-2)} degrees of freedom. The full model (Equation 3 in the
-paper) has \eqn{d \times p} moment conditions and \eqn{2d + p - 2} free
-parameters (\eqn{d} intercepts, \eqn{d} alphas, \eqn{p-1} betas, minus 1
-for the alpha-beta scale indeterminacy), giving
-\eqn{dp - (2d+p-2) = (d-1)(p-2)} degrees of freedom.
+Under the structural model \eqn{X_i = \mu_i + \lambda_i \eta + \varepsilon_i},
+the conditional expectations satisfy
+\deqn{E(X_i \mid Z = z_j) = \gamma_i + \alpha_i \beta_j}
+where \eqn{\gamma_i} are intercepts absorbing the reference-level means,
+\eqn{\alpha_i} are parameters (with \eqn{\alpha_1 = 1} for
+identification), and \eqn{\beta_j} are parameters (with
+\eqn{\beta_1 = 0} for the reference level).
 
-The procedure uses a two-step efficient GMM: first with a fixed weight
-matrix from initial estimates, then with the efficient weight matrix.
+This gives \eqn{d \times p} moment conditions:
+\deqn{E[I(Z = z_j)(X_i - \gamma_i - \alpha_i \beta_j)] = 0}
+with \eqn{2d + p - 2} free parameters (\eqn{d} intercepts, \eqn{d - 1}
+alphas, \eqn{p - 1} betas), yielding
+\eqn{dp - (2d + p - 2) = (d-1)(p-2)} degrees of freedom.
+
+The test checks whether the mean-difference matrix
+\eqn{\Delta_{ij} = E(X_i \mid Z = z_j) - E(X_i \mid Z = z_1)} has rank
+\eqn{\le 1}, which is the testable implication of the structural model
+(Theorem 2 in the paper).
+
+Consistent generalised methods of moments estimators
+(Newey & McFadden, 1994) are obtained by minimising a distance metric
+statistic. The procedure uses two-step estimation to obtain stable
+initial estimates, then minimises the criterion with the weight matrix
+recomputed at each parameter value. The test statistic is asymptotically
+\eqn{\chi^2_{(d-1)(p-2)}} under the null.
 }
 \references{
 VanderWeele, T. J. and Vansteelandt, S. (2022). A statistical test to
