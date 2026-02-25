@@ -180,8 +180,7 @@ for (i in 1:d) {
 }
 
 # T0 test (should NOT reject)
-result_t0 <- test_t0(X, z)
-print(result_t0)
+result_t0 <- test_t0(X, z); (result_t0)
 #> 
 #>   T0: Reliability-dependent test of structural interpretation (VanderWeele & Vansteelandt, 2022) 
 #> 
@@ -212,8 +211,7 @@ X_bad <- cbind(
 )
 
 # T0 test (should reject)
-result_t0_bad <- test_t0(X_bad, z)
-print(result_t0_bad)
+result_t0_bad <- test_t0(X_bad, z); (result_t0_bad)
 #> 
 #>   T0: Reliability-dependent test of structural interpretation (VanderWeele & Vansteelandt, 2022) 
 #> 
@@ -275,8 +273,11 @@ following are equivalent:*
 Condition 2 says that the \\d \times (p-1)\\ matrix of mean differences
 \\\Delta\_{ij} = E(X_i \mid Z = z_j) - E(X_i \mid Z = z_1)\\ has rank
 \\\leq 1\\, since it factors as
-\\\mathbf{\alpha}\\\mathbf{\beta}^\top\\. This can be tested without
-knowing the \\\lambda_i\\.
+\\\mathbf{\alpha}\\\mathbf{\beta}^\top\\. Rank \\\leq 1\\ means every
+column of \\\Delta\\ is a scalar multiple of every other column: the
+pattern of mean differences across indicators is the same no matter
+which Z-levels you compare, only the overall magnitude changes. This can
+be tested without knowing the \\\lambda_i\\.
 
 Under the null, the conditional expectations satisfy (Equation 3 in the
 paper):
@@ -320,7 +321,7 @@ Because \\T_1\\ does not depend on reliability estimates, it is not
 sensitive to misspecification of the error covariance structure (e.g.,
 correlated or heteroscedastic \\\varepsilon_i\\).
 
-**When to use:** \\d \geq 3\\ indicators and \\p \geq 3\\ levels of
+**When to use:** \\d \geq 2\\ indicators and \\p \geq 3\\ levels of
 \\Z\\. Preferred over \\T_0\\ because it does not rely on
 error-structure assumptions needed for reliability estimation.
 
@@ -341,8 +342,7 @@ for (i in 1:d) {
 }
 
 # T1 test (should NOT reject)
-result_t1 <- test_t1(X, z)
-print(result_t1)
+result_t1 <- test_t1(X, z); (result_t1)
 #> 
 #>   T1: Reliability-independent test of structural interpretation (VanderWeele & Vansteelandt, 2022) 
 #> 
@@ -371,8 +371,7 @@ X_bad <- cbind(
 )
 
 # T1 test (should reject)
-result_t1_bad <- test_t1(X_bad, z)
-print(result_t1_bad)
+result_t1_bad <- test_t1(X_bad, z); (result_t1_bad)
 #> 
 #>   T1: Reliability-independent test of structural interpretation (VanderWeele & Vansteelandt, 2022) 
 #> 
@@ -479,7 +478,7 @@ other purposes.
 |------------------------------------------------------|----------------|----------------|
 | **Relies on reliability estimates**                  | Yes            | No             |
 | **Sensitive to error distribution misspecification** | Yes            | No             |
-| **Minimum indicators (\\d\\)**                       | 3              | 3              |
+| **Minimum indicators (\\d\\)**                       | 3              | 2              |
 | **Minimum \\Z\\-levels (\\p\\)**                     | 2              | 3              |
 | **Degrees of freedom**                               | \\(d-1)(p-1)\\ | \\(d-1)(p-2)\\ |
 

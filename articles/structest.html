@@ -253,8 +253,7 @@ levels of <span class="math inline">\(Z\)</span>.</p>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="co"># T0 test (should NOT reject)</span></span>
-<span><span class="va">result_t0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/test_t0.html">test_t0</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">z</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result_t0</span><span class="op">)</span></span>
+<span><span class="va">result_t0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/test_t0.html">test_t0</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">z</span><span class="op">)</span>; <span class="op">(</span><span class="va">result_t0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   T0: Reliability-dependent test of structural interpretation (VanderWeele &amp; Vansteelandt, 2022) </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -283,8 +282,7 @@ reliabilities, and does not act through <span class="math inline">\(\eta\)</span
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># T0 test (should reject)</span></span>
-<span><span class="va">result_t0_bad</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/test_t0.html">test_t0</a></span><span class="op">(</span><span class="va">X_bad</span>, <span class="va">z</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result_t0_bad</span><span class="op">)</span></span>
+<span><span class="va">result_t0_bad</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/test_t0.html">test_t0</a></span><span class="op">(</span><span class="va">X_bad</span>, <span class="va">z</span><span class="op">)</span>; <span class="op">(</span><span class="va">result_t0_bad</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   T0: Reliability-dependent test of structural interpretation (VanderWeele &amp; Vansteelandt, 2022) </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -345,7 +343,11 @@ parameters <span class="math inline">\(\alpha_i\)</span>, <span class="math inli
 (p-1)\)</span> matrix of mean differences <span class="math inline">\(\Delta_{ij} = E(X_i \mid Z = z_j) - E(X_i \mid Z =
 z_1)\)</span> has rank <span class="math inline">\(\leq 1\)</span>,
 since it factors as <span class="math inline">\(\mathbf{\alpha}\,\mathbf{\beta}^\top\)</span>.
-This can be tested without knowing the <span class="math inline">\(\lambda_i\)</span>.</p>
+Rank <span class="math inline">\(\leq 1\)</span> means every column of
+<span class="math inline">\(\Delta\)</span> is a scalar multiple of
+every other column: the pattern of mean differences across indicators is
+the same no matter which Z-levels you compare, only the overall
+magnitude changes. This can be tested without knowing the <span class="math inline">\(\lambda_i\)</span>.</p>
 <p>Under the null, the conditional expectations satisfy (Equation 3 in
 the paper):</p>
 <p><span class="math display">\[
@@ -393,7 +395,7 @@ d \times p - (2d + p - 2) = (d - 1)(p - 2)
 reliability estimates, it is not sensitive to misspecification of the
 error covariance structure (e.g., correlated or heteroscedastic <span class="math inline">\(\varepsilon_i\)</span>).</p>
 <p><strong>When to use:</strong> <span class="math inline">\(d \geq
-3\)</span> indicators and <span class="math inline">\(p \geq 3\)</span>
+2\)</span> indicators and <span class="math inline">\(p \geq 3\)</span>
 levels of <span class="math inline">\(Z\)</span>. Preferred over <span class="math inline">\(T_0\)</span> because it does not rely on
 error-structure assumptions needed for reliability estimation.</p>
 </div>
@@ -415,8 +417,7 @@ error-structure assumptions needed for reliability estimation.</p>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="co"># T1 test (should NOT reject)</span></span>
-<span><span class="va">result_t1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/test_t1.html">test_t1</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">z</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result_t1</span><span class="op">)</span></span>
+<span><span class="va">result_t1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/test_t1.html">test_t1</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">z</span><span class="op">)</span>; <span class="op">(</span><span class="va">result_t1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   T1: Reliability-independent test of structural interpretation (VanderWeele &amp; Vansteelandt, 2022) </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -444,8 +445,7 @@ the structural model.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># T1 test (should reject)</span></span>
-<span><span class="va">result_t1_bad</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/test_t1.html">test_t1</a></span><span class="op">(</span><span class="va">X_bad</span>, <span class="va">z</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result_t1_bad</span><span class="op">)</span></span>
+<span><span class="va">result_t1_bad</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/test_t1.html">test_t1</a></span><span class="op">(</span><span class="va">X_bad</span>, <span class="va">z</span><span class="op">)</span>; <span class="op">(</span><span class="va">result_t1_bad</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   T1: Reliability-independent test of structural interpretation (VanderWeele &amp; Vansteelandt, 2022) </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -567,7 +567,7 @@ misspecification</strong></td>
 <tr class="odd">
 <td><strong>Minimum indicators (<span class="math inline">\(d\)</span>)</strong></td>
 <td>3</td>
-<td>3</td>
+<td>2</td>
 </tr>
 <tr class="even">
 <td><strong>Minimum <span class="math inline">\(Z\)</span>-levels (<span class="math inline">\(p\)</span>)</strong></td>

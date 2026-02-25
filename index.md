@@ -58,7 +58,7 @@ devtools::install_github("felipelfv/structest")
 | Function                  | Description                                                                                                            |
 |---------------------------|------------------------------------------------------------------------------------------------------------------------|
 | `test_t0(X, z)`           | Statistical test dependent on reliability estimates (Section 3.2). Requires d \>= 3 indicators and p \>= 2 Z-levels.   |
-| `test_t1(X, z)`           | Statistical test independent of reliability estimates (Section 3.3). Requires d \>= 3 indicators and p \>= 3 Z-levels. |
+| `test_t1(X, z)`           | Statistical test independent of reliability estimates (Section 3.3). Requires d \>= 2 indicators and p \>= 3 Z-levels. |
 | `estimate_reliability(X)` | Estimation of reliability via quasi-Poisson GLM on pairwise covariances (Section 3.1).                                 |
 
 ## Reference

@@ -39,7 +39,7 @@ A list with components:
 
 ## Details
 
-Under the structural model \\X_i = \alpha_i + \lambda_i Y +
+Under the structural model \\X_i = \mu_i + \lambda_i \eta +
 \varepsilon_i\\, we have \\\mathrm{Cov}(X_i, X_j) = \lambda_i
 \lambda_j\\. The log of each pairwise covariance is modelled as a linear
 combination of \\\log(\lambda_i)\\, yielding a quasi-Poisson GLM.
