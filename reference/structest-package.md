@@ -24,7 +24,8 @@ factor model.
 
 VanderWeele, T. J. and Vansteelandt, S. (2022). A statistical test to
 reject the structural interpretation of a latent factor model. *Journal
-of the Royal Statistical Society Series B*, 84, 2032–2054.
+of the Royal Statistical Society: Series B (Statistical Methodology)*,
+84, 2032–2054.
 
 ## See also
 

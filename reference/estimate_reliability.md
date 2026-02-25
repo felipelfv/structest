@@ -37,6 +37,19 @@ A list with components:
   matrix (n x d) of per-subject estimating function contributions for
   the reliability parameters (used internally by `test_t0`).
 
+- U_pairs:
+
+  matrix (n x choose(d,2)) of pairwise estimating function contributions
+  (used internally by `test_t0`).
+
+- pairs:
+
+  matrix (choose(d,2) x 2) of indicator index pairs.
+
+- Xc:
+
+  matrix (n x d) of mean-centred indicators.
+
 ## Details
 
 Under the structural model \\X_i = \mu_i + \lambda_i \eta +

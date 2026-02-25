@@ -68,8 +68,9 @@ reliability estimates (see paper, p. 2041).</p>
 
 
 <dt id="arg-z">z<a class="anchor" aria-label="anchor" href="#arg-z"></a></dt>
-<dd><p>numeric vector of length n encoding the auxiliary variable.
-Must have at least 2 distinct levels.</p></dd>
+<dd><p>numeric vector or factor of length n encoding a discrete auxiliary
+variable. Must have at least 2 distinct levels. If <code>z</code> is continuous,
+discretise it (e.g., into quantile groups) before use.</p></dd>
 
 
 <dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>
@@ -135,7 +136,7 @@ the resulting distance metric statistic.</p>
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>VanderWeele, T. J. and Vansteelandt, S. (2022). A statistical test to
 reject the structural interpretation of a latent factor model.
-<em>Journal of the Royal Statistical Society Series B</em>, 84, 2032–2054.</p>
+<em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em>, 84, 2032–2054.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

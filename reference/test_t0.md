@@ -19,8 +19,9 @@ test_t0(X, z, na.rm = TRUE, verbose = FALSE)
 
 - z:
 
-  numeric vector of length n encoding the auxiliary variable. Must have
-  at least 2 distinct levels.
+  numeric vector or factor of length n encoding a discrete auxiliary
+  variable. Must have at least 2 distinct levels. If `z` is continuous,
+  discretise it (e.g., into quantile groups) before use.
 
 - na.rm:
 
@@ -97,4 +98,5 @@ statistic.
 
 VanderWeele, T. J. and Vansteelandt, S. (2022). A statistical test to
 reject the structural interpretation of a latent factor model. *Journal
-of the Royal Statistical Society Series B*, 84, 2032–2054.
+of the Royal Statistical Society: Series B (Statistical Methodology)*,
+84, 2032–2054.
