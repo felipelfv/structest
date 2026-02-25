@@ -33,6 +33,8 @@ Useful links:
 
 - <https://felipelfv.github.io/structest/>
 
+- Report bugs at <https://github.com/felipelfv/structest/issues>
+
 ## Author
 
 **Maintainer**: Felipe Fontana Vieira <felipelfv98@gmail.com>
