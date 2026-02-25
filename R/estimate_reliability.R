@@ -16,7 +16,7 @@
 #' }
 #'
 #' @details
-#' Under the structural model \eqn{X_i = \alpha_i + \lambda_i Y + \varepsilon_i},
+#' Under the structural model \eqn{X_i = \mu_i + \lambda_i \eta + \varepsilon_i},
 #' we have \eqn{\mathrm{Cov}(X_i, X_j) = \lambda_i \lambda_j}. The log of
 #' each pairwise covariance is modelled as a linear combination of
 #' \eqn{\log(\lambda_i)}, yielding a quasi-Poisson GLM.
