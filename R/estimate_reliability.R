@@ -13,6 +13,10 @@
 #'   \item{glm_fit}{the fitted \code{glm} object.}
 #'   \item{V_k}{matrix (n x d) of per-subject estimating function contributions
 #'     for the reliability parameters (used internally by \code{test_t0}).}
+#'   \item{U_pairs}{matrix (n x choose(d,2)) of pairwise estimating function
+#'     contributions (used internally by \code{test_t0}).}
+#'   \item{pairs}{matrix (choose(d,2) x 2) of indicator index pairs.}
+#'   \item{Xc}{matrix (n x d) of mean-centred indicators.}
 #' }
 #'
 #' @details
