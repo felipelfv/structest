@@ -275,7 +275,7 @@ following are equivalent:*
 Condition 2 says that the \\d \times (p-1)\\ matrix of mean differences
 \\\Delta\_{ij} = E(X_i \mid Z = z_j) - E(X_i \mid Z = z_1)\\ has rank
 \\\leq 1\\, since it factors as
-\\\boldsymbol\alpha\\\boldsymbol\beta^\top\\. This can be tested without
+\\\mathbf{\alpha}\\\mathbf{\beta}^\top\\. This can be tested without
 knowing the \\\lambda_i\\.
 
 Under the null, the conditional expectations satisfy (Equation 3 in the
