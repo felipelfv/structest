@@ -72,6 +72,22 @@ initial estimates, then minimises the criterion with the weight matrix
 recomputed at each parameter value. The test statistic is asymptotically
 \eqn{\chi^2_{(d-1)(p-2)}} under the null.
 }
+\examples{
+set.seed(12345)
+n <- 1000
+z <- sample(0:2, n, replace = TRUE)
+eta <- 1 + 0.3 * (z == 1) + 0.7 * (z == 2) + rnorm(n)
+lambda <- c(1.0, 0.8, 0.6)
+X <- cbind(
+  2 + lambda[1] * eta + rnorm(n, sd = 0.5),
+  3 + lambda[2] * eta + rnorm(n, sd = 0.5),
+  1 + lambda[3] * eta + rnorm(n, sd = 0.5)
+)
+
+result <- test_t1(X, z)
+result
+
+}
 \references{
 VanderWeele, T. J. and Vansteelandt, S. (2022). A statistical test to
 reject the structural interpretation of a latent factor model.

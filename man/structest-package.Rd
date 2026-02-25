@@ -30,6 +30,7 @@ reject the structural interpretation of a latent factor model.
 Useful links:
 \itemize{
   \item \url{https://felipelfv.github.io/structest/}
+  \item Report bugs at \url{https://github.com/felipelfv/structest/issues}
 }
 
 }
