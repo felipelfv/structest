@@ -29,43 +29,136 @@ library(structest)
 
 ## The Model
 
-Consider a reflective latent factor model with \\d\\ indicators:
+Consider a reflective latent factor model with \\d\\ indicators
+(Equation 1 in the paper). After standardisation so that \\\eta\\ has
+mean zero and unit variance, each centred indicator is:
 
-\\ X_i = \mu_i + \lambda_i\\\eta + \varepsilon_i, \qquad i = 1, \ldots,
-d \\
+\\ X_i = \lambda_i\\\eta + \varepsilon_i, \qquad i = 1, \ldots, d
+\tag{1} \\
 
 where \\\eta\\ is the latent variable, \\\lambda_i\\ are the
-reliabilities, \\\mu_i\\ are intercepts, and the \\\varepsilon_i\\ are
-independent error terms. (Following the paper, we use the term
-“reliabilities” for \\\lambda_i\\; in mainstream psychometrics these are
-more commonly known as factor loadings.)
+reliabilities, and the \\\varepsilon_i\\ are mean-zero random errors
+independent of \\\eta\\ and of each other. (Following the paper, we use
+the term “reliabilities” for \\\lambda_i\\; in mainstream psychometrics
+these are more commonly known as factor loadings.)
 
 Under the **structural** interpretation, the latent variable \\\eta\\ is
-the causally relevant quantity. If we have an external variable \\Z\\
-that affects \\\eta\\ (and the indicators only *through* \\\eta\\), then
-by Theorem 1 of VanderWeele and Vansteelandt (2022), for any indicators
-\\i\\, \\j\\ and any values \\z\\, \\z^\*\\:
+the causally relevant quantity: the indicators \\(X_1, \ldots, X_d)\\ do
+not have causal effects on anything subsequent, and they are only
+affected by antecedents through \\\eta\\. This is a strong
+assumption—the basic measurement model (1) fitting well does *not* imply
+it. If we have any external variable \\Z\\ and the structural latent
+factor model holds, then \\Z\\ must be independent of \\(X_1, \ldots,
+X_d)\\ conditional on \\\eta\\. This yields the following testable
+constraint:
+
+**Theorem 1** (VanderWeele & Vansteelandt, 2022). *Suppose that \\Z\\ is
+independent of \\(X_1, \ldots, X_d)\\ conditional on \\\eta\\ and that
+the basic latent factor model in Equation (1) holds. Then for any \\i\\
+and \\j\\, and any values \\z\\ and \\z^\*\\, we must have*
 
 \\ \lambda_i \bigl\\E(X_j \mid Z=z) - E(X_j \mid Z=z^\*)\bigr\\ =
-\lambda_j \bigl\\E(X_i \mid Z=z) - E(X_i \mid Z=z^\*)\bigr\\ \\
+\lambda_j \bigl\\E(X_i \mid Z=z) - E(X_i \mid Z=z^\*)\bigr\\. \\
 
-This identity is testable with observed data. The \\T_0\\ and \\T_1\\
-tests formalise it using generalised methods of moments estimators
-(Newey & McFadden, 1994).
+Equivalently, dividing by the reliabilities:
+
+\\ \frac{E(X_j \mid Z = z) - E(X_j \mid Z = z^\*)}{\lambda_j} =
+\frac{E(X_i \mid Z = z) - E(X_i \mid Z = z^\*)}{\lambda_i}, \qquad
+\forall\\ i, j. \\
+
+The mean differences scaled by reliabilities must be constant across
+indicators.
+
+Note that Theorem 1 is completely general: \\Z\\ can be continuous or
+discrete, and the identity holds for *any* external variable. The
+Appendix of the paper further generalises the result to allow
+conditioning on covariates \\C\\ and multivariate latent variables
+\\\eta\\ (provided the number of indicators exceeds the dimension of
+\\\eta\\). However, the \\T_0\\ and \\T_1\\ tests implemented here
+require \\Z\\ to be **discrete** with a finite number of levels, because
+the moment conditions are parameterised using category indicators \\I(z
+= w)\\. In practice, a continuous \\Z\\ must therefore be discretised
+(e.g., into quantile groups) before applying the tests.
+
+The \\T_0\\ and \\T_1\\ tests formalise the constraint in Theorem 1
+using distance metric statistics from the generalised method of moments
+(GMM) framework (Newey & McFadden, 1994). Here the moment conditions are
+restrictions on the conditional means \\E(X_i \mid Z = z_j)\\: under the
+null, the residuals (observed minus predicted by the model) should
+average to zero. GMM stacks these residuals into a vector and measures
+how far their sample average deviates from zero using a
+variance-weighted quadratic form; the resulting statistic is
+asymptotically \\\chi^2\\-distributed under the null.
 
 ## The \\T_0\\ Test (Reliability-Dependent)
 
-The \\T_0\\ test (Section 3.2 of the paper) models the conditional
-expectations as:
+The \\T_0\\ test (Section 3.2 of the paper) requires pre-estimated
+reliabilities \\\hat\lambda_i\\ (see *Estimating Reliabilities* below).
+Consider a discrete \\Z\\ with categories \\\\1, \ldots, p\\\\. Define
+\\\gamma_i = E(X_i \mid Z = 1)\\ and \\\beta_w = E(X_1 \mid Z = w) -
+E(X_1 \mid Z = 1)\\. Under the null hypothesis, the conditional
+expectations follow the restricted model (Equation 2 in the paper):
 
-\\ E(X_i \mid Z = z_j) = \gamma_i + \frac{\lambda_i}{\lambda_1}\\\beta_j
-\\
+\\ E(X_i \mid Z = z) = \gamma_i + \frac{\lambda_i}{\lambda_1}
+\sum\_{w=2}^{p} \beta_w\\ I(z = w) \tag{2} \\
 
-with \\\beta_1 = 0\\ (reference level). This gives \\d \times p\\ moment
-conditions with \\d + p - 1\\ free parameters, yielding \\(d-1)(p-1)\\
-degrees of freedom. The test requires estimated reliability coefficients
-\\\lambda_i\\, which are obtained from pairwise covariances via a
-quasi-Poisson GLM.
+for \\i = 1, \ldots, d\\, where the reliabilities \\\lambda_i\\ are
+treated as known (plugged in from the estimation step). This model has
+\\d + p - 1\\ free parameters (\\\gamma_1, \ldots, \gamma_d\\ and
+\\\beta_2, \ldots, \beta_p\\, with \\\beta_1 = 0\\ as the reference
+level).
+
+### Moment conditions and test statistic
+
+Under the null, the model in Equation (2) implies that for each
+indicator \\i\\ and Z-level \\j\\, \\E\[X_i \mid Z = z_j\] - \gamma_i -
+(\lambda_i/\lambda_1)\sum\beta_w I(z_j = w) = 0\\. GMM constructs moment
+conditions from these restrictions by defining, for each observation
+\\k\\, the residual \\X\_{ik}\\ minus its predicted value under the
+model. Let \\U_k\\ be the \\(d \times p)\\-dimensional column vector
+with elements
+
+\\ I(Z_k = z_j)\\\left(X\_{ik} - \gamma_i -
+\frac{\lambda_i}{\lambda_1}\sum\_{w=2}^{p}\beta_w\\I(z_j = w)\right) \\
+
+for \\z_j = 1, \ldots, p\\ and \\i = 1, \ldots, d\\. If the model is
+correctly specified, \\E\[U_k\] = 0\\; the test measures how far the
+sample average \\\bar U = N^{-1}\sum_k U_k\\ deviates from zero. The
+distance metric statistic is
+
+\\ T_0 = N\\\bar U^\top\\ \Sigma^{-1}\\ \bar U, \\
+
+where \\\Sigma\\ is the empirical covariance matrix of \\U_k\\ after
+adjusting for the uncertainty in the estimated reliabilities (see
+below). This quadratic form measures the squared distance of \\\bar U\\
+from zero, weighted by \\\Sigma^{-1}\\ to standardise each moment
+condition by its variance and account for correlations between them. The
+minimum of \\T_0\\ over the free parameters converges to a \\\chi^2\\
+distribution with \\(d - 1)(p - 1)\\ degrees of freedom under the null
+(theorem 9.2 of Newey & McFadden, 1994).
+
+### Variance adjustment for estimated reliabilities
+
+In practice the reliabilities \\\lambda_i\\ are unknown and replaced by
+estimates \\\hat\lambda_i\\. To account for this additional uncertainty
+(p. 2041 of the paper), the covariance matrix \\\Sigma\\ in \\T_0\\ is
+computed from the adjusted moment contributions
+
+\\ U_k^\* = U_k - \left(\frac{1}{N}\sum\_{k=1}^{N} \frac{\partial
+U_k}{\partial \lambda}\right) \left(\frac{1}{N}\sum\_{k=1}^{N}
+\frac{\partial V_k}{\partial \lambda}\right)^{\\-1} V_k, \\
+
+where \\\lambda = (\lambda_1, \ldots, \lambda_d)\\ and \\V_k\\ is the
+\\d\\-dimensional vector from the reliability estimating equations with
+elements
+
+\\ V\_{ik} = \sum\_{\substack{j=1 \\ j \neq i}}^{d} \lambda_j
+\left\\\\\left(X_i - \bar X_i\right)\\ \left(X_j - \bar X_j\right) -
+\lambda_i\lambda_j\right\\. \\
+
+The empirical covariance of \\U_k^\*\\ (rather than of \\U_k\\) is then
+used as \\\Sigma\\, yielding a test statistic that remains
+\\\chi^2\_{(d-1)(p-1)}\\ under the null.
 
 **When to use:** \\d \geq 3\\ indicators and \\p \geq 2\\ levels of
 \\Z\\.
@@ -103,15 +196,16 @@ statistic is small and the \\p\\-value is large—we fail to reject
 
 ### Example: data violating the structural model
 
-Now consider data where \\Z\\ affects each indicator disproportionately,
-which violates the structural interpretation:
+Now consider data where \\Z\\ has direct effects on each indicator that
+are not proportional to the reliabilities, and does not act through
+\\\eta\\:
 
 ``` r
 set.seed(12345)
-eta <- rnorm(n)
+eta <- rnorm(n)                                # Z does not affect eta
 X_bad <- cbind(
   2 + 1.0 * eta + 0.5 * z + rnorm(n, sd = 0.3),
-  3 + 0.8 * eta + 2.0 * z + rnorm(n, sd = 0.3),   # disproportionate Z effect
+  3 + 0.8 * eta + 2.0 * z + rnorm(n, sd = 0.3),
   1 + 0.6 * eta - 0.3 * z + rnorm(n, sd = 0.3),
   2 + 0.9 * eta + 0.4 * z + rnorm(n, sd = 0.3),
   1 + 0.7 * eta + 0.8 * z + rnorm(n, sd = 0.3)
@@ -164,20 +258,67 @@ summary(result_t0_bad)
 ## The \\T_1\\ Test (Reliability-Independent)
 
 The \\T_1\\ test (Section 3.3 of the paper) avoids estimating
-reliabilities entirely. Under the structural model, the conditional
-expectations satisfy (Equation 3 in the paper):
+reliabilities entirely, relying instead on an equivalent reformulation
+of Theorem 1:
 
-\\ E(X_i \mid Z = z_j) = \gamma_i + \alpha_i\\\beta_j \\
+**Theorem 2** (VanderWeele & Vansteelandt, 2022). *Under the basic
+latent factor model in Equation (1), for any discrete \\Z\\ the
+following are equivalent:*
 
-with \\\alpha_1 = 1\\ for identification and \\\beta_1 = 0\\ for the
-reference level. This means the matrix of mean differences
+1.  *For any \\i\\ and \\j\\, and any values \\z\\ and \\z^\*\\,
+    \\\lambda_i\\E(X_j \mid Z = z) - E(X_j \mid Z = z^\*)\\ =
+    \lambda_j\\E(X_i \mid Z = z) - E(X_i \mid Z = z^\*)\\\\.*
+2.  *For any \\i\\ and any values \\z\\, \\z^\*\\, \\E(X_i \mid Z = z) -
+    E(X_i \mid Z = z^\*) = \alpha_i\\\beta_z\\ for some parameters
+    \\\alpha_i\\, \\\beta_z\\.*
 
-\\ \Delta\_{ij} = E(X_i \mid Z = z_j) - E(X_i \mid Z = z_1) \\
+Condition 2 says that the \\d \times (p-1)\\ matrix of mean differences
+\\\Delta\_{ij} = E(X_i \mid Z = z_j) - E(X_i \mid Z = z_1)\\ has rank
+\\\leq 1\\, since it factors as
+\\\boldsymbol\alpha\\\boldsymbol\beta^\top\\. This can be tested without
+knowing the \\\lambda_i\\.
 
-has rank \\\leq 1\\ under the structural model. The \\T_1\\ test checks
-this rank constraint using generalised methods of moments, with \\d
-\times p\\ moment conditions, \\2d + p - 2\\ free parameters, and
-\\(d-1)(p-2)\\ degrees of freedom.
+Under the null, the conditional expectations satisfy (Equation 3 in the
+paper):
+
+\\ E(X_i \mid Z = z) = \gamma_i + \sum\_{w=2}^{p} \alpha_i\\\beta_w\\I(z
+= w) \tag{3} \\
+
+for \\i = 1, \ldots, d\\, with \\\alpha_1 = 1\\ for identification (the
+product \\\alpha_i \beta_z\\ is invariant to rescaling
+\\\alpha_i/\tau\\, \\\beta_z \tau\\) and \\\beta_1 = 0\\ for the
+reference level. This model has \\2d + p - 2\\ free parameters (\\d\\
+intercepts \\\gamma_i\\, \\d - 1\\ free \\\alpha_i\\’s, and \\p - 1\\
+free \\\beta_w\\’s).
+
+### Moment conditions and test statistic
+
+As with \\T_0\\, the moment conditions are constructed as residuals:
+observed minus predicted under the null model. Let \\U_k\\ be the \\(d
+\times p)\\-dimensional column vector with elements
+
+\\ I(Z_k = z_j)\\\left(X\_{ik} - \gamma_i - \alpha_i\\\beta_w\right) \\
+
+for \\z_j = 1, \ldots, p\\ and \\i = 1, \ldots, d\\, where \\\beta_w =
+\beta\_{z_j}\\. Under Equation (3), \\E\[U_k\] = 0\\; the test measures
+how far \\\bar U = N^{-1}\sum_k U_k\\ deviates from this. The distance
+metric statistic is
+
+\\ T_1 = N\\\left(\frac{1}{N}\sum\_{k=1}^{N} U_k^{\\\top}\right)
+\Sigma^{-1} \left(\frac{1}{N}\sum\_{k=1}^{N} U_k\right), \\
+
+where \\\Sigma\\ is the empirical covariance matrix of \\U_k\\. Unlike
+\\T_0\\, no variance adjustment is needed since \\T_1\\ does not use
+estimated reliabilities. The minimum of \\T_1\\ over the free parameters
+converges to a \\\chi^2\\ distribution with
+
+\\ d \times p - (2d + p - 2) = (d - 1)(p - 2) \\
+
+degrees of freedom under the null.
+
+Because \\T_1\\ does not depend on reliability estimates, it is not
+sensitive to misspecification of the error covariance structure (e.g.,
+correlated or heteroscedastic \\\varepsilon_i\\).
 
 **When to use:** \\d \geq 3\\ indicators and \\p \geq 3\\ levels of
 \\Z\\. Preferred over \\T_0\\ because it does not rely on
@@ -274,13 +415,32 @@ summary(result_t1_bad)
 
 The
 [`estimate_reliability()`](https://felipelfv.github.io/structest/reference/estimate_reliability.md)
-function estimates the reliabilities \\\lambda_i\\ from pairwise
-covariances. Under the model \\X_i = \mu_i + \lambda_i\\\eta +
-\varepsilon_i\\, we have \\\text{Cov}(X_i, X_j) =
-\lambda_i\\\lambda_j\\. Taking logs gives \\\log \text{Cov}(X_i, X_j) =
-\log\lambda_i + \log\lambda_j\\, which is a linear model in the
-log-reliabilities. The function fits this as a quasi-Poisson GLM with
-log link.
+function estimates the reliabilities \\\lambda_i\\ following Section 3.1
+of the paper. Under model (1) with \\\text{Var}(\eta) = 1\\ and
+independent errors, the off-diagonal covariances factor as
+
+\\ \text{Cov}(X_i, X_j) = \lambda_i\\\lambda_j, \qquad i \neq j. \\
+
+Consistent estimators \\\hat\lambda_i\\ are obtained by solving \\d\\
+unbiased estimating equations (one per indicator):
+
+\\ \sum\_{\substack{j=1 \\ j \neq i}}^{d} \frac{\lambda_j}{N}
+\sum\_{k=1}^{N}\left(X\_{ik} - \bar X_i\right) \left(X\_{jk} - \bar
+X_j\right) - \lambda_i\lambda_j = 0, \qquad i = 1, \ldots, d. \\
+
+Taking logs of \\\text{Cov}(X_i, X_j) = \lambda_i\lambda_j\\ gives
+\\\log E(C\_{ij}) = \log\lambda_i + \log\lambda_j\\, which is a linear
+model in the log-reliabilities. Writing \\\Lambda_s = \log\lambda_s\\:
+
+\\ \log E\\\left(C\_{ij}\right) = \sum\_{s=1}^{d} \Lambda_s\\ I(s \in
+\\i, j\\) \\
+
+where \\C\_{ij}\\ is the sample covariance between \\X_i\\ and \\X_j\\,
+and \\I(\cdot)\\ is the indicator function. The solutions are readily
+obtained as the exponentiated coefficients from a quasi-Poisson GLM with
+log link, using the \\d(d-1)/2\\ pairwise covariances as the response
+and a \\d\\-column binary design matrix indicating which indicators are
+involved in each pair.
 
 ``` r
 set.seed(12345)
