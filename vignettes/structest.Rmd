@@ -85,9 +85,26 @@ $$
 $$
 
 The mean differences scaled by reliabilities must be constant across
-indicators. The $T_0$ and $T_1$ tests formalise this constraint using
-distance metric statistics from the generalised methods of moments framework
-(Newey & McFadden, 1994).
+indicators.
+
+Note that Theorem 1 is completely general: $Z$ can be continuous or discrete,
+and the identity holds for *any* external variable. The Appendix of the paper
+further generalises the result to allow conditioning on covariates $C$ and
+multivariate latent variables $\eta$ (provided the number of indicators
+exceeds the dimension of $\eta$). However, the $T_0$ and $T_1$ tests
+implemented here require $Z$ to be **discrete** with a finite number of
+levels, because the moment conditions are parameterised using category
+indicators $I(z = w)$. In practice, a continuous $Z$ must therefore be
+discretised (e.g., into quantile groups) before applying the tests.
+
+The $T_0$ and $T_1$ tests formalise the constraint in Theorem 1 using
+distance metric statistics from the generalised method of moments (GMM)
+framework (Newey & McFadden, 1994). Here the moment conditions are
+restrictions on the conditional means $E(X_i \mid Z = z_j)$: under the null,
+the residuals (observed minus predicted by the model) should average to zero.
+GMM stacks these residuals into a vector and measures how far their sample
+average deviates from zero using a variance-weighted quadratic form; the
+resulting statistic is asymptotically $\chi^2$-distributed under the null.
 
 ## The $T_0$ Test (Reliability-Dependent)
 
@@ -111,27 +128,35 @@ with $\beta_1 = 0$ as the reference level).
 
 ### Moment conditions and test statistic
 
-Let $U_k$ be the $(d \times p)$-dimensional column vector with elements
+Under the null, the model in Equation (2) implies that for each indicator
+$i$ and Z-level $j$,
+$E[X_i \mid Z = z_j] - \gamma_i - (\lambda_i/\lambda_1)\sum\beta_w I(z_j = w) = 0$.
+GMM constructs moment conditions from these restrictions by
+defining, for each observation $k$, the residual $X_{ik}$ minus its
+predicted value under the model. Let $U_k$ be the $(d \times p)$-dimensional
+column vector with elements
 
 $$
 I(Z_k = z_j)\!\left(X_{ik} - \gamma_i
   - \frac{\lambda_i}{\lambda_1}\sum_{w=2}^{p}\beta_w\,I(z_j = w)\right)
 $$
 
-for $z_j = 1, \ldots, p$ and $i = 1, \ldots, d$.  The distance metric
-statistic is
+for $z_j = 1, \ldots, p$ and $i = 1, \ldots, d$.
+If the model is correctly specified, $E[U_k] = 0$; the test measures how far
+the sample average $\bar U = N^{-1}\sum_k U_k$ deviates from zero.
+The distance metric statistic is
 
 $$
-T_0 = N\!\left(\frac{1}{N}\sum_{k=1}^{N} U_k^{\!\top}\right)
-\Sigma^{-1}
-\left(\frac{1}{N}\sum_{k=1}^{N} U_k\right),
+T_0 = N\,\bar U^\top\, \Sigma^{-1}\, \bar U,
 $$
 
 where $\Sigma$ is the empirical covariance matrix of $U_k$ after adjusting
-for the uncertainty in the estimated reliabilities (see below).
-The minimum of $T_0$ over the free parameters converges to a $\chi^2$
-distribution with $(d - 1)(p - 1)$ degrees of freedom under the null
-(theorem 9.2 of Newey & McFadden, 1994).
+for the uncertainty in the estimated reliabilities (see below). This
+quadratic form measures the squared distance of $\bar U$ from zero, weighted
+by $\Sigma^{-1}$ to standardise each moment condition by its variance and
+account for correlations between them. The minimum of $T_0$ over the free
+parameters converges to a $\chi^2$ distribution with $(d - 1)(p - 1)$
+degrees of freedom under the null (theorem 9.2 of Newey & McFadden, 1994).
 
 ### Variance adjustment for estimated reliabilities
 
@@ -189,15 +214,15 @@ is small and the $p$-value is large---we fail to reject $H_0$.
 
 ### Example: data violating the structural model
 
-Now consider data where $Z$ affects each indicator disproportionately, which
-violates the structural interpretation:
+Now consider data where $Z$ has direct effects on each indicator that are
+not proportional to the reliabilities, and does not act through $\eta$:
 
 ```{r t0-h1}
 set.seed(12345)
-eta <- rnorm(n)
+eta <- rnorm(n)                                # Z does not affect eta
 X_bad <- cbind(
   2 + 1.0 * eta + 0.5 * z + rnorm(n, sd = 0.3),
-  3 + 0.8 * eta + 2.0 * z + rnorm(n, sd = 0.3),   # disproportionate Z effect
+  3 + 0.8 * eta + 2.0 * z + rnorm(n, sd = 0.3),
   1 + 0.6 * eta - 0.3 * z + rnorm(n, sd = 0.3),
   2 + 0.9 * eta + 0.4 * z + rnorm(n, sd = 0.3),
   1 + 0.7 * eta + 0.8 * z + rnorm(n, sd = 0.3)
@@ -254,14 +279,18 @@ $\alpha_i$'s, and $p - 1$ free $\beta_w$'s).
 
 ### Moment conditions and test statistic
 
-Let $U_k$ be the $(d \times p)$-dimensional column vector with elements
+As with $T_0$, the moment conditions are constructed as residuals: observed
+minus predicted under the null model. Let $U_k$ be the
+$(d \times p)$-dimensional column vector with elements
 
 $$
 I(Z_k = z_j)\!\left(X_{ik} - \gamma_i - \alpha_i\,\beta_w\right)
 $$
 
 for $z_j = 1, \ldots, p$ and $i = 1, \ldots, d$, where
-$\beta_w = \beta_{z_j}$. The distance metric statistic is
+$\beta_w = \beta_{z_j}$. Under Equation (3), $E[U_k] = 0$; the test
+measures how far $\bar U = N^{-1}\sum_k U_k$ deviates from this.
+The distance metric statistic is
 
 $$
 T_1 = N\!\left(\frac{1}{N}\sum_{k=1}^{N} U_k^{\!\top}\right)
@@ -269,7 +298,9 @@ T_1 = N\!\left(\frac{1}{N}\sum_{k=1}^{N} U_k^{\!\top}\right)
 \left(\frac{1}{N}\sum_{k=1}^{N} U_k\right),
 $$
 
-where $\Sigma$ is the empirical covariance matrix of $U_k$. The minimum of
+where $\Sigma$ is the empirical covariance matrix of $U_k$. Unlike $T_0$,
+no variance adjustment is needed since $T_1$ does not use estimated
+reliabilities. The minimum of
 $T_1$ over the free parameters converges to a $\chi^2$ distribution with
 
 $$
