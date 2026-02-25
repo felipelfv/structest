@@ -9,8 +9,9 @@ test_t1(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25, verbose = FALSE)
 \arguments{
 \item{X}{numeric matrix (n x d) of indicator variables, d >= 2.}
 
-\item{z}{numeric vector of length n encoding the auxiliary variable.
-Must have at least 3 distinct levels.}
+\item{z}{numeric vector or factor of length n encoding a discrete auxiliary
+variable. Must have at least 3 distinct levels. If \code{z} is continuous,
+discretise it (e.g., into quantile groups) before use.}
 
 \item{na.rm}{logical; if \code{TRUE}, rows with any \code{NA} are removed.}
 

@@ -5,8 +5,9 @@
 #' coefficients.
 #'
 #' @param X numeric matrix (n x d) of indicator variables, d >= 2.
-#' @param z numeric vector of length n encoding the auxiliary variable.
-#'   Must have at least 3 distinct levels.
+#' @param z numeric vector or factor of length n encoding a discrete auxiliary
+#'   variable. Must have at least 3 distinct levels. If \code{z} is continuous,
+#'   discretise it (e.g., into quantile groups) before use.
 #' @param na.rm logical; if \code{TRUE}, rows with any \code{NA} are removed.
 #' @param max_iter integer; maximum iterations for \code{nlm}.
 #' @param tol numeric; convergence tolerance for the alternating LS initializer.

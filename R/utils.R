@@ -54,6 +54,14 @@ validate_inputs <- function(X, z, na.rm = TRUE, min_d = 2L, min_p = 2L) {
          call. = FALSE)
   }
 
+  if (p > 10L) {
+    warning(sprintf(
+      paste0("'z' has %d distinct values. The tests require a discrete Z ",
+             "with a small number of levels. If 'z' is continuous, consider ",
+             "discretising (e.g., into quantile groups) before use."),
+      p), call. = FALSE)
+  }
+
   list(X = X, z = z, n = n, d = d, p = p, z_levels = z_levels)
 }
 
