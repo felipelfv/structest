@@ -65,8 +65,9 @@ coefficients.</p>
 
 
 <dt id="arg-z">z<a class="anchor" aria-label="anchor" href="#arg-z"></a></dt>
-<dd><p>numeric vector of length n encoding the auxiliary variable.
-Must have at least 3 distinct levels.</p></dd>
+<dd><p>numeric vector or factor of length n encoding a discrete auxiliary
+variable. Must have at least 3 distinct levels. If <code>z</code> is continuous,
+discretise it (e.g., into quantile groups) before use.</p></dd>
 
 
 <dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>

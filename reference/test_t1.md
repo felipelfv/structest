@@ -18,8 +18,9 @@ test_t1(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25, verbose = FALSE)
 
 - z:
 
-  numeric vector of length n encoding the auxiliary variable. Must have
-  at least 3 distinct levels.
+  numeric vector or factor of length n encoding a discrete auxiliary
+  variable. Must have at least 3 distinct levels. If `z` is continuous,
+  discretise it (e.g., into quantile groups) before use.
 
 - na.rm:
 

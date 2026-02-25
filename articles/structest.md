@@ -401,13 +401,13 @@ summary(result_t1_bad)
 #> Parameter estimates:
 #>   gamma (intercepts):
 #>     X1     X2     X3     X4 
-#> 2.0874 3.0879 1.0657 2.1165 
+#> 2.0872 3.0878 1.0656 2.1163 
 #>   alpha:
 #>      X1      X2      X3      X4 
-#>  1.0000  7.7241 -1.5415  0.6062 
+#>  1.0000  7.7155 -1.5389  0.6065 
 #>   beta (Z effects):
 #>     z=0     z=1     z=2     z=3 
-#>  0.0000  0.2375 -0.0676  0.3791
+#>  0.0000  0.2378 -0.0676  0.3796
 ```
 
 ## Estimating Reliabilities
