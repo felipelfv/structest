@@ -8,7 +8,7 @@ the reliability estimates (see paper, p. 2041).
 ## Usage
 
 ``` r
-test_t0(X, z, na.rm = TRUE, verbose = FALSE)
+test_t0(X, z, na.rm = TRUE, max_iter = 1000L, verbose = FALSE)
 ```
 
 ## Arguments
@@ -26,6 +26,10 @@ test_t0(X, z, na.rm = TRUE, verbose = FALSE)
 - na.rm:
 
   logical; if `TRUE`, rows with any `NA` are removed.
+
+- max_iter:
+
+  integer; maximum iterations for `nlm`.
 
 - verbose:
 

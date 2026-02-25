@@ -52,7 +52,7 @@ reliability estimates (see paper, p. 2041).</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">test_t0</span><span class="op">(</span><span class="va">X</span>, <span class="va">z</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">test_t0</span><span class="op">(</span><span class="va">X</span>, <span class="va">z</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span>, max_iter <span class="op">=</span> <span class="fl">1000L</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -71,6 +71,10 @@ discretise it (e.g., into quantile groups) before use.</p></dd>
 
 <dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>
 <dd><p>logical; if <code>TRUE</code>, rows with any <code>NA</code> are removed.</p></dd>
+
+
+<dt id="arg-max-iter">max_iter<a class="anchor" aria-label="anchor" href="#arg-max-iter"></a></dt>
+<dd><p>integer; maximum iterations for <code>nlm</code>.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
