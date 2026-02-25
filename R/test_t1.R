@@ -127,7 +127,8 @@ test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
       alpha_init <- alpha_init / scale
     }
 
-    # Step 3: estimate gamma_i
+    # Step 3: estimate gamma_i (refresh beta_k after rescaling)
+    beta_k <- beta_init[match(z, z_levels)]
     for (i in seq_len(d)) {
       gamma_init[i] <- mean(X[, i] - alpha_init[i] * beta_k)
     }

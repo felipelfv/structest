@@ -77,6 +77,36 @@ test_that("test_t1 works with d = 2 indicators (paper Section 3.3)", {
   expect_gt(result$p.value, 0.01)  # structural model holds
 })
 
+test_that("test_t1 recovers known parameters under structural model", {
+  set.seed(999)
+  n <- 10000
+  z <- sample(0:3, n, replace = TRUE)  # p = 4 levels
+
+  # True parameters (Equation 3):
+  #   E(X_i | Z = z_j) = gamma_i + alpha_i * beta_j
+  #   alpha_1 = 1 (identification), beta_1 = 0 (reference)
+  gamma_true <- c(2.0, 5.0, -1.0)    # d = 3
+  alpha_true <- c(1.0, 1.5, 0.7)      # alpha_1 = 1
+  beta_true  <- c(0.0, 0.8, -0.5, 1.2) # beta_1 = 0
+
+  # Generate data: X_ik = gamma_i + alpha_i * beta_{z_k} + noise
+  X <- matrix(NA, n, 3)
+  beta_k <- beta_true[match(z, sort(unique(z)))]
+  for (i in 1:3) {
+    X[, i] <- gamma_true[i] + alpha_true[i] * beta_k + rnorm(n, sd = 0.5)
+  }
+
+  result <- test_t1(X, z)
+
+  # Should not reject (structural model holds)
+  expect_gt(result$p.value, 0.05)
+
+  # Check parameter recovery (n = 10000, errors should be < 0.03)
+  expect_equal(unname(result$estimates$gamma), gamma_true, tolerance = 0.03)
+  expect_equal(unname(result$estimates$alpha), alpha_true, tolerance = 0.03)
+  expect_equal(unname(result$estimates$beta),  beta_true,  tolerance = 0.03)
+})
+
 test_that("test_t1 requires d >= 2", {
   set.seed(445)
   n <- 500

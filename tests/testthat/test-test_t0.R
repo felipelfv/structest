@@ -59,6 +59,42 @@ test_that("test_t0 returns correct components", {
   expect_equal(result$p, 2)
 })
 
+test_that("test_t0 recovers known parameters under structural model", {
+  set.seed(888)
+  n <- 10000
+  z <- sample(0:2, n, replace = TRUE)  # p = 3 levels
+
+  # True parameters (Equation 2):
+  #   E(X_i | Z = z_j) = gamma_i + (lambda_i/lambda_1) * beta_j
+  #   beta_1 = 0 (reference level)
+  lambda_true <- c(1.0, 0.8, 0.6)
+  ratio_true  <- lambda_true / lambda_true[1]  # c(1.0, 0.8, 0.6)
+  gamma_true  <- c(2.0, 5.0, -1.0)
+  beta_true   <- c(0.0, 0.5, 1.2)  # beta_1 = 0
+
+  # Generate data: X_ik = mu_i + lambda_i * eta_k + eps_ik
+  # where eta_k ~ N(0, 1), eps independent
+  eta <- rnorm(n)
+  # Shift eta mean by Z-level to produce the right conditional expectations
+  # E(eta | Z = z_j) = beta_j / lambda_1 = beta_j (since lambda_1 = 1)
+  eta <- eta + beta_true[match(z, sort(unique(z)))]
+  mu <- c(2.0, 5.0 - 0.8 * 0, -1.0 - 0.6 * 0)  # adjust so gamma works out
+  X <- cbind(
+    gamma_true[1] + ratio_true[1] * beta_true[match(z, sort(unique(z)))] + rnorm(n, sd = 0.5),
+    gamma_true[2] + ratio_true[2] * beta_true[match(z, sort(unique(z)))] + rnorm(n, sd = 0.5),
+    gamma_true[3] + ratio_true[3] * beta_true[match(z, sort(unique(z)))] + rnorm(n, sd = 0.5)
+  )
+
+  result <- test_t0(X, z)
+
+  # Should not reject (structural model holds)
+  expect_gt(result$p.value, 0.05)
+
+  # Check parameter recovery (n = 10000, errors should be < 0.03)
+  expect_equal(unname(result$estimates$gamma), gamma_true, tolerance = 0.03)
+  expect_equal(unname(result$estimates$beta),  beta_true,  tolerance = 0.03)
+})
+
 test_that("test_t0 works with p > 2 Z-levels", {
   set.seed(303)
   n <- 1500
