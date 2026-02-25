@@ -61,6 +61,13 @@ devtools::install_github("felipelfv/structest")
 | `test_t1(X, z)`           | Statistical test independent of reliability estimates (Section 3.3). Requires d \>= 2 indicators and p \>= 3 Z-levels. |
 | `estimate_reliability(X)` | Estimation of reliability via quasi-Poisson GLM on pairwise covariances (Section 3.1).                                 |
 
+## Code of Conduct
+
+Please note that the structest project is released with a [Contributor
+Code of
+Conduct](https://felipelfv.github.io/structest/CODE_OF_CONDUCT.html). By
+contributing to this project, you agree to abide by its terms.
+
 ## Reference
 
 VanderWeele, T. J. & Vansteelandt, S. (2022). A statistical test to
