@@ -104,28 +104,3 @@ VanderWeele, T. J. and Vansteelandt, S. (2022). A statistical test to
 reject the structural interpretation of a latent factor model. *Journal
 of the Royal Statistical Society: Series B (Statistical Methodology)*,
 84, 2032–2054.
-
-## Examples
-
-``` r
-set.seed(12345)
-n <- 1000
-z <- rbinom(n, 1, 0.5)
-eta <- 1 + 0.5 * z + rnorm(n)
-lambda <- c(1.0, 0.8, 0.6)
-X <- cbind(
-  2 + lambda[1] * eta + rnorm(n, sd = 0.5),
-  3 + lambda[2] * eta + rnorm(n, sd = 0.5),
-  1 + lambda[3] * eta + rnorm(n, sd = 0.5)
-)
-
-result <- test_t0(X, z)
-result
-#> 
-#>   T0: Reliability-dependent test of structural interpretation (VanderWeele & Vansteelandt, 2022) 
-#> 
-#> data:   X and z 
-#> statistic = 6.452, df = 2, p-value = 0.03971
-#> n = 1000, d = 3 indicators, p = 2 Z-levels
-#> 
-```

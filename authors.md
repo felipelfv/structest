@@ -6,9 +6,6 @@
 
 ## Citation
 
-Source:
-[`DESCRIPTION`](https://github.com/felipelfv/structest/blob/main/DESCRIPTION)
-
 Fontana Vieira F (2026). *structest: Testing the Structural
 Interpretation of a Univariate Latent Factor Model*. R package version
 0.1.0, <https://felipelfv.github.io/structest/>.
