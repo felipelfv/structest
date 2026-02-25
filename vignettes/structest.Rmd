@@ -2,7 +2,7 @@
 title: "Testing the Structural Interpretation of a Latent Factor Model"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{structest}
+  %\VignetteIndexEntry{Testing the Structural Interpretation of a Latent Factor Model}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
