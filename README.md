@@ -36,6 +36,10 @@ devtools::install_github("felipelfv/structest")
 | `test_t1(X, z)` | Statistical test independent of reliability estimates (Section 3.3). Requires d >= 2 indicators and p >= 3 Z-levels. |
 | `estimate_reliability(X)` | Estimation of reliability via quasi-Poisson GLM on pairwise covariances (Section 3.1). |
 
+## Code of Conduct
+
+Please note that the structest project is released with a [Contributor Code of Conduct](https://felipelfv.github.io/structest/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.
+
 ## Reference
 
 VanderWeele, T. J. & Vansteelandt, S. (2022). A statistical test to reject the structural interpretation of a latent factor model. *Journal of the Royal Statistical Society: Series B (Statistical Methodology)*, 84, 2032--2054. [doi:10.1111/rssb.12555](https://doi.org/10.1111/rssb.12555)
