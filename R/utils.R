@@ -79,7 +79,7 @@ pairwise_indices <- function(d) {
 #' Build the design matrix B for the quasi-Poisson GLM (reliability estimation)
 #'
 #' For d indicators, there are choose(d,2) pairwise covariances.
-#' B is choose(d,2) x d, where B[k, i] = 1 if indicator i is in pair k.
+#' B is choose(d,2) x d, where \code{B[k, i] = 1} if indicator i is in pair k.
 #'
 #' @param d number of indicators
 #' @return matrix B of dimension choose(d,2) x d
@@ -98,7 +98,7 @@ build_design_matrix <- function(d) {
 
 #' Build indicator matrix for Z-levels
 #'
-#' Returns an n x p matrix where column j is 1 if z == z_levels[j], else 0.
+#' Returns an n x p matrix where column \code{j} is 1 if \code{z == z_levels[j]}, else 0.
 #'
 #' @param z numeric vector
 #' @param z_levels sorted unique values of z

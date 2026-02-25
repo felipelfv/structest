@@ -10,6 +10,7 @@
 #'   variable. Must have at least 2 distinct levels. If \code{z} is continuous,
 #'   discretise it (e.g., into quantile groups) before use.
 #' @param na.rm logical; if \code{TRUE}, rows with any \code{NA} are removed.
+#' @param max_iter integer; maximum iterations for \code{nlm}.
 #' @param verbose logical; if \code{TRUE}, print progress information.
 #'
 #' @return An object of class \code{c("structest_t0", "structest", "htest")}
@@ -47,7 +48,7 @@
 #' \emph{Journal of the Royal Statistical Society: Series B (Statistical Methodology)}, 84, 2032--2054.
 #'
 #' @export
-test_t0 <- function(X, z, na.rm = TRUE, verbose = FALSE) {
+test_t0 <- function(X, z, na.rm = TRUE, max_iter = 1000L, verbose = FALSE) {
   dname <- paste(deparse(substitute(X)), "and", deparse(substitute(z)))
 
   # Validate inputs
@@ -165,15 +166,21 @@ test_t0 <- function(X, z, na.rm = TRUE, verbose = FALSE) {
     }
 
     # Adjusted moment conditions: U*_k = U_k - E[dU/dlambda] (E[dV/dlambda])^{-1} V_k
-    uadjust <- u - t(dudlambda %*% solve(dvdlambda) %*% t(V_k))
+    dvdlambda_inv <- tryCatch(solve(dvdlambda), error = function(e) {
+      solve(dvdlambda + 1e-6 * diag(ncol(dvdlambda)))
+    })
+    uadjust <- u - t(dudlambda %*% dvdlambda_inv %*% t(V_k))
 
     # Distance metric statistic with adjusted variance (1/N normalization, matching paper)
     Sigma <- var(uadjust) * ((n - 1) / n)
-    n * drop(t(g) %*% solve(Sigma) %*% g)
+    Sigma_inv <- tryCatch(solve(Sigma), error = function(e) {
+      solve(Sigma + 1e-6 * diag(ncol(Sigma)))
+    })
+    n * drop(t(g) %*% Sigma_inv %*% g)
   }
 
   # Run optimization
-  res <- nlm(q_t0, p = theta_init)
+  res <- nlm(q_t0, p = theta_init, iterlim = max_iter)
 
   if (verbose) {
     message("T0 optimization converged with code: ", res$code)

@@ -77,7 +77,6 @@ estimate_reliability <- function(X, na.rm = TRUE) {
 
   # Per-subject estimating function contributions for lambda
   # u_ij[k] = (X_i[k] - mean_i)(X_j[k] - mean_j) - lambda_i * lambda_j
-  # u_i = -sum_{j != i} lambda_j * u_ij  (score contribution for lambda_i)
   means <- colMeans(X)
   Xc <- sweep(X, 2, means)  # centered indicators
 

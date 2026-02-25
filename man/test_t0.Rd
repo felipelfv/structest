@@ -4,7 +4,7 @@
 \alias{test_t0}
 \title{T0 Test: Reliability-Dependent Test of Structural Interpretation (Section 3.2)}
 \usage{
-test_t0(X, z, na.rm = TRUE, verbose = FALSE)
+test_t0(X, z, na.rm = TRUE, max_iter = 1000L, verbose = FALSE)
 }
 \arguments{
 \item{X}{numeric matrix (n x d) of indicator variables, d >= 3.}
@@ -14,6 +14,8 @@ variable. Must have at least 2 distinct levels. If \code{z} is continuous,
 discretise it (e.g., into quantile groups) before use.}
 
 \item{na.rm}{logical; if \code{TRUE}, rows with any \code{NA} are removed.}
+
+\item{max_iter}{integer; maximum iterations for \code{nlm}.}
 
 \item{verbose}{logical; if \code{TRUE}, print progress information.}
 }

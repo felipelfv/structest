@@ -18,6 +18,10 @@
 #' reject the structural interpretation of a latent factor model.
 #' \emph{Journal of the Royal Statistical Society: Series B (Statistical Methodology)}, 84, 2032--2054.
 #'
+#' @importFrom stats coef complete.cases cov glm lm.fit model.matrix nlm
+#'   pchisq quasi var
+#' @importFrom utils combn
+#'
 #' @docType package
 #' @name structest-package
 "_PACKAGE"
