@@ -37,22 +37,6 @@ each pairwise covariance is modelled as a linear combination of
 }
 \examples{
 # Simulate data from a one-factor model
-set.seed(42)
-n <- 1000
-eta <- rnorm(n)
-lambda_true <- c(1.0, 0.8, 0.6)
-X <- cbind(
-  lambda_true[1] * eta + rnorm(n, sd = 0.5),
-  lambda_true[2] * eta + rnorm(n, sd = 0.5),
-  lambda_true[3] * eta + rnorm(n, sd = 0.5)
-)
-
-rel <- estimate_reliability(X)
-rel$lambda
-
-# Ratios lambda_i / lambda_1 should be close to truth
-rel$lambda / rel$lambda[1]
-
 set.seed(12345)
 n <- 1000
 eta <- rnorm(n)
