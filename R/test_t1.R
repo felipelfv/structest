@@ -92,11 +92,11 @@ test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
   Z_mat <- z_indicator_matrix(z, z_levels)
 
   # Paper's formulation (Equation 3, p. 2042):
-  #   E(X_i | Z = z_j) = gamma_i + alpha_i * beta_j
-  #   Identification: alpha_1 = 1 (scale), beta_1 = 0 (reference level)
-  #   Moment conditions: d * p
-  #   Free parameters: d + (d-1) + (p-1) = 2d + p - 2
-  #   df = d*p - (2d + p - 2) = (d-1)(p-2)
+  # E(X_i | Z = z_j) = gamma_i + alpha_i * beta_j
+  # Identification: alpha_1 = 1 (scale), beta_1 = 0 (reference level)
+  # Moment conditions: d * p
+  # Free parameters: d + (d-1) + (p-1) = 2d + p - 2
+  # df = d*p - (2d + p - 2) = (d-1)(p-2)
 
   # Initialization via Appendix A.3 iterative procedure
   # Initial values: gamma_i = 0, alpha_i = mean(X_i | Z = z_1)

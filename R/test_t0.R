@@ -131,17 +131,17 @@ test_t0 <- function(X, z, na.rm = TRUE, max_iter = 1000L, verbose = FALSE) {
     # Sigma = Var(U*_k) where U*_k = U_k - E[dU/dlambda] (E[dV/dlambda])^{-1} V_k
     #
     # All matrices below use the paper's sign conventions directly:
-    #   dudlambda = E[dU/dlambda]           (d*p) x d
-    #   dvdlambda = E[dV/dlambda]           d x d
-    #   V_k       = paper's V_k             n x d
+    # dudlambda = E[dU/dlambda]           (d*p) x d
+    # dvdlambda = E[dV/dlambda]           d x d
+    # V_k       = paper's V_k             n x d
 
     # E[dU_{(i,j)}/dlambda_s]:
-    #   U_{(i,j),k} = I(z_k=z_j)(X_ik - gamma_i - ratio_i * beta_j)
-    #   dU/dlambda_s = -I(z_k=z_j) * d(ratio_i * beta_j)/dlambda_s
-    #   E[dU/dlambda_s] = -p_z[j] * d(ratio_i * beta_j)/dlambda_s
+    # U_{(i,j),k} = I(z_k=z_j)(X_ik - gamma_i - ratio_i * beta_j)
+    # dU/dlambda_s = -I(z_k=z_j) * d(ratio_i * beta_j)/dlambda_s
+    # E[dU/dlambda_s] = -p_z[j] * d(ratio_i * beta_j)/dlambda_s
     # Only nonzero for i > 1 AND j > 1:
-    #   d(lambda_i/lambda_1 * beta_j)/dlambda_1 = -ratio_i * beta_j / lambda_1
-    #   d(lambda_i/lambda_1 * beta_j)/dlambda_i = beta_j / lambda_1
+    # d(lambda_i/lambda_1 * beta_j)/dlambda_1 = -ratio_i * beta_j / lambda_1
+    # d(lambda_i/lambda_1 * beta_j)/dlambda_i = beta_j / lambda_1
     diag_pz <- numeric(d * p)
     col <- 0L
     for (i in seq_len(d)) {
@@ -166,9 +166,9 @@ test_t0 <- function(X, z, na.rm = TRUE, max_iter = 1000L, verbose = FALSE) {
     dudlambda <- -diag(diag_pz) %*% dpred_dlambda  # E[dU/dlambda], (d*p) x d
 
     # E[dV/dlambda] where V_{ik} = sum_{j!=i} lambda_j [(X_i-Xbar)(X_j-Xbar) - lambda_i lambda_j]
-    #   dV_i/dlambda_i = sum_{j!=i} lambda_j * (-lambda_j) = -sum_{j!=i} lambda_j^2
-    #   dV_i/dlambda_m = (X_i-Xbar)(X_m-Xbar) - 2*lambda_i*lambda_m  (m != i)
-    #   E[dV_i/dlambda_m] = mean_obs[...] = mean(u_im) - lambda_i*lambda_m
+    # dV_i/dlambda_i = sum_{j!=i} lambda_j * (-lambda_j) = -sum_{j!=i} lambda_j^2
+    # dV_i/dlambda_m = (X_i-Xbar)(X_m-Xbar) - 2*lambda_i*lambda_m  (m != i)
+    # E[dV_i/dlambda_m] = mean_obs[...] = mean(u_im) - lambda_i*lambda_m
     dvdlambda <- matrix(0, nrow = d, ncol = d)
     for (i in seq_len(d)) {
       dvdlambda[i, i] <- -sum(lambda[-i]^2)

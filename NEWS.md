@@ -1,6 +1,6 @@
 # structest 0.1.0
 
-* Initial CRAN release.
+* Initial release.
 * Implements `test_t0()`: reliability-dependent test of structural interpretation
   (Section 3.2 of VanderWeele & Vansteelandt, 2022).
 * Implements `test_t1()`: reliability-independent test of structural interpretation
