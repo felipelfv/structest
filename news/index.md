@@ -2,7 +2,7 @@
 
 ## structest 0.1.0
 
-- Initial CRAN release.
+- Initial release.
 - Implements
   [`test_t0()`](https://felipelfv.github.io/structest/reference/test_t0.md):
   reliability-dependent test of structural interpretation (Section 3.2
