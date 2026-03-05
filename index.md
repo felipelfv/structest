@@ -7,11 +7,11 @@ stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://
 
 R package implementing the statistical tests from:
 
-> VanderWeele, T. J. & Vansteelandt, S. (2022). A statistical test to
+> VanderWeele, T. J., & Vansteelandt, S. (2022). A statistical test to
 > reject the structural interpretation of a latent factor model.
 > *Journal of the Royal Statistical Society: Series B (Statistical
-> Methodology)*, 84, 2032–2054.
-> [doi:10.1111/rssb.12555](https://doi.org/10.1111/rssb.12555)
+> Methodology)*, *84*(5), 2032–2054.
+> <https://doi.org/10.1111/rssb.12555>
 
 ## Background
 
@@ -70,8 +70,7 @@ contributing to this project, you agree to abide by its terms.
 
 ## Reference
 
-VanderWeele, T. J. & Vansteelandt, S. (2022). A statistical test to
+VanderWeele, T. J., & Vansteelandt, S. (2022). A statistical test to
 reject the structural interpretation of a latent factor model. *Journal
 of the Royal Statistical Society: Series B (Statistical Methodology)*,
-84, 2032–2054.
-[doi:10.1111/rssb.12555](https://doi.org/10.1111/rssb.12555)
+*84*(5), 2032–2054. <https://doi.org/10.1111/rssb.12555>

@@ -3,17 +3,24 @@
 <url><loc>https://felipelfv.github.io/structest/CODE_OF_CONDUCT.html</loc></url>
 <url><loc>https://felipelfv.github.io/structest/CONTRIBUTING.html</loc></url>
 <url><loc>https://felipelfv.github.io/structest/LICENSE-text.html</loc></url>
+<url><loc>https://felipelfv.github.io/structest/articles/fit-structural.html</loc></url>
 <url><loc>https://felipelfv.github.io/structest/articles/index.html</loc></url>
 <url><loc>https://felipelfv.github.io/structest/articles/structest.html</loc></url>
 <url><loc>https://felipelfv.github.io/structest/authors.html</loc></url>
 <url><loc>https://felipelfv.github.io/structest/index.html</loc></url>
 <url><loc>https://felipelfv.github.io/structest/news/index.html</loc></url>
+<url><loc>https://felipelfv.github.io/structest/reference/coef.structest_fit.html</loc></url>
+<url><loc>https://felipelfv.github.io/structest/reference/confint.structest_fit.html</loc></url>
 <url><loc>https://felipelfv.github.io/structest/reference/estimate_reliability.html</loc></url>
+<url><loc>https://felipelfv.github.io/structest/reference/fit_structural.html</loc></url>
 <url><loc>https://felipelfv.github.io/structest/reference/index.html</loc></url>
 <url><loc>https://felipelfv.github.io/structest/reference/print.structest.html</loc></url>
+<url><loc>https://felipelfv.github.io/structest/reference/print.structest_fit.html</loc></url>
 <url><loc>https://felipelfv.github.io/structest/reference/structest-package.html</loc></url>
 <url><loc>https://felipelfv.github.io/structest/reference/summary.structest.html</loc></url>
+<url><loc>https://felipelfv.github.io/structest/reference/summary.structest_fit.html</loc></url>
 <url><loc>https://felipelfv.github.io/structest/reference/test_t0.html</loc></url>
 <url><loc>https://felipelfv.github.io/structest/reference/test_t1.html</loc></url>
+<url><loc>https://felipelfv.github.io/structest/reference/vcov.structest_fit.html</loc></url>
 </urlset>
 
