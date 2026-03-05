@@ -6,7 +6,7 @@
 
 R package implementing the statistical tests from:
 
-> VanderWeele, T. J. & Vansteelandt, S. (2022). A statistical test to reject the structural interpretation of a latent factor model. *Journal of the Royal Statistical Society: Series B (Statistical Methodology)*, 84, 2032--2054. [doi:10.1111/rssb.12555](https://doi.org/10.1111/rssb.12555)
+> VanderWeele, T. J., & Vansteelandt, S. (2022). A statistical test to reject the structural interpretation of a latent factor model. *Journal of the Royal Statistical Society: Series B (Statistical Methodology)*, *84*(5), 2032--2054. https://doi.org/10.1111/rssb.12555
 
 ## Background
 
@@ -42,4 +42,4 @@ Please note that the structest project is released with a [Contributor Code of C
 
 ## Reference
 
-VanderWeele, T. J. & Vansteelandt, S. (2022). A statistical test to reject the structural interpretation of a latent factor model. *Journal of the Royal Statistical Society: Series B (Statistical Methodology)*, 84, 2032--2054. [doi:10.1111/rssb.12555](https://doi.org/10.1111/rssb.12555)
+VanderWeele, T. J., & Vansteelandt, S. (2022). A statistical test to reject the structural interpretation of a latent factor model. *Journal of the Royal Statistical Society: Series B (Statistical Methodology)*, *84*(5), 2032--2054. https://doi.org/10.1111/rssb.12555

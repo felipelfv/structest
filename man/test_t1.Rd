@@ -89,7 +89,9 @@ result
 
 }
 \references{
-VanderWeele, T. J. and Vansteelandt, S. (2022). A statistical test to
+VanderWeele, T. J., & Vansteelandt, S. (2022). A statistical test to
 reject the structural interpretation of a latent factor model.
-\emph{Journal of the Royal Statistical Society: Series B (Statistical Methodology)}, 84, 2032--2054.
+\emph{Journal of the Royal Statistical Society: Series B (Statistical
+Methodology)}, \emph{84}(5), 2032--2054.
+\doi{10.1111/rssb.12555}
 }

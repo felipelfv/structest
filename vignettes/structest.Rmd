@@ -448,9 +448,14 @@ if you need the reliability estimates for other purposes.
   the conclusion; disagreement may signal misspecification of the error
   distribution (which affects $T_0$ but not $T_1$).
 
-## Reference
+## References
 
-VanderWeele, T. J. and Vansteelandt, S. (2022). A statistical test to reject
+Newey, W. K., & McFadden, D. (1994). Large sample estimation and hypothesis
+testing. In R. F. Engle & D. L. McFadden (Eds.), *Handbook of Econometrics*
+(Vol. 4, pp. 2111--2245). Elsevier.
+https://doi.org/10.1016/S1573-4412(05)80005-4
+
+VanderWeele, T. J., & Vansteelandt, S. (2022). A statistical test to reject
 the structural interpretation of a latent factor model. *Journal of the Royal
-Statistical Society: Series B (Statistical Methodology)*, 84, 2032--2054.
-[doi:10.1111/rssb.12555](https://doi.org/10.1111/rssb.12555)
+Statistical Society: Series B (Statistical Methodology)*, *84*(5), 2032--2054.
+https://doi.org/10.1111/rssb.12555

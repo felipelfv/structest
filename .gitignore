@@ -6,3 +6,5 @@
 *.o
 *.so
 *.dylib
+/doc/
+/Meta/
