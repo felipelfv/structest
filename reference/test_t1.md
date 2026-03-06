@@ -121,6 +121,13 @@ of the Royal Statistical Society: Series B (Statistical Methodology)*,
 *84*(5), 2032–2054.
 [doi:10.1111/rssb.12555](https://doi.org/10.1111/rssb.12555)
 
+## See also
+
+[`test_t0`](https://felipelfv.github.io/structest/reference/test_t0.md)
+for the reliability-dependent test;
+[`fit_structural`](https://felipelfv.github.io/structest/reference/fit_structural.md)
+for parameter estimates with standard errors.
+
 ## Examples
 
 ``` r

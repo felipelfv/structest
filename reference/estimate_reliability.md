@@ -57,6 +57,21 @@ Under the structural model \\X_i = \mu_i + \lambda_i \eta +
 \lambda_j\\. The log of each pairwise covariance is modelled as a linear
 combination of \\\log(\lambda_i)\\, yielding a quasi-Poisson GLM.
 
+## References
+
+VanderWeele, T. J., & Vansteelandt, S. (2022). A statistical test to
+reject the structural interpretation of a latent factor model. *Journal
+of the Royal Statistical Society: Series B (Statistical Methodology)*,
+*84*(5), 2032–2054.
+[doi:10.1111/rssb.12555](https://doi.org/10.1111/rssb.12555)
+
+## See also
+
+[`test_t0`](https://felipelfv.github.io/structest/reference/test_t0.md)
+which uses these estimates internally;
+[`test_t1`](https://felipelfv.github.io/structest/reference/test_t1.md)
+for a reliability-independent alternative.
+
 ## Examples
 
 ``` r

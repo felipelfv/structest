@@ -20,6 +20,11 @@ factor model.
 
   Estimate reliability coefficients via quasi-Poisson GLM (Section 3.1).
 
+- [`fit_structural`](https://felipelfv.github.io/structest/reference/fit_structural.md):
+
+  Fit the structural model with GMM sandwich standard errors for all
+  free parameters.
+
 ## References
 
 VanderWeele, T. J., & Vansteelandt, S. (2022). A statistical test to
