@@ -65,6 +65,9 @@
 #' Methodology)}, \emph{84}(5), 2032--2054.
 #' \doi{10.1111/rssb.12555}
 #'
+#' @seealso \code{\link{test_t0}} for the reliability-dependent test;
+#'   \code{\link{fit_structural}} for parameter estimates with standard errors.
+#'
 #' @examples
 #' set.seed(12345)
 #' n <- 1000

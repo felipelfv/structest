@@ -56,6 +56,10 @@
 #' Methodology)}, \emph{84}(5), 2032--2054.
 #' \doi{10.1111/rssb.12555}
 #'
+#' @seealso \code{\link{test_t1}} and \code{\link{test_t0}} for the
+#'   overidentification tests alone;
+#'   \code{\link{estimate_reliability}} for reliability estimation.
+#'
 #' @examples
 #' set.seed(12345)
 #' n <- 1000

@@ -18,6 +18,8 @@ Requires d >= 3 indicators and p >= 2 Z-levels.}
 Requires d >= 2 indicators and p >= 3 Z-levels.}
 \item{\code{\link{estimate_reliability}}}{Estimate reliability coefficients
 via quasi-Poisson GLM (Section 3.1).}
+\item{\code{\link{fit_structural}}}{Fit the structural model with GMM
+sandwich standard errors for all free parameters.}
 }
 }
 

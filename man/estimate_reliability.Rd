@@ -54,3 +54,14 @@ rel$lambda
 rel$lambda / rel$lambda[1]
 
 }
+\references{
+VanderWeele, T. J., & Vansteelandt, S. (2022). A statistical test to
+reject the structural interpretation of a latent factor model.
+\emph{Journal of the Royal Statistical Society: Series B (Statistical
+Methodology)}, \emph{84}(5), 2032--2054.
+\doi{10.1111/rssb.12555}
+}
+\seealso{
+\code{\link{test_t0}} which uses these estimates internally;
+\code{\link{test_t1}} for a reliability-independent alternative.
+}

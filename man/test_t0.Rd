@@ -78,3 +78,8 @@ reject the structural interpretation of a latent factor model.
 Methodology)}, \emph{84}(5), 2032--2054.
 \doi{10.1111/rssb.12555}
 }
+\seealso{
+\code{\link{test_t1}} for the reliability-independent test;
+\code{\link{fit_structural}} for parameter estimates with standard errors;
+\code{\link{estimate_reliability}} for the reliability estimation step.
+}
