@@ -40,8 +40,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/fit-indices-and-structural.html">Fit Indices and Structural Interpretation</a></li>
-    <li><a class="dropdown-item" href="../articles/fit-structural.html">Fitting the Structural Model with Standard Errors</a></li>
+<li><a class="dropdown-item" href="../articles/fit-structural.html">Fitting the Structural Model with Standard Errors</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -501,47 +500,6 @@ argument for selecting specific parameters:</p>
 <span><span class="co">#&gt;               2.5 %    97.5 %</span></span>
 <span><span class="co">#&gt; beta[z=1] 0.1261550 0.4574583</span></span>
 <span><span class="co">#&gt; beta[z=2] 0.5699997 0.9091969</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="interpreting-the-parameters">Interpreting the Parameters<a class="anchor" aria-label="anchor" href="#interpreting-the-parameters"></a>
-</h2>
-<p>The parameter estimates from <code><a href="../reference/fit_structural.html">fit_structural()</a></code> are
-meaningful <strong>only when the structural model is not
-rejected</strong>. When the overidentification test yields a large <span class="math inline">\(p\)</span>-value, the model fits the data
-adequately and the parameters describe the latent factor structure:</p>
-<ul>
-<li>
-<strong><span class="math inline">\(\beta_j\)</span></strong>
-measures how much the latent factor <span class="math inline">\(\eta\)</span> shifts at <span class="math inline">\(Z\)</span>-level <span class="math inline">\(j\)</span> relative to the reference. A
-significant <span class="math inline">\(\beta_j\)</span> means <span class="math inline">\(Z\)</span>-level <span class="math inline">\(j\)</span> is associated with a different level of
-the latent factor.</li>
-<li>
-<strong><span class="math inline">\(\alpha_i\)</span></strong>
-(<span class="math inline">\(T_1\)</span> only) gives the relative
-loading of indicator <span class="math inline">\(i\)</span> compared to
-the reference indicator (<span class="math inline">\(\alpha_1 =
-1\)</span>). Under the structural model, <span class="math inline">\(\alpha_i = \lambda_i / \lambda_1\)</span>.</li>
-<li>
-<strong><span class="math inline">\(\gamma_i\)</span></strong> is
-the intercept for indicator <span class="math inline">\(i\)</span> at
-the reference level of <span class="math inline">\(Z\)</span>: <span class="math inline">\(\gamma_i = \mu_i + \lambda_i\,E(\eta \mid Z =
-z_1)\)</span>.</li>
-</ul>
-<div class="section level3">
-<h3 id="when-the-model-is-rejected">When the model is rejected<a class="anchor" aria-label="anchor" href="#when-the-model-is-rejected"></a>
-</h3>
-<p>If the overidentification test rejects (small <span class="math inline">\(p\)</span>-value), the structural model does not
-hold and the parameter estimates should not be interpreted
-substantively. Under misspecification, the model is fitting a rank-1
-structure to data that does not have one, so the estimates do not
-correspond to well-defined population quantities and the standard errors
-are not valid.</p>
-<p>In particular, the per-parameter <span class="math inline">\(p\)</span>-values <strong>cannot</strong> be used
-to diagnose <em>which</em> indicator breaks the structural
-interpretation. The estimates and their standard errors are derived
-under the assumption that the model is correct; when it is not, they do
-not have a meaningful interpretation.</p>
-</div>
 </div>
 <div class="section level2">
 <h2 id="relationship-to-the-tests">Relationship to the Tests<a class="anchor" aria-label="anchor" href="#relationship-to-the-tests"></a>
