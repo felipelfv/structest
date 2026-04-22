@@ -105,6 +105,8 @@ test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
 
   # Initialization via Appendix A.3 iterative procedure
   # Initial values: gamma_i = 0, alpha_i = mean(X_i | Z = z_1)
+  # To do (!): reference inits alpha on centred X (~0); raw means here can be far
+  # from solution for highly variable indicators.
   gamma_init <- rep(0, d)
   alpha_init <- numeric(d)
   for (i in seq_len(d)) {
@@ -254,7 +256,6 @@ test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
   # Degrees of freedom: (d-1)(p-2)
   df <- (d - 1L) * (p - 2L)
 
-  # Extract estimates
   theta_hat <- res$estimate
   gamma_hat <- theta_hat[1:d]
   alpha_hat <- c(1, theta_hat[(d + 1):(2 * d - 1)])

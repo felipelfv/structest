@@ -187,6 +187,7 @@ test_t0 <- function(X, z, na.rm = TRUE, max_iter = 1000L, verbose = FALSE) {
     }
 
     # Adjusted moment conditions: U*_k = U_k - E[dU/dlambda] (E[dV/dlambda])^{-1} V_k
+    # To do (!): reference script uses + C instead of - C; equivalent under Gaussian X, diverges for skewed indicators. Worth a numerical check.
     dvdlambda_inv <- tryCatch(solve(dvdlambda), error = function(e) {
       solve(dvdlambda + 1e-6 * diag(ncol(dvdlambda)))
     })
