@@ -95,13 +95,11 @@ fit_structural <- function(X, z, type = c("t1", "t0"), conf_level = 0.95,
     stop("'conf_level' must be a single number between 0 and 1.", call. = FALSE)
   }
 
-  # Run the appropriate test to get estimates and overidentification statistic
   test_res <- switch(type,
     t1 = test_t1(X, z, na.rm = na.rm, max_iter = max_iter, verbose = verbose),
     t0 = test_t0(X, z, na.rm = na.rm, max_iter = max_iter, verbose = verbose)
   )
 
-  # Prepare clean data (same validation as test functions)
   inp <- validate_inputs(X, z, na.rm = na.rm,
                          min_d = if (type == "t1") 2L else 3L,
                          min_p = if (type == "t1") 3L else 2L)
@@ -123,7 +121,6 @@ fit_structural <- function(X, z, type = c("t1", "t0"), conf_level = 0.95,
   param_names <- se_result$param_names
   se <- sqrt(pmax(diag(vcov_mat), 0))
 
-  # Build coefficient table
   z_val <- estimates_vec / se
   p_val <- 2 * pnorm(-abs(z_val))
   ci_lower <- estimates_vec - crit * se
@@ -216,7 +213,6 @@ fit_structural <- function(X, z, type = c("t1", "t0"), conf_level = 0.95,
   bread <- crossprod(G, Omega_inv %*% G)
   vcov_mat <- solve(bread) / n
 
-  # Parameter names
   ind_names <- names(gamma_hat)
   param_names <- c(
     paste0("gamma[", ind_names, "]"),
@@ -328,7 +324,6 @@ fit_structural <- function(X, z, type = c("t1", "t0"), conf_level = 0.95,
   bread <- crossprod(G, Omega_inv %*% G)
   vcov_mat <- solve(bread) / n
 
-  # Parameter names
   ind_names <- names(gamma_hat)
   param_names <- c(
     paste0("gamma[", ind_names, "]"),

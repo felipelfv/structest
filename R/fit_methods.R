@@ -17,7 +17,6 @@ print.structest_fit <- function(x, digits = max(3L, getOption("digits") - 3L),
   cat("n = ", x$n_obs, ", d = ", x$d, " indicators, p = ", x$p,
       " Z-levels\n\n", sep = "")
 
-  # Print coefficient table
   ct <- x$coefficients
   out <- data.frame(
     Estimate = formatC(ct$Estimate, digits = digits, format = "f"),
@@ -59,7 +58,6 @@ summary.structest_fit <- function(object,
   cat("n = ", object$n_obs, ", d = ", object$d, " indicators, p = ", object$p,
       " Z-levels\n\n", sep = "")
 
-  # Full coefficient table with CIs
   ct <- object$coefficients
   ci_pct <- paste0(format(100 * object$conf_level, digits = 3), "%")
   ci_label <- paste0(ci_pct, " CI")
