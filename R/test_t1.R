@@ -240,10 +240,16 @@ test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
     g <- build_gmm(theta_val)
     gm <- colMeans(g)
     Sigma <- var(g) * ((n - 1) / n)
+    # Sigma is recomputed at every candidate theta. If nlm probes an extreme
+    # region the moment variances can blow up and Sigma becomes uninvertible;
+    # return a large penalty there so the optimizer retreats instead of erroring.
     Sigma_inv <- tryCatch(solve(Sigma), error = function(e) {
-      solve(Sigma + 1e-6 * diag(ncol(Sigma)))
+      tryCatch(solve(Sigma + 1e-6 * diag(ncol(Sigma))),
+               error = function(e2) NULL)
     })
-    n * drop(crossprod(gm, Sigma_inv %*% gm))
+    if (is.null(Sigma_inv)) return(1e10)
+    val <- n * drop(crossprod(gm, Sigma_inv %*% gm))
+    if (!is.finite(val)) 1e10 else val
   }
 
   res <- nlm(q_final, p = res2$estimate, iterlim = max_iter)
