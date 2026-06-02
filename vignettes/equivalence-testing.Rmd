@@ -1,0 +1,264 @@
+---
+title: "Equivalence Testing for the Structural Interpretation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Equivalence Testing for the Structural Interpretation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+The `test_t0()` and `test_t1()` functions ask whether the structural
+interpretation of a latent factor model can be rejected. They are built to
+detect departures, so a small $p$-value is evidence that the indicators do
+not depend on the external variable $Z$ only through the latent factor
+$\eta$. A large $p$-value is a weaker statement. It does not show that the
+structural interpretation holds. It means only that the data did not supply
+enough evidence to reject it, which can happen either because the
+interpretation is essentially correct or because the sample is too small to
+resolve a real departure.
+
+The `equiv_test()` function addresses the complementary question. Instead of
+asking whether any departure exists, it asks whether the departure is small
+enough to be treated as negligible relative to a margin that the analyst
+fixes in advance. A significant result licenses the positive claim that
+departures from the structural interpretation lie below the margin, so the
+estimates from `fit_structural()` may be read structurally.
+
+This vignette assumes familiarity with the model, the notation, and the
+distance metric statistic introduced in the *Getting Started* vignette
+(`vignette("structest")`) and the *Standard Errors* vignette
+(`vignette("fit-structural")`). We recall the relevant quantities before
+defining the equivalence test.
+
+```{r setup}
+library(structest)
+```
+
+## Recap: The Distance Metric Statistic
+
+Both tests estimate the restricted model by GMM and report the minimised
+distance metric statistic
+
+$$
+J = Q_N(\hat\theta)
+  = N\,\bar U(\hat\theta)^\top\,\Sigma^{-1}\,\bar U(\hat\theta),
+$$
+
+where $\bar U(\theta)$ is the sample average of the $d \times p$ moment
+conditions and $\Sigma$ is their covariance. The statistic $J$ equals $T_0$
+or $T_1$ depending on the parameterisation. Under the null that the
+structural interpretation holds, $J$ is asymptotically $\chi^2_{df}$ with
+$df = d \times p - m$ overidentifying degrees of freedom, where $m$ is the
+number of free parameters. The rejection tests compare $J$ to the upper tail
+of this $\chi^2_{df}$ distribution.
+
+## Why a Non-significant Test Is Not Confirmation
+
+The rejection test controls the probability of wrongly rejecting a correct
+structural interpretation, but it says nothing direct about the probability
+of failing to reject an incorrect one. When the sample is small, or the
+departure is subtle, $J$ can easily fall in the non-rejection region even
+though the structural interpretation is false. Reporting a large $p$-value as
+support for the structural model therefore confuses absence of evidence with
+evidence of absence.
+
+The same asymmetry appears from the other side in large samples. There the
+rejection test has the power to flag even a negligible departure, so a small
+$p$-value confirms that the departure is nonzero without telling us whether it
+is large enough to matter. In both regimes the rejection test answers a
+different question from the one we usually care about.
+
+Equivalence testing repairs this by inverting the burden of proof. We choose
+a margin $\varepsilon_0$ that represents the largest departure we are willing
+to call negligible, and we require positive evidence that the true departure
+is smaller than $\varepsilon_0$ before we conclude in favour of the
+structural interpretation.
+
+## Measuring the Size of a Departure
+
+To speak of a departure being small or large we need a scale. Under a
+sequence of local alternatives to the structural model, $J$ is asymptotically
+non-central $\chi^2_{df}(\lambda)$. The non-centrality parameter $\lambda$
+measures how far the population sits from the restricted model, with
+$\lambda = 0$ recovering the central $\chi^2_{df}$ of exact fit.
+
+The non-centrality $\lambda$ is, to first order, $n$ times the population
+value of the distance metric, namely the standardised squared distance
+between the truth and the closest the restricted model can come. It therefore
+grows with sample size and is not directly comparable across studies.
+Following the close-fit tradition in covariance structure modelling, we divide
+by $n\,df$ to obtain a per-degree-of-freedom average that no longer depends on
+sample size, and take the square root to return to the scale of a
+standardised discrepancy,
+
+$$
+\varepsilon = \sqrt{\frac{\lambda}{n\,df}} .
+$$
+
+We call $\varepsilon$ the standardised misfit. It is the root-mean-square
+approximation error of the structural model, directly analogous to the RMSEA
+in covariance structure modelling. Each of the $df$ overidentifying
+restrictions contributes a standardised squared discrepancy, and $\varepsilon$
+is the square root of their average. A value of zero corresponds to exact
+structural fit, the index is dimensionless because the weighting by
+$\Sigma^{-1}$ places every moment on a standardised footing, and larger values
+correspond to larger departures. The point estimate used by `equiv_test()`
+simply inverts the relationship $E[J] \approx df + \lambda$ and floors it at
+zero,
+
+$$
+\hat\varepsilon = \sqrt{\max\!\left(0,\ \frac{J - df}{n\,df}\right)}.
+$$
+
+## The Close-fit Hypotheses
+
+A margin $\varepsilon_0$ on the $\varepsilon$ scale corresponds to a boundary
+non-centrality $\lambda_0 = n\,df\,\varepsilon_0^2$. The equivalence test is a
+one-sided close-fit test of
+
+$$
+H_0:\ \varepsilon \ge \varepsilon_0
+\qquad\text{versus}\qquad
+H_1:\ \varepsilon < \varepsilon_0 .
+$$
+
+Note the direction. The null is now that the departure is at least as large
+as the margin, and rejecting it is what allows the positive conclusion that
+the departure is smaller than the margin. This is the opposite arrangement to
+`test_t0()` and `test_t1()`, where the null is exact structural fit.
+
+## The Equivalence p-value and the Upper Confidence Limit
+
+Because $J$ is stochastically increasing in $\lambda$, small observed values
+of $J$ are evidence against $H_0$. The equivalence $p$-value is the
+lower-tail probability of the boundary distribution,
+
+$$
+p = P\!\left(\chi^2_{df}(\lambda_0) \le J_{\text{obs}}\right),
+$$
+
+and we declare equivalence when $p < \alpha$.
+
+The same decision can be read off a confidence limit. Let
+$\varepsilon_{\text{upper}}$ be the one-sided $(1 - \alpha)$ upper confidence
+limit for $\varepsilon$, obtained by finding the non-centrality $\lambda_u$
+that solves $P(\chi^2_{df}(\lambda_u) \le J_{\text{obs}}) = \alpha$ and
+rescaling. The test then has the clean dual form
+
+$$
+\text{declare equivalence}
+\iff \varepsilon_{\text{upper}} < \varepsilon_0
+\iff p < \alpha .
+$$
+
+Reporting $\varepsilon_{\text{upper}}$ alongside the decision is often more
+informative than the $p$-value, since it states directly how large the
+departure could plausibly be.
+
+## Relationship to Two One-sided Tests
+
+Readers familiar with equivalence testing for a mean difference will know the
+two one-sided tests (TOST) procedure. There the parameter of interest is a
+signed effect $\theta$, and equivalence means $|\theta| < \Delta$. Because
+$\theta$ can be either positive or negative, TOST runs two one-sided tests,
+one against each bound, and rejects only when both pass. The matching
+confidence interval is the $(1 - 2\alpha)$ interval, which for
+$\alpha = 0.05$ is the $90\%$ interval rather than the $95\%$ interval.
+
+The structural setting differs in one important respect. The misfit
+$\varepsilon$ is a non-negative omnibus quantity, not a signed effect, so
+being outside the margin has only one side, namely
+$\varepsilon \ge \varepsilon_0$. A single one-sided test is therefore the
+correct procedure, and the matching confidence statement is a one-sided
+$(1 - \alpha)$ upper limit, not a $(1 - 2\alpha)$ interval. Carrying the TOST
+$90\%$ rule over to this setting would be a mistake, because that rule is
+specific to the two-bound case.
+
+## Choosing the Margin
+
+The margin is a substantive judgement, not a statistical default, and
+`equiv_test()` deliberately has no default value for it. Unlike the
+established conventions for the RMSEA in covariance structure modelling, there
+is no canonical threshold for what counts as approximate structural
+interpretation, so the margin has to be justified on the merits of the
+application. A smaller margin is a stronger claim and requires more data to
+support. It is good practice to fix the margin before seeing the test result.
+
+## Worked Example
+
+We simulate data with a small direct effect of $Z$ on the first indicator, so
+that the structural interpretation is mildly violated, and we use a
+moderately large sample. The departure is genuine but modest.
+
+```{r simulate}
+set.seed(12345)
+n <- 4000
+z <- rbinom(n, 1, 0.5)
+eta <- 1 + 0.5 * z + rnorm(n)
+lambda <- c(1.0, 0.8, 0.6)
+X <- cbind(
+  2 + lambda[1] * eta + 0.10 * z + rnorm(n, sd = 0.5),  # direct effect of z
+  3 + lambda[2] * eta + rnorm(n, sd = 0.5),
+  1 + lambda[3] * eta + rnorm(n, sd = 0.5)
+)
+
+fit <- test_t0(X, z)
+fit
+```
+
+At this sample size the rejection test detects the departure and rejects
+exact structural fit. That tells us the departure is nonzero, but not whether
+it is large. The equivalence test asks the second question. We first take a
+margin of $0.08$ on the standardised scale.
+
+```{r equiv}
+et <- equiv_test(fit, margin = 0.08)
+et
+```
+
+The output reports the underlying statistic, the equivalence $p$-value, the
+point estimate $\hat\varepsilon$, and the one-sided upper limit
+$\varepsilon_{\text{upper}}$. Here the upper limit falls below $0.08$, so the
+departure, though real, is small on this scale. A more demanding margin tells
+a different story. The same data cannot establish that the misfit is below
+$0.05$, because the upper limit exceeds that value.
+
+```{r equiv-strict}
+equiv_test(fit, margin = 0.05)
+```
+
+Taken together the two analyses say that the structural interpretation is not
+exact here, but the departure is modest. It is below $0.08$ on the
+standardised scale, and not demonstrably below $0.05$. The conclusion is
+always relative to the margin, which is why the margin must be chosen on
+substantive grounds before the test is run.
+
+The components are available for programmatic use.
+
+```{r components}
+et$epsilon          # point estimate of standardised misfit
+et$epsilon_upper    # one-sided (1 - alpha) upper limit
+et$equivalence      # decision at the chosen alpha
+```
+
+## Calibration
+
+The non-central $\chi^2$ reference is asymptotic, and the mapping from
+$\lambda$ to $\varepsilon$ relies on the local-alternatives approximation. In
+finite samples the actual size of the test at the boundary need not equal
+$\alpha$ exactly, and the approximation is best checked by simulation under a
+data-generating process with a known departure. In our own checks the size at
+the boundary tracks $\alpha$ closely across a range of sample sizes once the
+departure is set so that the population $\varepsilon$ equals the margin, and
+$\hat\varepsilon$ is stable across $n$ as the rescaling intends. We recommend
+a short calibration study tailored to the design at hand before relying on the
+test for a substantive claim.
