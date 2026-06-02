@@ -84,12 +84,16 @@ of the Royal Statistical Society: Series B (Statistical Methodology)*,
   : Extract coefficients from a structest_fit object
 - [`confint(`*`<structest_fit>`*`)`](https://felipelfv.github.io/structest/reference/confint.structest_fit.md)
   : Confidence intervals for structest_fit parameters
+- [`equiv_test()`](https://felipelfv.github.io/structest/reference/equiv_test.md)
+  : Equivalence Test for the Structural Interpretation
 - [`estimate_reliability()`](https://felipelfv.github.io/structest/reference/estimate_reliability.md)
   : Estimate Reliability Coefficients (Section 3.1)
 - [`fit_structural()`](https://felipelfv.github.io/structest/reference/fit_structural.md)
   : Fit a Structural Model with Standard Errors
 - [`print(`*`<structest>`*`)`](https://felipelfv.github.io/structest/reference/print.structest.md)
   : Print method for structest objects
+- [`print(`*`<structest_equiv>`*`)`](https://felipelfv.github.io/structest/reference/print.structest_equiv.md)
+  : Print method for structest equivalence tests
 - [`print(`*`<structest_fit>`*`)`](https://felipelfv.github.io/structest/reference/print.structest_fit.md)
   : Print method for structest_fit objects
 - [`structest`](https://felipelfv.github.io/structest/reference/structest-package.md)
