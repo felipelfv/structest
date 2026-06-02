@@ -2,6 +2,8 @@
 
 ### All vignettes
 
+- [Equivalence Testing for the Structural
+  Interpretation](https://felipelfv.github.io/structest/articles/equivalence-testing.md):
 - [Fitting the Structural Model with Standard
   Errors](https://felipelfv.github.io/structest/articles/fit-structural.md):
 - [Testing the Structural Interpretation of a Latent Factor
