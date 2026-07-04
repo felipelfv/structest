@@ -71,6 +71,12 @@ statistic. The procedure uses two-step estimation to obtain stable
 initial estimates, then minimises the criterion with the weight matrix
 recomputed at each parameter value. The test statistic is asymptotically
 \eqn{\chi^2_{(d-1)(p-2)}} under the null.
+
+The normalisation \eqn{\alpha_1 = 1} requires the first indicator to be
+associated with \eqn{Z} (the analogue of the paper's condition
+\eqn{\theta_{12} \neq 0} in Appendix A.4). If the first column of
+\code{X} is unrelated to \code{z}, reorder the columns so that a
+\eqn{Z}-associated indicator comes first.
 }
 \examples{
 set.seed(12345)

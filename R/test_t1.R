@@ -58,6 +58,12 @@
 #' recomputed at each parameter value. The test statistic is asymptotically
 #' \eqn{\chi^2_{(d-1)(p-2)}} under the null.
 #'
+#' The normalisation \eqn{\alpha_1 = 1} requires the first indicator to be
+#' associated with \eqn{Z} (the analogue of the paper's condition
+#' \eqn{\theta_{12} \neq 0} in Appendix A.4). If the first column of
+#' \code{X} is unrelated to \code{z}, reorder the columns so that a
+#' \eqn{Z}-associated indicator comes first.
+#'
 #' @references
 #' VanderWeele, T. J., & Vansteelandt, S. (2022). A statistical test to
 #' reject the structural interpretation of a latent factor model.
@@ -104,9 +110,12 @@ test_t1 <- function(X, z, na.rm = TRUE, max_iter = 1000L, tol = 1e-25,
   # df = d*p - (2d + p - 2) = (d-1)(p-2)
 
   # Initialization via Appendix A.3 iterative procedure
-  # Initial values: gamma_i = 0, alpha_i = mean(X_i | Z = z_1)
-  # To do (!): reference inits alpha on centred X (~0); raw means here can be far
-  # from solution for highly variable indicators.
+  # Initial values: gamma_i = 0, alpha_i = mean(X_i | Z = z_1), exactly as
+  # prescribed in A.3 ("we can use 0 and the sample average of X_i in the
+  # subgroup Z = 1"). The authors' reference script instead initialises on
+  # subject-centred X, but that belongs to its different (centred, no-intercept)
+  # formulation of the moments, which is not equivalent to Equation (3) of the
+  # paper implemented here.
   gamma_init <- rep(0, d)
   alpha_init <- numeric(d)
   for (i in seq_len(d)) {

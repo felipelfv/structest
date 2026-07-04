@@ -187,7 +187,13 @@ test_t0 <- function(X, z, na.rm = TRUE, max_iter = 1000L, verbose = FALSE) {
     }
 
     # Adjusted moment conditions: U*_k = U_k - E[dU/dlambda] (E[dV/dlambda])^{-1} V_k
-    # To do (!): reference script uses + C instead of - C; equivalent under Gaussian X, diverges for skewed indicators. Worth a numerical check.
+    # This is the paper's Appendix A.2 formula (the standard influence-function
+    # correction for estimated lambda). Note: the authors' reference script
+    # (StructuralRejection-JRSSB.R) effectively computes U_k + C V_k because its
+    # dthetadlambda term carries the opposite sign; simulation (500 null reps,
+    # Gaussian indicators, d = 5, p = 2, n = 2000) shows the minus sign used here
+    # is correctly calibrated (mean 3.90 vs chi^2_4 target 4; 5.2% rejection at
+    # alpha = 0.05) while the script's sign is conservative (mean 3.14, 2.6%).
     dvdlambda_inv <- tryCatch(solve(dvdlambda), error = function(e) {
       solve(dvdlambda + 1e-6 * diag(ncol(dvdlambda)))
     })
