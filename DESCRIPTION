@@ -5,11 +5,12 @@ Authors@R:
     person("Felipe", "Fontana Vieira", role = c("aut", "cre"),
            email = "felipelfv98@gmail.com")
 Description: Implements two statistical tests from VanderWeele and Vansteelandt
-    (2022, JRSS-B) to reject the structural interpretation of a univariate
-    latent factor model. The T0 test (Section 3.2) depends on reliability
-    estimates and requires d >= 3 indicators and p >= 2 Z-levels. The T1 test
-    (Section 3.3) is reliability-independent and requires d >= 2 indicators
-    and p >= 3 Z-levels.
+    (2022) <doi:10.1111/rssb.12555> to reject the structural interpretation of
+    a univariate latent factor model. The T0 test (Section 3.2 of the paper)
+    depends on reliability estimates and requires at least 3 indicators and an
+    auxiliary variable with at least 2 levels. The T1 test (Section 3.3) is
+    reliability-independent and requires at least 2 indicators and an auxiliary
+    variable with at least 3 levels.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

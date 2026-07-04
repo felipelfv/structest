@@ -23,7 +23,7 @@
 #' \doi{10.1111/rssb.12555}
 #'
 #' @importFrom stats coef complete.cases cov glm lm.fit model.matrix nlm
-#'   pchisq quasi var
+#'   pchisq quasi setNames var
 #' @importFrom utils combn
 #'
 #' @docType package
