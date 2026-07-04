@@ -113,6 +113,12 @@ then minimises the criterion with the weight matrix recomputed at each
 parameter value. The test statistic is asymptotically
 \\\chi^2\_{(d-1)(p-2)}\\ under the null.
 
+The normalisation \\\alpha_1 = 1\\ requires the first indicator to be
+associated with \\Z\\ (the analogue of the paper's condition
+\\\theta\_{12} \neq 0\\ in Appendix A.4). If the first column of `X` is
+unrelated to `z`, reorder the columns so that a \\Z\\-associated
+indicator comes first.
+
 ## References
 
 VanderWeele, T. J., & Vansteelandt, S. (2022). A statistical test to

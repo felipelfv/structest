@@ -152,6 +152,11 @@ statistic. The procedure uses two-step estimation to obtain stable
 initial estimates, then minimises the criterion with the weight matrix
 recomputed at each parameter value. The test statistic is asymptotically
 \(\chi^2_{(d-1)(p-2)}\) under the null.</p>
+<p>The normalisation \(\alpha_1 = 1\) requires the first indicator to be
+associated with \(Z\) (the analogue of the paper's condition
+\(\theta_{12} \neq 0\) in Appendix A.4). If the first column of
+<code>X</code> is unrelated to <code>z</code>, reorder the columns so that a
+\(Z\)-associated indicator comes first.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
