@@ -26,7 +26,8 @@ VanderWeele and Vansteelandt (2022) show that the structural interpretation has 
 
 ```r
 # Install from GitHub
-devtools::install_github("felipelfv/structest")
+# install.packages("pak")
+pak::pak("felipelfv/structest")
 ```
 
 ## Functions
