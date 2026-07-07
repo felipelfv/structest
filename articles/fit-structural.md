@@ -30,6 +30,7 @@ We briefly recall the key definitions below before developing the
 standard-error machinery.
 
 ``` r
+
 library(structest)
 ```
 
@@ -259,6 +260,7 @@ reliabilities*).
 ## Example: Fitting the \\T_1\\ Model
 
 ``` r
+
 set.seed(12345)
 n <- 1000
 
@@ -317,6 +319,7 @@ adequately.
 ## Example: Fitting the \\T_0\\ Model
 
 ``` r
+
 fit0 <- fit_structural(X, z, type = "t0")
 summary(fit0)
 #> 
@@ -353,6 +356,7 @@ reliability estimates.
 The `structest_fit` object supports standard R model-object methods:
 
 ``` r
+
 # Point estimates (named vector of free parameters)
 coef(fit1)
 #> gamma[X1] gamma[X2] gamma[X3] alpha[X2] alpha[X3] beta[z=1] beta[z=2] 
@@ -404,6 +408,7 @@ The [`confint()`](https://rdrr.io/r/stats/confint.html) method accepts a
 `parm` argument for selecting specific parameters:
 
 ``` r
+
 # CI for beta parameters only
 confint(fit1, parm = c("beta[z=1]", "beta[z=2]"))
 #>               2.5 %    97.5 %
@@ -421,6 +426,7 @@ functions share the same underlying GMM estimation. The point estimates
 are identical:
 
 ``` r
+
 t1_test <- test_t1(X, z)
 fit1 <- fit_structural(X, z, type = "t1")
 

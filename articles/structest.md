@@ -24,6 +24,7 @@ reject these constraints, providing researchers with a principled way to
 evaluate whether the structural interpretation is tenable.
 
 ``` r
+
 library(structest)
 ```
 
@@ -166,6 +167,7 @@ used as \\\Sigma\\, yielding a test statistic that remains
 ### Example: data consistent with the structural model
 
 ``` r
+
 set.seed(12345)
 n <- 5000
 d <- 5
@@ -200,6 +202,7 @@ are not proportional to the reliabilities, and does not act through
 \\\eta\\:
 
 ``` r
+
 set.seed(12345)
 eta <- rnorm(n)                                # Z does not affect eta
 X_bad <- cbind(
@@ -227,6 +230,7 @@ We can inspect the full output with
 [`summary()`](https://rdrr.io/r/base/summary.html):
 
 ``` r
+
 summary(result_t0_bad)
 #> 
 #>   T0: Reliability-dependent test of structural interpretation (VanderWeele & Vansteelandt, 2022) 
@@ -328,6 +332,7 @@ error-structure assumptions needed for reliability estimation.
 ### Example: data consistent with the structural model
 
 ``` r
+
 set.seed(12345)
 n <- 5000
 d <- 4
@@ -357,6 +362,7 @@ structural model.
 ### Example: data violating the structural model
 
 ``` r
+
 set.seed(12345)
 eta <- rnorm(n)
 X_bad <- cbind(
@@ -383,6 +389,7 @@ result_t1_bad <- test_t1(X_bad, z); (result_t1_bad)
 The structural interpretation is rejected, as expected.
 
 ``` r
+
 summary(result_t1_bad)
 #> 
 #>   T1: Reliability-independent test of structural interpretation (VanderWeele & Vansteelandt, 2022) 
@@ -442,6 +449,7 @@ and a \\d\\-column binary design matrix indicating which indicators are
 involved in each pair.
 
 ``` r
+
 set.seed(12345)
 n <- 5000
 d <- 5
@@ -474,13 +482,13 @@ other purposes.
 
 ## Choosing Between \\T_0\\ and \\T_1\\
 
-|                                                      | \\T_0\\        | \\T_1\\        |
-|------------------------------------------------------|----------------|----------------|
-| **Relies on reliability estimates**                  | Yes            | No             |
-| **Sensitive to error distribution misspecification** | Yes            | No             |
-| **Minimum indicators (\\d\\)**                       | 3              | 2              |
-| **Minimum \\Z\\-levels (\\p\\)**                     | 2              | 3              |
-| **Degrees of freedom**                               | \\(d-1)(p-1)\\ | \\(d-1)(p-2)\\ |
+|  | \\T_0\\ | \\T_1\\ |
+|----|----|----|
+| **Relies on reliability estimates** | Yes | No |
+| **Sensitive to error distribution misspecification** | Yes | No |
+| **Minimum indicators (\\d\\)** | 3 | 2 |
+| **Minimum \\Z\\-levels (\\p\\)** | 2 | 3 |
+| **Degrees of freedom** | \\(d-1)(p-1)\\ | \\(d-1)(p-2)\\ |
 
 **Guidance:**
 

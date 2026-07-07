@@ -1,6 +1,6 @@
 # structest
 
-[![R-CMD-CHECK](https://github.com/felipelfv/structest/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/felipelfv/structest/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/felipelfv/structest/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/felipelfv/structest/actions/workflows/R-CMD-check.yaml)
 [![test-coverage](https://github.com/felipelfv/structest/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/felipelfv/structest/actions/workflows/test-coverage.yaml)
 [![CodeFactor](https://www.codefactor.io/repository/github/felipelfv/structest/badge/main)](https://www.codefactor.io/repository/github/felipelfv/structest/overview/main)
 [![Lifecycle:
@@ -50,6 +50,7 @@ these are more commonly known as factor loadings.
 ## Installation
 
 ``` r
+
 # Install from GitHub
 # install.packages("pak")
 pak::pak("felipelfv/structest")
@@ -57,11 +58,11 @@ pak::pak("felipelfv/structest")
 
 ## Functions
 
-| Function                  | Description                                                                                                            |
-|---------------------------|------------------------------------------------------------------------------------------------------------------------|
-| `test_t0(X, z)`           | Statistical test dependent on reliability estimates (Section 3.2). Requires d \>= 3 indicators and p \>= 2 Z-levels.   |
-| `test_t1(X, z)`           | Statistical test independent of reliability estimates (Section 3.3). Requires d \>= 2 indicators and p \>= 3 Z-levels. |
-| `estimate_reliability(X)` | Estimation of reliability via quasi-Poisson GLM on pairwise covariances (Section 3.1).                                 |
+| Function | Description |
+|----|----|
+| `test_t0(X, z)` | Statistical test dependent on reliability estimates (Section 3.2). Requires d \>= 3 indicators and p \>= 2 Z-levels. |
+| `test_t1(X, z)` | Statistical test independent of reliability estimates (Section 3.3). Requires d \>= 2 indicators and p \>= 3 Z-levels. |
+| `estimate_reliability(X)` | Estimation of reliability via quasi-Poisson GLM on pairwise covariances (Section 3.1). |
 
 ## Code of Conduct
 

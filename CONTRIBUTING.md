@@ -34,6 +34,7 @@ reporting a bug:
 3.  Install development dependencies.
 
     ``` r
+
     install.packages("devtools")
     devtools::install_deps()
     ```
@@ -41,6 +42,7 @@ reporting a bug:
 4.  Make sure the package passes checks before you start.
 
     ``` r
+
     devtools::check()
     devtools::test()
     ```
