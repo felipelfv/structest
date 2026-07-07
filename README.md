@@ -1,6 +1,6 @@
 # structest <img src="man/figures/logo.png" align="right" height="139" />
 
-[![R-CMD-CHECK](https://github.com/felipelfv/structest/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/felipelfv/structest/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/felipelfv/structest/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/felipelfv/structest/actions/workflows/R-CMD-check.yaml)
 [![test-coverage](https://github.com/felipelfv/structest/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/felipelfv/structest/actions/workflows/test-coverage.yaml)
 [![CodeFactor](https://www.codefactor.io/repository/github/felipelfv/structest/badge/main)](https://www.codefactor.io/repository/github/felipelfv/structest/overview/main)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
