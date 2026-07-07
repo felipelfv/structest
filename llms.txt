@@ -51,7 +51,8 @@ these are more commonly known as factor loadings.
 
 ``` r
 # Install from GitHub
-devtools::install_github("felipelfv/structest")
+# install.packages("pak")
+pak::pak("felipelfv/structest")
 ```
 
 ## Functions
